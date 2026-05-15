@@ -36,7 +36,7 @@ export function registerGetAiInsights(
     async ({ range }) => {
       try {
         const response = await chronova.get<{ data: ChronovaAiAnalytics }>(
-          "/users/current/analytics/ai",
+          "users/current/analytics/ai",
           { range },
         );
 

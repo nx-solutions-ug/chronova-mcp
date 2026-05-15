@@ -19,7 +19,7 @@ export function registerGetDeveloperContext(
     async () => {
       try {
         const response = await chronova.get<{ data: ChronovaUser }>(
-          "/users/current",
+          "users/current",
         );
         return {
           content: [

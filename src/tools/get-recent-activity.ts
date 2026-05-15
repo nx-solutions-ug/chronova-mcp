@@ -69,7 +69,7 @@ export function registerGetRecentActivity(
         if (per_page !== undefined) params.per_page = String(per_page);
 
         const response = await chronova.get<ChronovaHeartbeatResponse>(
-          "/users/current/heartbeats",
+          "users/current/heartbeats",
           Object.keys(params).length > 0 ? params : undefined,
         );
 
