@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.0...v1.0.1) (2026-05-15)
+
+
+### Bug Fixes
+
+* add shebangs to CLI entry points for npx resolution ([c1caa21](https://github.com/nx-solutions-ug/chronova-mcp/commit/c1caa216d93890b04d94a4bf0e3f089b5c7d9f53))
+
 # 1.0.0 (2026-05-15)
 
 
