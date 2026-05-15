@@ -1,1 +1,3 @@
-console.log("chronova-mcp starting...");
+import { startServer } from "./server.js";
+
+startServer();
