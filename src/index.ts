@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { startServer } from "./server.js";
 
 const HELP_TEXT = `
