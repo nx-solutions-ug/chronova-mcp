@@ -5,12 +5,12 @@ MCP server that exposes Chronova developer productivity data to AI agents. Built
 ## Installation
 
 ```bash
-# Run directly
-npx @chronova/mcp-server
+# Run directly (stdio transport for MCP clients)
+npx -y @chronova/mcp-server
 
 # Or install globally
 npm install -g @chronova/mcp-server
-chronova-mcp
+chronova-mcp-server
 ```
 
 ## Configuration
@@ -51,7 +51,7 @@ Add to `claude_desktop_config.json`:
   "mcpServers": {
     "chronova": {
       "command": "npx",
-      "args": ["@chronova/mcp-server"],
+      "args": ["-y", "@chronova/mcp-server"],
       "env": {
         "CHRONOVA_API_KEY": "your-api-key"
       }
@@ -69,7 +69,7 @@ Add to `.cursor/mcp.json`:
   "mcpServers": {
     "chronova": {
       "command": "npx",
-      "args": ["@chronova/mcp-server"],
+      "args": ["-y", "@chronova/mcp-server"],
       "env": {
         "CHRONOVA_API_KEY": "your-api-key"
       }
@@ -87,7 +87,7 @@ Add to `opencode.json` under `mcp`:
   "mcp": {
     "chronova": {
       "type": "local",
-      "command": ["npx", "@chronova/mcp-server"],
+      "command": ["npx", "-y", "@chronova/mcp-server"],
       "enabled": true,
       "env": {
         "CHRONOVA_API_KEY": "your-api-key"
