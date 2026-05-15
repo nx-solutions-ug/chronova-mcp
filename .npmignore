@@ -1,0 +1,7 @@
+node_modules
+src
+tests
+.env
+.sisyphus
+AUDIT_REPORT.md
+*.tgz

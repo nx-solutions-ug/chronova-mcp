@@ -17,6 +17,7 @@
   "private": false,
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "start": "node dist/index.js",
     "dev": "tsc --watch & node --watch dist/index.js",
     "test": "vitest run",
