@@ -5,14 +5,11 @@ import express, { type Request, type Response } from "express";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { ChronovaClient } from "./lib/chronova-client.js";
+import { resolveConfig, type ChronovaConfig } from "./lib/config.js";
 import { registerGetDeveloperContext } from "./tools/get-developer-context.js";
 import { registerGetAiInsights } from "./tools/get-ai-insights.js";
 import { registerGetProductivitySummary } from "./tools/get-productivity-summary.js";
 import { registerGetRecentActivity } from "./tools/get-recent-activity.js";
-
-const PORT = Number(process.env.PORT) || 3001;
-const CHRONOVA_API_URL = process.env.CHRONOVA_API_URL || "https://chronova.dev";
-const CHRONOVA_API_KEY = process.env.CHRONOVA_API_KEY;
 
 const VERSION = "0.1.0";
 
@@ -21,9 +18,9 @@ interface Session {
   server: McpServer;
 }
 
-function createMcpServer(): { server: McpServer; chronova: ChronovaClient } {
+function createMcpServer(config: ChronovaConfig): { server: McpServer; chronova: ChronovaClient } {
   const server = new McpServer({ name: "chronova-mcp", version: VERSION });
-  const chronova = new ChronovaClient(CHRONOVA_API_URL, CHRONOVA_API_KEY);
+  const chronova = new ChronovaClient(config.apiUrl, config.apiKey);
 
   registerGetAiInsights(server, chronova);
   registerGetDeveloperContext(server, chronova);
@@ -33,7 +30,8 @@ function createMcpServer(): { server: McpServer; chronova: ChronovaClient } {
   return { server, chronova };
 }
 
-export function createApp(): express.Express {
+export function createApp(config?: ChronovaConfig): express.Express {
+  const resolvedConfig = config ?? resolveConfig();
   const app = express();
   app.use(cors());
   app.use(express.json());
@@ -65,7 +63,7 @@ export function createApp(): express.Express {
       return;
     }
 
-    const { server: mcpServer } = createMcpServer();
+    const { server: mcpServer } = createMcpServer(resolvedConfig);
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => randomUUID(),
       onsessioninitialized: (newSessionId: string) => {
@@ -96,13 +94,19 @@ export function createApp(): express.Express {
 }
 
 export function startServer() {
-  if (!CHRONOVA_API_KEY) {
-    console.warn("Warning: CHRONOVA_API_KEY is not set. API requests will fail.");
+  const config = resolveConfig();
+
+  if (!config.apiKey) {
+    console.warn(
+      "Warning: No API key found. Set CHRONOVA_API_KEY env var, or add api_key to ~/.chronova.cfg or ~/.wakatime.cfg. API requests will fail.",
+    );
+  } else if (config.configSource !== "env") {
+    console.log(`Using API key from ${config.configSource}`);
   }
 
-  const app = createApp();
-  const httpServer = app.listen(PORT, () => {
-    console.log(`Chronova MCP server listening on port ${PORT}`);
+  const app = createApp(config);
+  const httpServer = app.listen(config.port, () => {
+    console.log(`Chronova MCP server listening on port ${config.port}`);
   });
 
   async function shutdown(): Promise<void> {

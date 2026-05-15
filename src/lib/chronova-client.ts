@@ -7,10 +7,12 @@ export class ChronovaClient {
   private apiKey: string;
 
   constructor(
-    baseUrl: string = process.env.CHRONOVA_API_URL ?? "https://chronova.dev",
+    baseUrl: string = process.env.CHRONOVA_API_URL ?? "https://chronova.dev/api/v1",
     apiKey: string = process.env.CHRONOVA_API_KEY ?? "",
   ) {
-    this.baseUrl = baseUrl.replace(/\/+$/, "");
+    // Ensure trailing slash so new URL("users/current", baseUrl) resolves correctly
+    // Without it, new URL("path", "https://host/api/v1") yields "https://host/path"
+    this.baseUrl = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
     this.apiKey = apiKey;
   }
 

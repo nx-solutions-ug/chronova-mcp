@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { createApp } from "../../src/server.js";
+import type { ChronovaConfig } from "../../src/lib/config.js";
 import {
   mockChronovaApi,
   startMcpTestServer,
@@ -7,6 +8,13 @@ import {
   callTool,
 } from "../helpers/mock-server.js";
 import type { MockChronovaApi, McpTestServer } from "../helpers/mock-server.js";
+
+const TEST_CONFIG: ChronovaConfig = {
+  apiKey: "test-api-key",
+  apiUrl: "https://chronova.test/api/v1",
+  port: 3001,
+  configSource: "env",
+};
 
 describe("MCP Tools", () => {
   let app: ReturnType<typeof createApp>;
@@ -86,9 +94,7 @@ describe("MCP Tools", () => {
   beforeEach(async () => {
     mockApi = mockChronovaApi();
     mockApi.setup();
-    app = createApp();
-    process.env.CHRONOVA_API_KEY = "test-api-key";
-    process.env.CHRONOVA_API_URL = "https://chronova.test";
+    app = createApp(TEST_CONFIG);
     mcpServer = await startMcpTestServer(app);
     await initSession(mcpServer);
   });
@@ -100,7 +106,7 @@ describe("MCP Tools", () => {
 
   describe("get_developer_context", () => {
     it("should return developer profile data", async () => {
-      mockApi.respond("/api/v1/users/current", {
+      mockApi.respond("users/current", {
         status: 200,
         body: { data: mockUser },
       });
@@ -118,7 +124,7 @@ describe("MCP Tools", () => {
     });
 
     it("should return error for 401 response", async () => {
-      mockApi.respond("/api/v1/users/current", {
+      mockApi.respond("users/current", {
         status: 401,
         body: { error: "Unauthorized" },
       });
@@ -136,7 +142,7 @@ describe("MCP Tools", () => {
 
   describe("get_productivity_summary", () => {
     it("should return productivity stats", async () => {
-      mockApi.respond("/api/v1/users/current/stats/last_7_days", {
+      mockApi.respond("users/current/stats/last_7_days", {
         status: 200,
         body: { data: mockStats },
       });
@@ -152,7 +158,7 @@ describe("MCP Tools", () => {
     });
 
     it("should pass project filter parameter", async () => {
-      mockApi.respond("/api/v1/users/current/stats/last_7_days", {
+      mockApi.respond("users/current/stats/last_7_days", {
         status: 200,
         body: { data: mockStats },
       });
@@ -167,7 +173,7 @@ describe("MCP Tools", () => {
     });
 
     it("should return error for 401 response", async () => {
-      mockApi.respond("/api/v1/users/current/stats/last_7_days", {
+      mockApi.respond("users/current/stats/last_7_days", {
         status: 401,
         body: { error: "Unauthorized" },
       });
@@ -183,7 +189,7 @@ describe("MCP Tools", () => {
 
   describe("get_recent_activity", () => {
     it("should return heartbeat data", async () => {
-      mockApi.respond("/api/v1/users/current/heartbeats", {
+      mockApi.respond("users/current/heartbeats", {
         status: 200,
         body: mockHeartbeats,
       });
@@ -200,7 +206,7 @@ describe("MCP Tools", () => {
     });
 
     it("should pass optional filter parameters", async () => {
-      mockApi.respond("/api/v1/users/current/heartbeats", {
+      mockApi.respond("users/current/heartbeats", {
         status: 200,
         body: mockHeartbeats,
       });
@@ -217,7 +223,7 @@ describe("MCP Tools", () => {
     });
 
     it("should return error for 401 response", async () => {
-      mockApi.respond("/api/v1/users/current/heartbeats", {
+      mockApi.respond("users/current/heartbeats", {
         status: 401,
         body: { error: "Unauthorized" },
       });
@@ -234,7 +240,7 @@ describe("MCP Tools", () => {
 
   describe("get_ai_insights", () => {
     it("should return AI analytics data", async () => {
-      mockApi.respond("/api/v1/users/current/analytics/ai", {
+      mockApi.respond("users/current/analytics/ai", {
         status: 200,
         body: { data: mockAiAnalytics },
       });
@@ -250,7 +256,7 @@ describe("MCP Tools", () => {
     });
 
     it("should return error for 401 response", async () => {
-      mockApi.respond("/api/v1/users/current/analytics/ai", {
+      mockApi.respond("users/current/analytics/ai", {
         status: 401,
         body: { error: "Unauthorized" },
       });

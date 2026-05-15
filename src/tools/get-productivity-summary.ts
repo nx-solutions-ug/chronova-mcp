@@ -36,7 +36,7 @@ export function registerGetProductivitySummary(
     },
     async ({ range, project }) => {
       try {
-        const path = `/api/v1/users/current/stats/${range}`;
+        const path = `/users/current/stats/${range}`;
         const params: Record<string, string> = {};
         if (project) {
           params.project = project;

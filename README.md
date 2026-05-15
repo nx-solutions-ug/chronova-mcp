@@ -15,10 +15,27 @@ chronova-mcp
 
 ## Configuration
 
+The server resolves your API key from multiple sources in priority order:
+
+1. **Environment variable** `CHRONOVA_API_KEY`
+2. **Config file** `~/.chronova.cfg` — `api_key` under `[settings]`
+3. **Config file** `~/.wakatime.cfg` — `api_key` under `[settings]` (WakaTime-compatible)
+4. **Default**: empty (requests will fail with 401)
+
+Similarly, `api_url` is resolved from `CHRONOVA_API_URL` env var, then the config file's `api_url` key, then the default `https://chronova.dev`.
+
+Config files use INI format:
+
+```ini
+[settings]
+api_key = waka_your-api-key-here
+api_url = https://chronova.dev/api/v1
+```
+
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `CHRONOVA_API_KEY` | Yes | — | Your Chronova API key |
-| `CHRONOVA_API_URL` | No | `https://chronova.dev` | Chronova API base URL |
+| `CHRONOVA_API_KEY` | Yes* | — | Your Chronova API key (*or set in config file) |
+| `CHRONOVA_API_URL` | No | `https://chronova.dev/api/v1` | Chronova API base URL |
 | `PORT` | No | `3001` | Server listen port |
 
 CLI flags override env vars: `--port 3001`, `--api-url https://chronova.dev`, `--help`.

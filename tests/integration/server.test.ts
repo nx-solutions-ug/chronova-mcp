@@ -1,15 +1,23 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import request from "supertest";
 import { createApp } from "../../src/server.js";
+import type { ChronovaConfig } from "../../src/lib/config.js";
 import { startMcpTestServer, initSession } from "../helpers/mock-server.js";
 import type { McpTestServer } from "../helpers/mock-server.js";
+
+const TEST_CONFIG: ChronovaConfig = {
+  apiKey: "test-api-key",
+  apiUrl: "https://chronova.test/api/v1",
+  port: 3001,
+  configSource: "env",
+};
 
 describe("MCP Server - Protocol negotiation and tool listing", () => {
   let app: ReturnType<typeof createApp>;
   let mcpServer: McpTestServer;
 
   beforeEach(() => {
-    app = createApp();
+    app = createApp(TEST_CONFIG);
   });
 
   afterEach(async () => {

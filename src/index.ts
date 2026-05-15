@@ -5,12 +5,18 @@ Usage: @chronova/mcp-server [options]
 
 Options:
   --port <number>     Port to listen on (default: 3001)
-  --api-url <url>     Chronova API URL (default: https://chronova.dev)
+  --api-url <url>     Chronova API URL (default: https://chronova.dev/api/v1)
   --help              Show this help message
 
+Configuration priority:
+  1. Environment variables (CHRONOVA_API_KEY, CHRONOVA_API_URL)
+  2. ~/.chronova.cfg file (api_key, api_url under [settings])
+  3. ~/.wakatime.cfg file (api_key, api_url under [settings])
+  4. Defaults
+
 Environment variables:
-  CHRONOVA_API_KEY    Required. Your Chronova API key
-  CHRONOVA_API_URL    Chronova API URL (default: https://chronova.dev)
+  CHRONOVA_API_KEY    Your Chronova API key (required if no config file)
+  CHRONOVA_API_URL    Chronova API URL (default: https://chronova.dev/api/v1)
   PORT                Server port (default: 3001)
 `;
 

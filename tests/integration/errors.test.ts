@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { createApp } from "../../src/server.js";
+import type { ChronovaConfig } from "../../src/lib/config.js";
 import {
   mockChronovaApi,
   startMcpTestServer,
@@ -7,6 +8,13 @@ import {
   callTool,
 } from "../helpers/mock-server.js";
 import type { MockChronovaApi, McpTestServer } from "../helpers/mock-server.js";
+
+const TEST_CONFIG: ChronovaConfig = {
+  apiKey: "test-api-key",
+  apiUrl: "https://chronova.test/api/v1",
+  port: 3001,
+  configSource: "env",
+};
 
 describe("MCP Error propagation", () => {
   let app: ReturnType<typeof createApp>;
@@ -16,9 +24,7 @@ describe("MCP Error propagation", () => {
   beforeEach(async () => {
     mockApi = mockChronovaApi();
     mockApi.setup();
-    app = createApp();
-    process.env.CHRONOVA_API_KEY = "test-api-key";
-    process.env.CHRONOVA_API_URL = "https://chronova.test";
+    app = createApp(TEST_CONFIG);
     mcpServer = await startMcpTestServer(app);
     await initSession(mcpServer);
   });
@@ -40,7 +46,7 @@ describe("MCP Error propagation", () => {
   }
 
   it("should propagate 401 Unauthorized with CHRONOVA_API_KEY guidance", async () => {
-    mockApi.respond("/api/v1/users/current", {
+    mockApi.respond("users/current", {
       status: 401,
       body: { error: "Invalid API key" },
     });
@@ -53,7 +59,7 @@ describe("MCP Error propagation", () => {
   });
 
   it("should propagate 429 Rate limited with Retry-After guidance", async () => {
-    mockApi.respond("/api/v1/users/current", {
+    mockApi.respond("users/current", {
       status: 429,
       body: { error: "Too many requests" },
       headers: { "Retry-After": "30" },
@@ -67,7 +73,7 @@ describe("MCP Error propagation", () => {
   });
 
   it("should propagate 429 without Retry-After header", async () => {
-    mockApi.respond("/api/v1/users/current", {
+    mockApi.respond("users/current", {
       status: 429,
       body: { error: "Too many requests" },
     });
@@ -79,7 +85,7 @@ describe("MCP Error propagation", () => {
   });
 
   it("should propagate 500 server error", async () => {
-    mockApi.respond("/api/v1/users/current/stats/last_7_days", {
+    mockApi.respond("users/current/stats/last_7_days", {
       status: 500,
       body: { error: "Internal Server Error" },
     });
@@ -93,7 +99,7 @@ describe("MCP Error propagation", () => {
   });
 
   it("should propagate 502 bad gateway", async () => {
-    mockApi.respond("/api/v1/users/current/heartbeats", {
+    mockApi.respond("users/current/heartbeats", {
       status: 502,
       body: { error: "Bad Gateway" },
     });
@@ -105,7 +111,7 @@ describe("MCP Error propagation", () => {
   });
 
   it("should propagate 404 not found error", async () => {
-    mockApi.respond("/api/v1/users/current/analytics/ai", {
+    mockApi.respond("users/current/analytics/ai", {
       status: 404,
       body: { error: "Not found" },
     });
