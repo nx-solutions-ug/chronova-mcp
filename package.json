@@ -4,7 +4,8 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "chronova-mcp": "./dist/index.js"
+    "chronova-mcp": "./dist/index.js",
+    "chronova-mcp-stdio": "./dist/stdio.js"
   },
   "files": [
     "dist",
