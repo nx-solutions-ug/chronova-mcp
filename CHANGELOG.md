@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.2...v1.0.3) (2026-05-15)
+
+
+### Bug Fixes
+
+* single bin entry for npx resolution and updated docs ([a333825](https://github.com/nx-solutions-ug/chronova-mcp/commit/a333825c84ec3ac8361c39e5dbf1740383e630e6))
+
 ## [1.0.2](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.1...v1.0.2) (2026-05-15)
 
 
