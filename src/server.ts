@@ -5,6 +5,10 @@ import express, { type Request, type Response } from "express";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { ChronovaClient } from "./lib/chronova-client.js";
+import { registerGetDeveloperContext } from "./tools/get-developer-context.js";
+import { registerGetAiInsights } from "./tools/get-ai-insights.js";
+import { registerGetProductivitySummary } from "./tools/get-productivity-summary.js";
+import { registerGetRecentActivity } from "./tools/get-recent-activity.js";
 
 const PORT = Number(process.env.PORT) || 3001;
 const CHRONOVA_API_URL = process.env.CHRONOVA_API_URL || "https://chronova.dev";
@@ -12,21 +16,29 @@ const CHRONOVA_API_KEY = process.env.CHRONOVA_API_KEY;
 
 const VERSION = "0.1.0";
 
-export interface ServerContext {
+interface Session {
+  transport: StreamableHTTPServerTransport;
   server: McpServer;
-  app: express.Express;
-  chronova: ChronovaClient;
 }
 
-export function createServer(): ServerContext {
+function createMcpServer(): { server: McpServer; chronova: ChronovaClient } {
+  const server = new McpServer({ name: "chronova-mcp", version: VERSION });
+  const chronova = new ChronovaClient(CHRONOVA_API_URL, CHRONOVA_API_KEY);
+
+  registerGetAiInsights(server, chronova);
+  registerGetDeveloperContext(server, chronova);
+  registerGetProductivitySummary(server, chronova);
+  registerGetRecentActivity(server, chronova);
+
+  return { server, chronova };
+}
+
+export function createApp(): express.Express {
   const app = express();
   app.use(cors());
   app.use(express.json());
 
-  const server = new McpServer({ name: "chronova-mcp", version: VERSION });
-  const chronova = new ChronovaClient(CHRONOVA_API_URL, CHRONOVA_API_KEY);
-
-  const transports = new Map<string, StreamableHTTPServerTransport>();
+  const sessions = new Map<string, Session>();
 
   app.get("/health", (_req: Request, res: Response) => {
     res.json({ status: "ok", version: VERSION });
@@ -36,8 +48,8 @@ export function createServer(): ServerContext {
     const sessionId = req.headers["mcp-session-id"] as string | undefined;
 
     if (sessionId) {
-      const transport = transports.get(sessionId);
-      if (!transport) {
+      const session = sessions.get(sessionId);
+      if (!session) {
         res.status(400).json({
           jsonrpc: "2.0",
           error: { code: -32600, message: "Invalid or expired session ID" },
@@ -45,7 +57,7 @@ export function createServer(): ServerContext {
         });
         return;
       }
-      await transport.handleRequest(
+      await session.transport.handleRequest(
         req as unknown as IncomingMessage,
         res as unknown as ServerResponse,
         req.body,
@@ -53,20 +65,22 @@ export function createServer(): ServerContext {
       return;
     }
 
+    const { server: mcpServer } = createMcpServer();
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => randomUUID(),
       onsessioninitialized: (newSessionId: string) => {
-        transports.set(newSessionId, transport);
+        sessions.set(newSessionId, { transport, server: mcpServer });
       },
     });
 
-    transport.onclose = () => {
-      if (transport.sessionId) {
-        transports.delete(transport.sessionId);
+    mcpServer.server.onclose = () => {
+      const sid = transport.sessionId;
+      if (sid && sessions.has(sid)) {
+        sessions.delete(sid);
       }
     };
 
-    await server.connect(transport);
+    await mcpServer.connect(transport);
     await transport.handleRequest(
       req as unknown as IncomingMessage,
       res as unknown as ServerResponse,
@@ -78,30 +92,27 @@ export function createServer(): ServerContext {
   app.get("/mcp", handleMcpRequest);
   app.delete("/mcp", handleMcpRequest);
 
-  return { server, app, chronova };
+  return app;
 }
 
-export function startServer(): ServerContext {
+export function startServer() {
   if (!CHRONOVA_API_KEY) {
-    console.warn(
-      "Warning: CHRONOVA_API_KEY is not set. API requests will fail.",
-    );
+    console.warn("Warning: CHRONOVA_API_KEY is not set. API requests will fail.");
   }
 
-  const ctx = createServer();
-  const httpServer = ctx.app.listen(PORT, () => {
+  const app = createApp();
+  const httpServer = app.listen(PORT, () => {
     console.log(`Chronova MCP server listening on port ${PORT}`);
   });
 
   async function shutdown(): Promise<void> {
     console.log("Shutting down...");
     httpServer.close();
-    await ctx.server.close();
     process.exit(0);
   }
 
   process.on("SIGTERM", shutdown);
   process.on("SIGINT", shutdown);
 
-  return ctx;
+  return httpServer;
 }

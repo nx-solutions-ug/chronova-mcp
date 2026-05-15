@@ -20,3 +20,16 @@
 ## ChronovaClient Constructor
 - `new ChronovaClient(baseUrl, apiKey)` — both string params, no options object
 - Defaults from env vars when no args passed
+
+## CRITICAL: One McpServer per Transport (not shared)
+- `McpServer.connect(transport)` can only be called ONCE per server instance
+- Second call throws: "Already connected to a transport"
+- Fix: create a fresh McpServer + ChronovaClient per new session, register tools on each
+- Store `{ transport, server }` in the session map, not just the transport
+- On session close (`mcpServer.server.onclose`), delete from session map
+- This is the official pattern from modelcontextprotocol/servers repo
+
+## Streamable HTTP Accept Header
+- Clients MUST send `Accept: application/json, text/event-stream` 
+- Without it, transport returns 406 "Not Acceptable"
+- This is per the MCP Streamable HTTP spec
