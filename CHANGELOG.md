@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.1...v1.0.2) (2026-05-15)
+
+
+### Bug Fixes
+
+* add .npmignore and prepublishOnly script to include dist in npm package ([afbc9ad](https://github.com/nx-solutions-ug/chronova-mcp/commit/afbc9ad8578d94bd49b0cb3c877df4c825e967a6))
+
 ## [1.0.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.0...v1.0.1) (2026-05-15)
 
 
