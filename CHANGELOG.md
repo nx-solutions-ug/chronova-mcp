@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.3...v1.0.4) (2026-05-17)
+
+
+### Bug Fixes
+
+* **ci:** upgrade workflow permissions to write for issues and pull-requests ([10e3d1a](https://github.com/nx-solutions-ug/chronova-mcp/commit/10e3d1ad4eee281fca6ecd06fba8b34a0dd205c2))
+
 ## [1.0.3](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.2...v1.0.3) (2026-05-15)
 
 
