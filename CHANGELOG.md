@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.4...v1.0.5) (2026-05-17)
+
+
+### Bug Fixes
+
+* **ci:** add token availability guard to prevent 403 errors in workflows ([4165ee9](https://github.com/nx-solutions-ug/chronova-mcp/commit/4165ee968c097466f3ace1b2a381158ad52cc096))
+
 ## [1.0.4](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.3...v1.0.4) (2026-05-17)
 
 
