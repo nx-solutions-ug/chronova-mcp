@@ -101,16 +101,16 @@ export function startServer() {
       "Warning: No API key found. Set CHRONOVA_API_KEY env var, or add api_key to ~/.chronova.cfg or ~/.wakatime.cfg. API requests will fail.",
     );
   } else if (config.configSource !== "env") {
-    console.log(`Using API key from ${config.configSource}`);
+    process.stderr.write(`Using API key from ${config.configSource}\n`);
   }
 
   const app = createApp(config);
   const httpServer = app.listen(config.port, () => {
-    console.log(`Chronova MCP server listening on port ${config.port}`);
+    process.stderr.write(`Chronova MCP server listening on port ${config.port}\n`);
   });
 
   async function shutdown(): Promise<void> {
-    console.log("Shutting down...");
+    process.stderr.write("Shutting down...\n");
     httpServer.close();
     process.exit(0);
   }

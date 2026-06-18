@@ -29,7 +29,7 @@ function parseArgs(): void {
     const arg = args[i];
 
     if (arg === "--help") {
-      console.log(HELP_TEXT.trim());
+      process.stdout.write(HELP_TEXT.trim() + "\n");
       process.exit(0);
     }
 
@@ -49,7 +49,7 @@ function parseArgs(): void {
       process.env.CHRONOVA_API_URL = value;
     } else {
       console.error(`Error: Unknown option '${arg}'`);
-      console.log(HELP_TEXT.trim());
+      process.stdout.write(HELP_TEXT.trim() + "\n");
       process.exit(1);
     }
 

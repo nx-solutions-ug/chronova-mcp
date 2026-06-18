@@ -12,7 +12,7 @@ export class ChronovaApiError extends Error {
   }
 }
 
-export function mapHttpStatusToError(response: Response, url: string): ChronovaApiError {
+export function mapHttpStatusToError(response: Response, _url: string): ChronovaApiError {
   const status = response.status;
   const statusText = response.statusText;
 

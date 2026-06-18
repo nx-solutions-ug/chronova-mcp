@@ -21,6 +21,7 @@
     "dev": "tsc --watch & node --watch dist/index.js",
     "test": "vitest run",
     "type-check": "tsc --noEmit",
+    "lint": "eslint .",
     "semantic-release": "semantic-release"
   },
   "publishConfig": {
@@ -35,6 +36,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
@@ -45,9 +47,11 @@
     "@types/express": "^5.0.6",
     "@types/node": "^25.8.0",
     "@types/supertest": "^7.2.0",
+    "eslint": "^9.39.4",
     "semantic-release": "^24.2.3",
     "supertest": "^7.2.2",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1",
     "vitest": "^4.1.6"
   }
 }
