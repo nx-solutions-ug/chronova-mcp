@@ -1,3 +1,22 @@
+# [1.1.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.5...v1.1.0) (2026-06-18)
+
+
+### Bug Fixes
+
+* add dedup check to review-pr command to prevent duplicate comments ([c0d04c8](https://github.com/nx-solutions-ug/chronova-mcp/commit/c0d04c8dcd8623f556a44033311084489da56565))
+* add label-skip pre-check and run label-pr on synchronize/ready_for_review ([7dcfcc8](https://github.com/nx-solutions-ug/chronova-mcp/commit/7dcfcc822dbd201ad1a68df9895c0865dbe7d6b8))
+* **ci:** source install + sqlite3 auth for OMP ([f6ce5e3](https://github.com/nx-solutions-ug/chronova-mcp/commit/f6ce5e36f18785c3fa07fda1d2eea6e9a0418db9))
+* **ci:** source install + sqlite3 auth for OMP CI ([661eb59](https://github.com/nx-solutions-ug/chronova-mcp/commit/661eb597ad0ad471f1ff7bfdb5ae232f2ddab549))
+* folders - remove opencode ([63b194f](https://github.com/nx-solutions-ug/chronova-mcp/commit/63b194fd6791cd80ede37746daee695bd35b5bfd))
+* strengthen skip check - never comment, stop immediately when labels exist ([7d23ffd](https://github.com/nx-solutions-ug/chronova-mcp/commit/7d23ffdccf85142b44330e09a6c3cc7b49e371ea))
+
+
+### Features
+
+* **ci:** add OMP workflows with chronova-agent app token ([4f0bdcd](https://github.com/nx-solutions-ug/chronova-mcp/commit/4f0bdcd2d0e6fab79a426448c4e37deb40dd1ee6))
+* **ci:** delete stale dependency summary comments and link Renovate Dashboard ([3852422](https://github.com/nx-solutions-ug/chronova-mcp/commit/38524223b04c0751789025f1278e06666744a6b1))
+* consolidate auto-assign and auto-tag into auto-manage with app token ([5b4f91a](https://github.com/nx-solutions-ug/chronova-mcp/commit/5b4f91ae9c1fd2748275fc527675a93779b4a044))
+
 ## [1.0.5](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.4...v1.0.5) (2026-05-17)
 
 
