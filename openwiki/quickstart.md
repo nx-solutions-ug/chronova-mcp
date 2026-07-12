@@ -106,7 +106,7 @@ All four tools are registered in `src/server.ts` and `src/stdio.ts` via `McpServ
 | `get_ai_insights` | AI vs manual coding analytics | `range` |
 | `get_recent_activity` | Recent heartbeats with filters + pagination | none (all filters optional) |
 
-Named `range` values: `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, `all_time`. `get_productivity_summary` also accepts custom `YYYY`/`YYYY-MM`/`YYYY-MM-DD_to_YYYY-MM-DD`.
+Named `range` values: `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, `all_time`. `get_ai_insights` additionally accepts the custom `YYYY-MM-DD_to_YYYY-MM-DD` format (see `tools.md`).
 
 ## Development
 
