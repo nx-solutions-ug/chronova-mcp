@@ -8,7 +8,7 @@ The server is a small TypeScript program with two entry points, one shared Expre
 
 | File | Purpose | Invoked by |
 |---|---|---|
-| `src/index.ts` → `dist/index.js` | CLI: parses flags, starts HTTP server | `npm start`, Docker `CMD`, `chronova-mcp-server` |
+| `src/index.ts` → `dist/index.js` | CLI: parses flags, starts HTTP server | `npm start`, `node dist/index.js`, Docker `CMD` |
 | `src/stdio.ts` → `dist/stdio.js` | stdio transport for local MCP clients | npm `bin: chronova-mcp-server`, `npx -y @chronova/mcp-server` |
 
 Both call `resolveConfig()` from `src/lib/config.ts`. The HTTP entry warns when no API key is configured; the stdio entry fails fast (`process.exit(1)`) because the client would be unusable without one.

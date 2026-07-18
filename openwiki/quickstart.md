@@ -21,9 +21,12 @@ The server is published to npm. Two ways to use it:
 # Run via npx (stdio transport — what AI clients invoke)
 npx -y @chronova/mcp-server
 
-# Or install globally and start the HTTP server
+# Or install globally (the bin runs the stdio transport)
 npm install -g @chronova/mcp-server
-chronova-mcp-server        # exposes /mcp on port 3001
+chronova-mcp-server
+
+# To run the Streamable HTTP server instead, use:
+npm start                  # runs `node dist/index.js`, exposing /mcp on port 3001
 ```
 
 CLI flags override env vars (see `src/index.ts`):

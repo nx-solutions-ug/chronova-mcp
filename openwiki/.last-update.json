@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-07-12T09:57:56.867Z",
+  "updatedAt": "2026-07-18T16:36:40.193Z",
   "command": "update",
-  "gitHead": "77474693c2b76fe0f7f281718b710a040d5f5d4a",
+  "gitHead": "60b621213acf4c17c4fe1e371b5e446819968ed2",
   "model": "minimax-m3"
 }
