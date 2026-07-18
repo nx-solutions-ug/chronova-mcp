@@ -1,0 +1,75 @@
+name: Wiki Update
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 8 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate token
+        id: token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+        continue-on-error: true
+
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          token: ${{ steps.token.outputs.token || secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "25"
+
+      - name: Build Wiki Agent
+        run: |
+          git clone --branch main --depth 1 https://github.com/nx-solutions-ug/wiki-agent.git /tmp/wiki-agent
+          cd /tmp/wiki-agent
+          npm install
+          npx tsc -p tsconfig.json
+
+      - name: Run Wiki Agent
+        run: node /tmp/wiki-agent/dist/cli.js --update --print --verbose
+        env:
+          WIKI_OLLAMA_MODE: cloud
+          WIKI_OLLAMA_API_KEY: ${{ secrets.WIKI_OLLAMA_API_KEY }}
+          WIKI_MODEL: ${{ vars.WIKI_MODEL || 'kimi-k2.7-code' }}
+      - name: Generate timestamp
+        id: timestamp
+        run: echo "timestamp=$(date +%s)" >> $GITHUB_OUTPUT
+
+      - name: Check for changes
+        id: report
+        run: |
+          if [ -f .wiki/.last-update-report.md ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "body<<EOF" >> $GITHUB_OUTPUT
+            cat .wiki/.last-update-report.md >> $GITHUB_OUTPUT
+            echo "" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Wiki update pull request
+        uses: peter-evans/create-pull-request@v8
+        if: steps.report.outputs.has_changes == 'true'
+        with:
+          token: ${{ steps.token.outputs.token || secrets.GITHUB_TOKEN }}
+          branch: wiki/update-${{ steps.timestamp.outputs.timestamp }}
+          add-paths: .wiki
+          title: "docs: update wiki"
+          body: ${{ steps.report.outputs.body }}
