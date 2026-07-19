@@ -108,7 +108,7 @@ Once connected, the agent can call four read-only tools. See [Tools reference](t
 | `get_ai_insights` | AI vs manual coding analytics | `range` |
 | `get_recent_activity` | Paginated coding heartbeats with filters | none (all filters optional) |
 
-Named ranges: `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, `all_time`. Custom range: `YYYY-MM-DD_to_YYYY-MM-DD`.
+Named ranges: `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, `all_time`. A custom range in the format `YYYY-MM-DD_to_YYYY-MM-DD` is only supported by `get_ai_insights`; `get_productivity_summary` accepts the named ranges only.
 
 ## Development
 
