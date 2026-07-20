@@ -66,7 +66,7 @@ Each handler:
 1. Builds a Chronova API path and query params from the zod-parsed args.
 2. Calls `chronova.get<{ data: T }>(path, params)`.
 3. Returns `{ content: [{ type: "text", text: JSON.stringify(data, null, 2) }] }` on success.
-4. Catches `ChronovaApiError` and returns `{ content: [{ type: "text", text: error.message }], isError: true }`; unexpected errors are stringified into the text content with `isError: true`.
+4. Catches any error and delegates to `formatToolError(error)` (`src/lib/errors.ts`), which returns `{ content: [{ type: "text", text }], isError: true }` — using `error.message` for a `ChronovaApiError`, or `"Unexpected error: ..."` for anything else.
 
 See [Tools reference](../tools/index.md) for per-tool paths, schemas, and response shapes.
 
@@ -98,8 +98,9 @@ These types describe the Chronova API contract as the server understands it; the
 | `src/server.ts` | Express app, `/health`, `/mcp`, session lifecycle |
 | `src/lib/config.ts` | Config resolution (env → `~/.chronova.cfg` → `~/.wakatime.cfg`) |
 | `src/lib/chronova-client.ts` | HTTP client wrapper around `fetch` |
-| `src/lib/errors.ts` | `ChronovaApiError` + status/network mappers |
+| `src/lib/errors.ts` | `ChronovaApiError` + status/network mappers + `formatToolError` |
 | `src/lib/types.ts` | Chronova response type definitions |
+| `src/version.ts` | Reads `package.json#version` at import time; shared by both entrypoints |
 | `src/tools/*.ts` | One file per MCP tool, `registerXxx` pattern |
 | `tests/helpers/mock-server.ts` | `fetch` mock + MCP-over-HTTP test harness |
 | `tests/integration/*.test.ts` | Integration tests for server + tools |
