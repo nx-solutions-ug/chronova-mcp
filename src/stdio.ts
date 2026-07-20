@@ -7,8 +7,7 @@ import { registerGetDeveloperContext } from "./tools/get-developer-context.js";
 import { registerGetAiInsights } from "./tools/get-ai-insights.js";
 import { registerGetProductivitySummary } from "./tools/get-productivity-summary.js";
 import { registerGetRecentActivity } from "./tools/get-recent-activity.js";
-
-const VERSION = "0.1.0";
+import { VERSION } from "./version.js";
 
 async function main() {
   const config = resolveConfig();
