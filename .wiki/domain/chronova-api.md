@@ -23,6 +23,8 @@ The server is a typed read-only client for a subset of the Chronova HTTP API. `s
 | `get_developer_context` | GET | `users/current` | — |
 | `get_productivity_summary` | GET | `users/current/stats/{range}` | `project` (optional) |
 | `get_ai_insights` | GET | `users/current/analytics/ai` | `range` (required) |
+
+`range` values for both tools include the named ranges `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, and `all_time`. `get_productivity_summary` additionally accepts `YYYY` for a year, `YYYY-MM` for a month, and `YYYY-MM-DD_to_YYYY-MM-DD` for a custom date range. `get_ai_insights` accepts named ranges and `YYYY-MM-DD_to_YYYY-MM-DD`.
 | `get_recent_activity` | GET | `users/current/heartbeats` | `date`, `start`, `end`, `project`, `language`, `editor`, `page`, `per_page` |
 
 All paths are relative to the configured base URL.
