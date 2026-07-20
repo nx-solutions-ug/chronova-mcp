@@ -55,7 +55,7 @@ Both call `resolveConfig()` (`src/lib/config.ts`) and construct a `ChronovaClien
 - `createApp(config?)` — builds an Express app with CORS and JSON body parsing. `GET /health` returns `{ status, version }`. `POST|GET|DELETE /mcp` handle MCP protocol traffic via the Streamable HTTP transport.
 - `startServer()` — resolves config, warns on missing API key, listens on `config.port`, wires `SIGTERM`/`SIGINT` graceful shutdown.
 
-Sessions are managed in an in-memory `Map<sessionId, Session>`. Each new session (no `mcp-session-id` header) creates a fresh `McpServer` + `StreamableHTTPServerTransport` pair with a random UUID generator and stores it on `onsessioninitialized`. `server.onclose` deletes the session. The MCP server version constant is `VERSION = "0.1.0"` in `server.ts` (note: this differs from the npm package version in `package.json`).
+Sessions are managed in an in-memory `Map<sessionId, Session>`. Each new session (no `mcp-session-id` header) creates a fresh `McpServer` + `StreamableHTTPServerTransport` pair with a random UUID generator and stores it on `onsessioninitialized`. `server.onclose` deletes the session. The MCP server version is read from `package.json` by `src/version.ts` and passed to `McpServer` in both entrypoints. `/health` and the MCP `initialize` response therefore report the same version as the published npm package (`@chronova/mcp-server`).
 
 ## Tool registration pattern
 
@@ -96,6 +96,7 @@ These types describe the Chronova API contract as the server understands it; the
 | `src/index.ts` | HTTP entrypoint, CLI arg parsing, `--help` |
 | `src/stdio.ts` | stdio entrypoint (npm `bin`) |
 | `src/server.ts` | Express app, `/health`, `/mcp`, session lifecycle |
+| `src/version.ts` | Reads `version` from `package.json` for MCP server info and `/health` |
 | `src/lib/config.ts` | Config resolution (env → `~/.chronova.cfg` → `~/.wakatime.cfg`) |
 | `src/lib/chronova-client.ts` | HTTP client wrapper around `fetch` |
 | `src/lib/errors.ts` | `ChronovaApiError` + status/network mappers |

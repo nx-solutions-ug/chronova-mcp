@@ -47,7 +47,7 @@ Release is automated via **semantic-release** (`npm run semantic-release`). Conf
 - `@semantic-release/npm` — publish to npm (`"publishConfig": { "access": "public" }`).
 - `@semantic-release/github` — GitHub release.
 
-The npm package name is `@chronova/mcp-server` (currently `version: "1.1.0"` in `package.json`). Note the `McpServer` internal `VERSION = "0.1.0"` constant in `server.ts`/`stdio.ts` is **independent** of the npm package version and is what `/health` and `initialize` report.
+The npm package name is `@chronova/mcp-server` (`version` in `package.json`). The same version is used for the MCP `serverInfo.version` and the `/health` endpoint via `src/version.ts`, so the runtime-reported version always matches the published package version.
 
 `renovate.json` configures dependency automation; `.github/` holds CI workflows (not inspected in detail here).
 
