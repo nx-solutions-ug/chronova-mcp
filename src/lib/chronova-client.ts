@@ -19,9 +19,12 @@ export class ChronovaClient {
   async get<T>(path: string, params?: Record<string, string>): Promise<T> {
     const url = new URL(path, this.baseUrl);
     if (params) {
-      for (const [key, value] of Object.entries(params)) {
-        if (value !== undefined && value !== "") {
-          url.searchParams.set(key, value);
+      for (const key in params) {
+        if (Object.prototype.hasOwnProperty.call(params, key)) {
+          const value = params[key];
+          if (value !== undefined && value !== "") {
+            url.searchParams.set(key, value);
+          }
         }
       }
     }
