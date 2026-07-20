@@ -13,7 +13,7 @@ The server ships two entrypoints that register the **same four tools** against t
 
 - Published as the npm `bin` (`chronova-mcp-server`), so `npx -y @chronova/mcp-server` runs it.
 - Uses `StdioServerTransport` from `@modelcontextprotocol/sdk/server/stdio.js`.
-- Builds a single `McpServer({ name: "chronova-mcp", version: "0.1.0" })` and connects the stdio transport.
+- Builds a single `McpServer({ name: "chronova-mcp", version: VERSION })` (where `VERSION` is read from `package.json` at runtime) and connects the stdio transport.
 - **Hard-fails on missing API key** — exits with code 1 and a message pointing to `CHRONOVA_API_KEY` / `~/.chronova.cfg` / `~/.wakatime.cfg`. This is the right behavior for clients that spawn the server as a child process: a missing key is unrecoverable.
 - No HTTP server, no port, no session map. One process = one client.
 
@@ -25,7 +25,7 @@ Use stdio when an AI client (Claude Desktop, Cursor, OpenCode) launches the serv
 - Exposes `POST`, `GET`, and `DELETE` on `/mcp` — all handled by `handleMcpRequest`.
 - Uses `StreamableHTTPServerTransport` with a `sessionIdGenerator: () => randomUUID()`.
 - Sessions are tracked in an in-memory `Map<string, Session>` where `Session = { transport, server }`. New sessions are created lazily when a request arrives without an `mcp-session-id`; subsequent requests reuse the existing session by ID.
-- `GET /health` returns `{ status: "ok", version: "0.1.0" }` — useful for liveness probes in containers.
+- `GET /health` returns `{ status: "ok", version: VERSION }` (the package version) — useful for liveness probes in containers.
 - Graceful shutdown on `SIGTERM`/`SIGINT` closes the HTTP server and exits.
 - **Warns** (does not exit) on missing API key, because HTTP mode may be shared/remote and the key could come from a config file at runtime.
 

@@ -39,7 +39,7 @@ The shapes below mirror `src/lib/types.ts`. Field names use snake_case to match 
 - **`ChronovaStatsRange`** — `range`, `total_seconds`; arrays `languages` / `projects` / `editors` / `operating_systems` each of `{ name, total_seconds, percent }`; `daily_stats: [{ date, total_seconds }]`; `hourly_stats: [{ hour, total_seconds }]`; `best_day: { date, total_seconds } | null`; `start`, `end`.
 - **`ChronovaHeartbeat`** — `id`, `time`, `type`, `project`, `language`, `editor`, `operating_system`, `machine`, `branch`, `created_at`.
 - **`ChronovaHeartbeatResponse`** — `heartbeats: ChronovaHeartbeat[]`, `total`, `page`, `per_page`, `total_pages`.
-- **`ChronovaAiAnalytics`** — `adoptionTimeline`, `contributionShare`, `comparison`, `languageMatrix`, `projectDependency`, `efficiencyTrend` (see [Tools reference](../tools/index.md#get_ai_insights) for sub-shapes).
+- **`ChronovaAiAnalytics`** — `adoptionTimeline`, `contributionShare`, `comparison`, `languageMatrix`, `projectDependency`, `efficiencyTrend` (see [Tools reference](../tools/index.md) for sub-shapes).
 
 ## Heartbeats concept
 

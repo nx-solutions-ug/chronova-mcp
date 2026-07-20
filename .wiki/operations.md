@@ -47,9 +47,17 @@ Release is automated via **semantic-release** (`npm run semantic-release`). Conf
 - `@semantic-release/npm` — publish to npm (`"publishConfig": { "access": "public" }`).
 - `@semantic-release/github` — GitHub release.
 
-The npm package name is `@chronova/mcp-server` (currently `version: "1.1.0"` in `package.json`). Note the `McpServer` internal `VERSION = "0.1.0"` constant in `server.ts`/`stdio.ts` is **independent** of the npm package version and is what `/health` and `initialize` report.
+The npm package name is `@chronova/mcp-server`.
 
-`renovate.json` configures dependency automation; `.github/` holds CI workflows (not inspected in detail here).
+.github/workflows include:
+
+- `test.yml` — type-check, lint, build, and test on pushes/PRs to `main`, `develop`, `feat/*`, and `fix/*` branches.
+- `release.yml` — runs tests then `semantic-release` on `main` pushes.
+- `update-wiki.yml` — regenerates `.wiki/` daily and on `main` pushes.
+- `auto-manage.yml` — auto-tags issues `needs-triage` and assigns them to `niklasschaeffer`.
+- `omp.yml`, `omp-ci.yml`, `omp-fix-issue.yml` — OMP agent automation (issue triage, PR review, `/omp` comment triggers).
+
+`renovate.json` configures dependency automation.
 
 ## Publishing notes
 

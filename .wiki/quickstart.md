@@ -82,15 +82,14 @@ api_url = https://chronova.dev/api/v1
 
 ### OpenCode
 
-`opencode.json`:
+`~/.opencode/mcp.json`:
 
 ```json
 {
-  "mcp": {
+  "mcps": {
     "chronova": {
-      "type": "local",
-      "command": ["npx", "-y", "@chronova/mcp-server"],
-      "enabled": true,
+      "command": "npx",
+      "args": ["-y", "@chronova/mcp-server"],
       "env": { "CHRONOVA_API_KEY": "your-api-key" }
     }
   }

@@ -7,7 +7,7 @@ tags: [domain, errors, error-handling]
 
 # Errors & status mapping
 
-`src/lib/errors.ts` defines `ChronovaApiError` and two mappers that translate raw `fetch` outcomes into structured, user-facing errors. Every tool handler catches `ChronovaApiError` and returns it as a tool error (`isError: true` with the message as text) rather than throwing — so AI clients see a readable message.
+`src/lib/errors.ts` defines `ChronovaApiError`, two mappers that translate raw `fetch` outcomes into structured errors, and `formatToolError`, which all tool handlers use to turn errors into `isError: true` text content.
 
 ## ChronovaApiError
 
@@ -46,8 +46,9 @@ chronova.get(...)
   └─ fetch(...) ok? → mapHttpStatusToError (if !response.ok) → throw ChronovaApiError
   └─ fetch(...) throws TypeError/AbortError? → mapNetworkError → throw ChronovaApiError
 tool handler
-  └─ catch (error instanceof ChronovaApiError) → { content: [{ text: error.message }], isError: true }
-  └─ catch (other) → { content: [{ text: "Unexpected error: ..." }], isError: true }
+  └─ uses `formatToolError(error)` from `src/lib/errors.ts`
+       ├─ `ChronovaApiError` → { content: [{ text: error.message }], isError: true }
+       └─ anything else → { content: [{ text: "Unexpected error: ..." }], isError: true }
 ```
 
 The `CONNECTION_ERROR` (statusCode 0), `RATE_LIMITED` (with `retryAfter`), and `UNAUTHORIZED` codes are the main actionable signals a caller can key off. The integration tests assert the 401 path returns `isError: true` with "Unauthorized" + "CHRONOVA_API_KEY" in the text.
