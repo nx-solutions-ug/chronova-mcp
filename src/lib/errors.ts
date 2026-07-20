@@ -83,3 +83,20 @@ export function mapNetworkError(error: unknown, url: string): ChronovaApiError {
     "CONNECTION_ERROR",
   );
 }
+export function formatToolError(error: unknown) {
+  if (error instanceof ChronovaApiError) {
+    return {
+      content: [{ type: "text" as const, text: error.message }],
+      isError: true,
+    };
+  }
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: `Unexpected error: ${error instanceof Error ? error.message : String(error)}`,
+      },
+    ],
+    isError: true,
+  };
+}
