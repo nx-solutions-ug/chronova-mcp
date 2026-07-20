@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ChronovaClient } from "../lib/chronova-client.js";
-import { ChronovaApiError } from "../lib/errors.js";
+import { formatToolError } from "../lib/errors.js";
 import type { ChronovaHeartbeatResponse } from "../lib/types.js";
 
 export function registerGetRecentActivity(
@@ -79,21 +79,7 @@ export function registerGetRecentActivity(
           ],
         };
       } catch (error) {
-        if (error instanceof ChronovaApiError) {
-          return {
-            content: [{ type: "text" as const, text: error.message }],
-            isError: true,
-          };
-        }
-        return {
-          content: [
-            {
-              type: "text" as const,
-              text: `Unexpected error: ${error instanceof Error ? error.message : String(error)}`,
-            },
-          ],
-          isError: true,
-        };
+        return formatToolError(error);
       }
     },
   );
