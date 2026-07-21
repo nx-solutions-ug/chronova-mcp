@@ -27,7 +27,7 @@ The server is a typed read-only client for a subset of the Chronova HTTP API. `s
 
 All paths are relative to the configured base URL.
 
-`range` values for `get_productivity_summary` and `get_ai_insights` include the named ranges `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, and `all_time`. `get_productivity_summary` additionally accepts `YYYY` for a year, `YYYY-MM` for a month, and `YYYY-MM-DD_to_YYYY-MM-DD` for a custom date range. `get_ai_insights` accepts named ranges and `YYYY-MM-DD_to_YYYY-MM-DD`.
+`get_productivity_summary` accepts the named ranges `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, and `all_time`; it also accepts `YYYY` for a year, `YYYY-MM` for a month, and `YYYY-MM-DD_to_YYYY-MM-DD` for a custom date range. `get_ai_insights` accepts the same named ranges and `YYYY-MM-DD_to_YYYY-MM-DD`.
 
 ## Response envelope
 

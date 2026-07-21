@@ -53,13 +53,7 @@ This lets tests drive the server exactly as a real MCP client would, without spa
 
 ## Test config
 
-Integration tests use a fixed `TEST_CONFIG`:
-
-```ts
-{ apiKey: "test-api-key", apiUrl: "https://chronova.test/api/v1", port: 3001, configSource: "env" }
-```
-
-and call `createApp(TEST_CONFIG)` directly (bypassing `resolveConfig`), so tests are deterministic regardless of the host's `~/.chronova.cfg`.
+Integration tests call `createApp(TEST_CONFIG)` directly, where `TEST_CONFIG` is a fixed object with `apiKey`, `apiUrl`, `port`, and `configSource: "env"`. This bypasses `resolveConfig`, so tests are deterministic regardless of the host's `~/.chronova.cfg`.
 
 ## What the tests assert
 

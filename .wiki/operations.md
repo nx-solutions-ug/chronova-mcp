@@ -51,7 +51,9 @@ The npm package name is `@chronova/mcp-server` (currently `version: "1.1.1"` in 
 
 Release branches: `.releaserc.json` targets `main` plus two prerelease channels, `beta` and `alpha`. Pushes to `beta` produce `v{version}-beta.N` tags/prereleases; pushes to `alpha` produce `v{version}-alpha.N`.
 
-`renovate.json` configures dependency automation; `.github/` holds CI workflows (not inspected in detail here).
+`.github/workflows/test.yml` runs type-check, lint, build, and test on push/PR to `main`, `develop`, and `feat/*`/`fix/*` branches. `.github/workflows/release.yml` re-runs those checks on `main` pushes and then invokes `semantic-release`. `.github/workflows/update-wiki.yml` regenerates `.wiki/` daily at 08:00 UTC and on every `main` push, flattening the output into the GitHub Wiki repo and opening a staging PR when there are changes.
+
+Additional automation lives in `.github/workflows/auto-manage.yml` (tags issues with `needs-triage` and assigns to `niklasschaeffer`) and the OMP workflows (`omp.yml`, `omp-ci.yml`, `omp-fix-issue.yml`) that drive the agent commands under `.omp/commands/`. `renovate.json` uses the Renovate recommended preset for dependency PRs.
 
 ## Publishing notes
 

@@ -52,8 +52,8 @@ Both call `resolveConfig()` (`src/lib/config.ts`) and construct a `ChronovaClien
 
 `src/server.ts` exposes:
 
-- `createApp(config?)` — builds an Express app with CORS and JSON body parsing. `GET /health` returns `{ status, version }`. `POST|GET|DELETE /mcp` handle MCP protocol traffic via the Streamable HTTP transport.
-- `startServer()` — resolves config, warns on missing API key, listens on `config.port`, wires `SIGTERM`/`SIGINT` graceful shutdown.
+- `createApp(config?)` — builds an Express app with CORS and JSON body parsing. `GET /health` returns `{ status, version }`. `POST|GET|DELETE /mcp` all dispatch to `handleMcpRequest`, which uses the Streamable HTTP transport.
+- `startServer()` — resolves config, warns on missing API key (HTTP mode), listens on `config.port`, wires `SIGTERM`/`SIGINT` graceful shutdown.
 
 Sessions are managed in an in-memory `Map<sessionId, Session>`. Each new session (no `mcp-session-id` header) creates a fresh `McpServer` + `StreamableHTTPServerTransport` pair with a random UUID generator and stores it on `onsessioninitialized`. `server.onclose` deletes the session. The MCP server version is loaded from `package.json` by `src/version.ts` and imported into both entrypoints, so the version reported by `initialize` and `/health` stays in sync with the published npm package version.
 
