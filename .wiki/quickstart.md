@@ -32,16 +32,15 @@ chronova-mcp-server
 The server needs a Chronova API key. It resolves configuration in priority order (highest first):
 
 1. `CHRONOVA_API_KEY` environment variable
-2. `~/.chronova.cfg` — `api_key` under `[settings]`
-3. `~/.wakatime.cfg` — `api_key` under `[settings]` (WakaTime-compatible)
+2. `~/.chronova.cfg` — `api_key` as a top-level key
+3. `~/.wakatime.cfg` — `api_key` as a top-level key (WakaTime-compatible)
 4. Default: empty — API requests will fail with `401 Unauthorized`
 
 `api_url` follows the same ladder (`CHRONOVA_API_URL` → config file → `https://chronova.dev/api/v1`). See [Configuration](configuration.md) for the full resolution rules and CLI flags.
 
-Config files use INI format:
+Config files use INI-like syntax (section headers are ignored by the parser):
 
 ```ini
-[settings]
 api_key = waka_your-api-key-here
 api_url = https://chronova.dev/api/v1
 ```
