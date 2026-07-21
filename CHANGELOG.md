@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.1.1...v1.1.2) (2026-07-21)
+
+
+### Bug Fixes
+
+* bump server.test.ts version assertions to 1.1.1 ([e5fbfcd](https://github.com/nx-solutions-ug/chronova-mcp/commit/e5fbfcd320a4889b770232530353ea4fa3027d00)), closes [#48](https://github.com/nx-solutions-ug/chronova-mcp/issues/48)
+
 ## [1.1.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.1.0...v1.1.1) (2026-07-21)
 
 
