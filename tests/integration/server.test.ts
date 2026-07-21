@@ -29,7 +29,7 @@ describe("MCP Server - Protocol negotiation and tool listing", () => {
   it("should respond to health check", async () => {
     const res = await request(app).get("/health");
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ status: "ok", version: "1.1.0" });
+    expect(res.body).toEqual({ status: "ok", version: "1.1.1" });
   });
 
   it("should initialize an MCP session via POST /mcp", async () => {
@@ -51,7 +51,7 @@ describe("MCP Server - Protocol negotiation and tool listing", () => {
       serverInfo: { name: string; version: string };
     };
     expect(result.serverInfo.name).toBe("chronova-mcp");
-    expect(result.serverInfo.version).toBe("1.1.0");
+    expect(result.serverInfo.version).toBe("1.1.1");
     expect(mcpServer.sessionId()).toBeDefined();
   });
 
