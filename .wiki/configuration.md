@@ -29,7 +29,7 @@ Config is resolved **first match wins**, with `apiKey` as the gating value:
    - `apiUrl = CHRONOVA_API_URL ?? "https://chronova.dev/api/v1"`
    - `port = PORT ? Number(PORT) : 3001`
    - `configSource = "env"`
-2. **`~/.chronova.cfg`** — INI file; if it has `api_key` under `[settings]`:
+2. **`~/.chronova.cfg`** — INI-like file; if it has an `api_key` entry:
    - `apiKey = chronovaCfg.api_key`
    - `apiUrl = CHRONOVA_API_URL env ?? chronovaCfg.api_url ?? default`
    - `port = PORT env ?? 3001`
@@ -41,10 +41,9 @@ Note: `apiUrl` and `port` can be overridden by env vars even when the *key* come
 
 ## Config file format
 
-INI format, parsed by `parseIniFile()` in `config.ts`. Lines starting with `[`, `#`, or `;` are skipped; only `key = value` pairs are captured. Only the `api_key` and `api_url` keys are consumed; the `[settings]` section header is cosmetic (the parser ignores section headers).
+The parser in `src/lib/config.ts` reads any line matching `key = value`. Lines that are blank or start with `[`, `#`, or `;` are ignored, so section headers have no effect. Put `api_key` and `api_url` as top-level keys:
 
 ```ini
-[settings]
 api_key = waka_your-api-key-here
 api_url = https://chronova.dev/api/v1
 ```
