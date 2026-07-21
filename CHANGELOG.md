@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.1.0...v1.1.1) (2026-07-21)
+
+
+### Bug Fixes
+
+* update wiki ([d173f38](https://github.com/nx-solutions-ug/chronova-mcp/commit/d173f3851c05f8ab6a8401f2c367a205a6e968ff))
+
 # [1.1.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.0.5...v1.1.0) (2026-06-18)
 
 
