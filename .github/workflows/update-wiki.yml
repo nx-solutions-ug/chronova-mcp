@@ -32,6 +32,11 @@ jobs:
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "25"
+
       - name: Install Wiki Agent
         run: bun add -g @chronova/wiki-agent
 
@@ -41,6 +46,7 @@ jobs:
           WIKI_OLLAMA_MODE: cloud
           WIKI_OLLAMA_API_KEY: ${{ secrets.WIKI_OLLAMA_API_KEY }}
           WIKI_MODEL: ${{ vars.WIKI_MODEL || 'kimi-k2.7-code' }}
+          GH_TOKEN: ${{ steps.token.outputs.token || secrets.GITHUB_TOKEN }}
 
       - name: Generate timestamp
         id: timestamp
