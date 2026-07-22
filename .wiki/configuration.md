@@ -70,7 +70,7 @@ The stdio entrypoint (`src/stdio.ts`) does **not** parse these flags — stdio c
 | `CHRONOVA_API_URL` | No | `https://chronova.dev/api/v1` | Chronova API base URL |
 | `PORT` | No | `3001` | HTTP listen port |
 
-`.env.example` ships with `CHRONOVA_API_URL=https://chronova.dev` (note: the client normalizes the base URL by appending `/` and the code default already includes `/api/v1`; the runtime default used in `config.ts` is `https://chronova.dev/api/v1`).
+`.env.example` ships with `CHRONOVA_API_URL=https://chronova.dev/api/v1`, matching the runtime default.
 
 ## Testability
 
