@@ -64,6 +64,8 @@ and call `createApp(TEST_CONFIG)` directly (bypassing `resolveConfig`), so tests
 ## What the tests assert
 
 - **`server.test.ts`** — `/health` returns `{ status: "ok", version: "1.1.1" }`; `initialize` returns `serverInfo.name = "chronova-mcp"` and `version = "1.1.1"`; `tools/list` returns exactly 4 tools with the expected sorted names; every tool has `annotations.readOnlyHint: true` and an `inputSchema.type = "object"`; an unknown `Mcp-Session-Id` yields HTTP 400 with "Invalid or expired session ID".
+
+  > Note: the test hard-codes `1.1.1` for stability; `package.json` is currently `1.1.3` and `src/version.ts` reads it dynamically, so the live server reports the package version.
 - **`tools.test.ts`** — for each tool: a happy path asserting parsed JSON content, a 401 path asserting `isError: true` and the "Unauthorized" message; plus parameter-passthrough checks (e.g. `get_productivity_summary` with `project`, `get_recent_activity` with filters/pagination).
 - **`config.test.ts`** — `resolveConfig` priority: env wins over `~/.chronova.cfg`, which wins over `~/.wakatime.cfg`, which wins over `none`; uses injected `readFile`/`getHomeDir`/`env` so no real filesystem access.
 - **`errors.test.ts`** — `mapHttpStatusToError` for 401/404/429/5xx/generic; 429 `retryAfter` from `Retry-After` and from `X-RateLimit-Reset`; `mapNetworkError` produces `CONNECTION_ERROR`.
