@@ -22,7 +22,7 @@ The server resolves your API key from multiple sources in priority order:
 3. **Config file** `~/.wakatime.cfg` — `api_key` under `[settings]` (WakaTime-compatible)
 4. **Default**: empty (requests will fail with 401)
 
-Similarly, `api_url` is resolved from `CHRONOVA_API_URL` env var, then the config file's `api_url` key, then the default `https://chronova.dev`.
+Similarly, `api_url` is resolved from `CHRONOVA_API_URL` env var, then the config file's `api_url` key, then the default `https://chronova.dev/api/v1`.
 
 Config files use INI format:
 
