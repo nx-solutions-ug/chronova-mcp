@@ -38,7 +38,7 @@ api_url = https://chronova.dev/api/v1
 | `CHRONOVA_API_URL` | No | `https://chronova.dev/api/v1` | Chronova API base URL |
 | `PORT` | No | `3001` | Server listen port |
 
-CLI flags override env vars: `--port 3001`, `--api-url https://chronova.dev`, `--help`.
+CLI flags override env vars: `--port 3001`, `--api-url https://chronova.dev/api/v1`, `--help`.
 
 ## Usage with AI Clients
 
