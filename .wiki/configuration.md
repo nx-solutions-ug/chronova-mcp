@@ -41,9 +41,10 @@ Note: `apiUrl` and `port` can be overridden by env vars even when the *key* come
 
 ## Config file format
 
-The parser in `src/lib/config.ts` reads any line matching `key = value`. Lines that are blank or start with `[`, `#`, or `;` are ignored, so section headers have no effect. Put `api_key` and `api_url` as top-level keys:
+The parser in `src/lib/config.ts` reads any line matching `key = value`. Lines that are blank or start with `[`, `#`, or `;` are ignored, so section headers have no semantic effect. The README and `.env.example` use a `[settings]` section; keys can live under it or at the top level:
 
 ```ini
+[settings]
 api_key = waka_your-api-key-here
 api_url = https://chronova.dev/api/v1
 ```

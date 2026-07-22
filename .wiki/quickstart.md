@@ -38,9 +38,10 @@ The server needs a Chronova API key. It resolves configuration in priority order
 
 `api_url` follows the same ladder (`CHRONOVA_API_URL` → config file → `https://chronova.dev/api/v1`). See [Configuration](configuration.md) for the full resolution rules and CLI flags.
 
-Config files use INI-like syntax (section headers are ignored by the parser):
+Config files use INI-like syntax. Section headers are ignored by the parser, so keys can be placed under `[settings]` or at the top level:
 
 ```ini
+[settings]
 api_key = waka_your-api-key-here
 api_url = https://chronova.dev/api/v1
 ```

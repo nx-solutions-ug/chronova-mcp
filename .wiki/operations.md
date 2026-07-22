@@ -47,7 +47,7 @@ Release is automated via **semantic-release** (`npm run semantic-release`). Conf
 - `@semantic-release/npm` — publish to npm (`"publishConfig": { "access": "public" }`).
 - `@semantic-release/github` — GitHub release.
 
-The npm package name is `@chronova/mcp-server` (currently `version: "1.1.1"` in `package.json`). `src/version.ts` reads this value from `package.json` at import time, so the version reported by `/health` and MCP `initialize` is always the same as the published package version.
+The npm package name is `@chronova/mcp-server` (currently `version: "1.1.3"` in `package.json`). `src/version.ts` reads this value from `package.json` at import time, so the version reported by `/health` and MCP `initialize` is always the same as the published package version.
 
 Release branches: `.releaserc.json` targets `main` plus two prerelease channels, `beta` and `alpha`. Pushes to `beta` produce `v{version}-beta.N` tags/prereleases; pushes to `alpha` produce `v{version}-alpha.N`.
 
