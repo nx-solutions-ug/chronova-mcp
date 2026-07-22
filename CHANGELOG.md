@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.1.2...v1.1.3) (2026-07-22)
+
+
+### Bug Fixes
+
+* correct CHRONOVA_API_URL in .env.example to include /api/v1 ([0140642](https://github.com/nx-solutions-ug/chronova-mcp/commit/0140642b188775bfc86a6fe636ec7eec75e06e9c))
+
 ## [1.1.2](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.1.1...v1.1.2) (2026-07-21)
 
 
