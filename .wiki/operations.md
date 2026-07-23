@@ -43,13 +43,22 @@ Release is automated via **semantic-release** (`npm run semantic-release`). Conf
 
 - `@semantic-release/commit-analyzer` — determines version bump from conventional commits.
 - `@semantic-release/release-notes-generator` — generates changelog.
-- `@semantic-release/changelog` + `@semantic-release/git` — update `CHANGELOG.md` and commit it back.
+- `@semantic-release/changelog` + `@semantic-release/git` — update `CHANGELOG.md`, `package.json`, and `package-lock.json` and commit them back.
 - `@semantic-release/npm` — publish to npm (`"publishConfig": { "access": "public" }`).
 - `@semantic-release/github` — GitHub release.
 
 The npm package name is `@chronova/mcp-server` (currently `version: "1.1.3"` in `package.json`). `src/version.ts` reads this value from `package.json` at import time, so the version reported by `/health` and MCP `initialize` is always the same as the published package version.
 
 Release branches: `.releaserc.json` targets `main` plus two prerelease channels, `beta` and `alpha`. Pushes to `beta` produce `v{version}-beta.N` tags/prereleases; pushes to `alpha` produce `v{version}-alpha.N`.
+
+### Full-changelog release notes
+
+After semantic-release runs, `.github/workflows/release.yml` runs a post-release step that replaces the GitHub release body with the **full commit list** since the previous tag (all commits, not just conventional `feat`/`fix`/`perf`). It:
+
+1. Captures the latest tag **before** semantic-release and compares it with the latest tag **after**. If the tag did not change, the step exits cleanly and skips the update — this prevents no-op releases from erasing release notes.
+2. Derives the previous tag from `git tag --sort=-creatordate` and generates `git log --pretty=format:"- %s (%h)" --no-merges <previous>..<latest>`.
+3. Writes the commit list under a `## What's Changed` header.
+4. If the body exceeds 120 kB, truncates at the last complete line and appends a link to `CHANGELOG.md`.
 
 `renovate.json` configures dependency automation; `.github/` holds CI workflows (not inspected in detail here).
 
