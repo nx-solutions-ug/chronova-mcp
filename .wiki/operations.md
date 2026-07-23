@@ -55,7 +55,7 @@ Release branches: `.releaserc.json` targets `main` plus two prerelease channels,
 
 After semantic-release runs, `.github/workflows/release.yml` runs a post-release step that replaces the GitHub release body with the **full commit list** since the previous tag (all commits, not just conventional `feat`/`fix`/`perf`). It:
 
-1. Captures the latest tag **before** semantic-release and compares it with the latest tag **after**. If the tag did not change, the step exits cleanly and skips the update — this prevents no-op releases from erasing release notes.
+1. Captures the latest tag **before** semantic-release (`pre-tag`) and compares it with the latest tag **after**. If the tag did not change, the step exits cleanly and skips the update — this prevents no-op releases from erasing release notes.
 2. Derives the previous tag from `git tag --sort=-creatordate` and generates `git log --pretty=format:"- %s (%h)" --no-merges <previous>..<latest>`.
 3. Writes the commit list under a `## What's Changed` header.
 4. If the body exceeds 120 kB, truncates at the last complete line and appends a link to `CHANGELOG.md`.
