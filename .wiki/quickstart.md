@@ -5,6 +5,10 @@ description: "Install, configure, and run the Chronova MCP server with AI client
 tags: [quickstart, mcp, chronova]
 ---
 
+<p align="center">
+  <img src="public/banner.png" alt="Chronova MCP Server — Model Context Protocol for Developer Analytics" width="850" />
+</p>
+
 # Chronova MCP Server — Quickstart
 
 `@chronova/mcp-server` is a Model Context Protocol (MCP) server that exposes [Chronova](https://chronova.dev) developer productivity data — coding stats, recent activity, and AI-assisted coding analytics — to AI agents such as Claude Desktop, Cursor, and OpenCode.
