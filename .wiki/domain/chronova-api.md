@@ -27,7 +27,7 @@ The server is a typed read-only client for a subset of the Chronova HTTP API. `s
 
 All paths are relative to the configured base URL.
 
-`range` values for `get_productivity_summary` and `get_ai_insights` include the named ranges `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, and `all_time`. `get_productivity_summary` additionally accepts `YYYY` for a year, `YYYY-MM` for a month, and `YYYY-MM-DD_to_YYYY-MM-DD` for a custom date range. `get_ai_insights` accepts named ranges and `YYYY-MM-DD_to_YYYY-MM-DD`.
+`range` values for both tools include the named ranges `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, and `all_time`. `get_ai_insights` also accepts a custom date range as `YYYY-MM-DD_to_YYYY-MM-DD` (via `z.enum(...).or(z.string().regex(...))` in `src/tools/get-ai-insights.ts`). `get_productivity_summary` currently validates only the named ranges — its source description references `YYYY`/`YYYY-MM`/`YYYY-MM-DD_to_YYYY-MM-DD` formats, but the Zod `inputSchema` in `src/tools/get-productivity-summary.ts` is a plain enum and does not permit them.
 
 ## Response envelope
 
@@ -35,7 +35,7 @@ All paths are relative to the configured base URL.
 
 ## Type reference
 
-The shapes below mirror `src/lib/types.ts`. Field names use snake_case to match the API wire format; the server passes JSON through to the MCP client unchanged (no camelCase conversion).
+The shapes below mirror `src/lib/types.ts`. The server passes the raw JSON response through to the MCP client unchanged (no case conversion), so the field names in tool output match whatever the Chronova API returns. Most user and stats fields use snake_case, while the AI analytics shape (`ChronovaAiAnalytics`) uses camelCase as typed in the source.
 
 - **`ChronovaUser`** — `id`, `username`, `email`, `avatar_url`, `subscription: { plan, status }`, `github_connected`, `organizations: Array<{ id, name, role }>`, `created_at`, `modified_at`.
 - **`ChronovaStatsRange`** — `range`, `total_seconds`; arrays `languages` / `projects` / `editors` / `operating_systems` each of `{ name, total_seconds, percent }`; `daily_stats: [{ date, total_seconds }]`; `hourly_stats: [{ hour, total_seconds }]`; `best_day: { date, total_seconds } | null`; `start`, `end`.
