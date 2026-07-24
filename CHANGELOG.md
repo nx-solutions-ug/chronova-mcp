@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.1.3...v1.2.0) (2026-07-24)
+
+
+### Features
+
+* add FLUX 2 Max generated README banner ([ac41271](https://github.com/nx-solutions-ug/chronova-mcp/commit/ac41271097f7a9d9ace563ad4645f55114b4a404))
+
 ## [1.1.3](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.1.2...v1.1.3) (2026-07-22)
 
 
