@@ -39,7 +39,7 @@ docker run -e CHRONOVA_API_KEY=your-key -p 3001:3001 chronova-mcp
 
 ## Release — semantic-release
 
-Release is automated via **semantic-release** (`npm run semantic-release`). Configuration in `.releaserc.json` plus these devDependencies:
+Release is automated via **semantic-release** (`npm run semantic-release`). Before the release job starts, `.github/workflows/release.yml` runs a `test` job that performs `npm run type-check` and `npm run lint` (it does not run the Vitest suite). Configuration in `.releaserc.json` plus these devDependencies:
 
 - `@semantic-release/commit-analyzer` — determines version bump from conventional commits.
 - `@semantic-release/release-notes-generator` — generates changelog.
