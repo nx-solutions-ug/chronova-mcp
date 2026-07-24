@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.2.0...v1.2.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* crop banner to 3:1 ratio for better README display ([8f3a922](https://github.com/nx-solutions-ug/chronova-mcp/commit/8f3a922e3dbdde61359bde6ee8e93028f0ba17f1))
+
 # [1.2.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.1.3...v1.2.0) (2026-07-24)
 
 
