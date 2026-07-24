@@ -2,7 +2,7 @@
   <img src="public/banner-flux.png" alt="Chronova MCP Server — Developer productivity data for AI agents" width="100%" />
 </p>
 
-# Chronova MCP Server
+
 
 MCP server that exposes Chronova developer productivity data to AI agents. Built on the Model Context Protocol, it lets tools like Claude Desktop, Cursor, and OpenCode query your coding stats, activity, and AI-assisted coding metrics.
 
