@@ -2,6 +2,10 @@
   <img src="public/banner.png" alt="Chronova MCP Server — Model Context Protocol for Developer Analytics" width="850" />
 </p>
 
+[![npm version](https://img.shields.io/npm/v/@chronova/mcp-server.svg)](https://www.npmjs.com/package/@chronova/mcp-server)
+[![Tests](https://github.com/nx-solutions-ug/chronova-mcp/actions/workflows/test.yml/badge.svg)](https://github.com/nx-solutions-ug/chronova-mcp/actions/workflows/test.yml)
+[![Release](https://github.com/nx-solutions-ug/chronova-mcp/actions/workflows/release.yml/badge.svg)](https://github.com/nx-solutions-ug/chronova-mcp/actions/workflows/release.yml)
+
 MCP server that exposes Chronova developer productivity data to AI agents. Built on the Model Context Protocol, it lets tools like Claude Desktop, Cursor, and OpenCode query your coding stats, activity, and AI-assisted coding metrics.
 
 ## Installation
