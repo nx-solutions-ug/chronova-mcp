@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.3.0...v1.4.0) (2026-07-25)
+
+
+### Features
+
+* regenerate README banner with Gemini 2.5 Flash Image (1024x341, no manual crop needed) ([19a7afa](https://github.com/nx-solutions-ug/chronova-mcp/commit/19a7afa77a44dbdcb4c2a6733345ea46bf7666ad))
+
 # [1.3.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.2.1...v1.3.0) (2026-07-25)
 
 
