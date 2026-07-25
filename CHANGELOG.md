@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.7.0...v1.8.0) (2026-07-25)
+
+
+### Features
+
+* regenerate banner with Chronova logo - AGY generated, 1376x768 native ([787cbfd](https://github.com/nx-solutions-ug/chronova-mcp/commit/787cbfd7753a7bb3afa54f5686d8a1e1416c456d))
+
 # [1.7.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.6.0...v1.7.0) (2026-07-25)
 
 
