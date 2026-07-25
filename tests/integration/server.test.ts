@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import request from "supertest";
 import { createApp } from "../../src/server.js";
+import { VERSION } from "../../src/version.js";
 import type { ChronovaConfig } from "../../src/lib/config.js";
 import { startMcpTestServer, initSession } from "../helpers/mock-server.js";
 import type { McpTestServer } from "../helpers/mock-server.js";
@@ -29,7 +30,7 @@ describe("MCP Server - Protocol negotiation and tool listing", () => {
   it("should respond to health check", async () => {
     const res = await request(app).get("/health");
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ status: "ok", version: "1.1.1" });
+    expect(res.body).toEqual({ status: "ok", version: VERSION });
   });
 
   it("should initialize an MCP session via POST /mcp", async () => {
@@ -51,7 +52,7 @@ describe("MCP Server - Protocol negotiation and tool listing", () => {
       serverInfo: { name: string; version: string };
     };
     expect(result.serverInfo.name).toBe("chronova-mcp");
-    expect(result.serverInfo.version).toBe("1.1.1");
+    expect(result.serverInfo.version).toBe(VERSION);
     expect(mcpServer.sessionId()).toBeDefined();
   });
 
