@@ -9,6 +9,10 @@ tags: [quickstart, mcp, chronova]
   <img src="public/banner.png" alt="Chronova MCP Server — Model Context Protocol for Developer Analytics" width="850" />
 </p>
 
+[![npm version](https://img.shields.io/npm/v/@chronova/mcp-server.svg)](https://www.npmjs.com/package/@chronova/mcp-server)
+[![Tests](https://github.com/nx-solutions-ug/chronova-mcp/actions/workflows/test.yml/badge.svg)](https://github.com/nx-solutions-ug/chronova-mcp/actions/workflows/test.yml)
+[![Release](https://github.com/nx-solutions-ug/chronova-mcp/actions/workflows/release.yml/badge.svg)](https://github.com/nx-solutions-ug/chronova-mcp/actions/workflows/release.yml)
+
 # Chronova MCP Server — Quickstart
 
 `@chronova/mcp-server` is a Model Context Protocol (MCP) server that exposes [Chronova](https://chronova.dev) developer productivity data — coding stats, recent activity, and AI-assisted coding analytics — to AI agents such as Claude Desktop, Cursor, and OpenCode.
