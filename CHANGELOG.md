@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.4.0...v1.5.0) (2026-07-25)
+
+
+### Features
+
+* regenerate README banner with Gemini 2.5 Flash Image - CLI-style layout with data panel and feature badges ([690a087](https://github.com/nx-solutions-ug/chronova-mcp/commit/690a087e91146662dd7bccc42a87ec53c9195949))
+
 # [1.4.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.3.0...v1.4.0) (2026-07-25)
 
 
