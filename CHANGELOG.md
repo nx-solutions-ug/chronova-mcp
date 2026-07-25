@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.5.1...v1.6.0) (2026-07-25)
+
+
+### Features
+
+* native wide banner 1536x672 with Gemini - no crop, no resize, CLI-style layout ([a3a54a8](https://github.com/nx-solutions-ug/chronova-mcp/commit/a3a54a897b32cff35b3962a1d0418ba3dbf43953))
+
 ## [1.5.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.5.0...v1.5.1) (2026-07-25)
 
 
