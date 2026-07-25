@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.2.1...v1.3.0) (2026-07-25)
+
+
+### Features
+
+* regenerate README banner with FLUX 2 Max (1024x341, 3:1 crop) ([3d19d52](https://github.com/nx-solutions-ug/chronova-mcp/commit/3d19d52207e2cf8ee1150a6c2ba061746838290e))
+
 ## [1.2.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.2.0...v1.2.1) (2026-07-24)
 
 
