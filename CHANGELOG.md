@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.5.0...v1.5.1) (2026-07-25)
+
+
+### Bug Fixes
+
+* resize banner instead of cropping - no content cut off ([b3939cc](https://github.com/nx-solutions-ug/chronova-mcp/commit/b3939ccd39f598ff0e2c00a730a6ca132de78a1c))
+
 # [1.5.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.4.0...v1.5.0) (2026-07-25)
 
 
