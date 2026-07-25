@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.6.0...v1.7.0) (2026-07-25)
+
+
+### Features
+
+* regenerate banner with Antigravity CLI - native 1376x768, no crop ([ba454a5](https://github.com/nx-solutions-ug/chronova-mcp/commit/ba454a5ae7fadb3441db560dfc29d3c2610876ee))
+
 # [1.6.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.5.1...v1.6.0) (2026-07-25)
 
 
