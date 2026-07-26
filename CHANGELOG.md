@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.8.1...v1.9.0) (2026-07-26)
+
+
+### Features
+
+* add lightweight vouch system for PR gating via discussions ([381a0eb](https://github.com/nx-solutions-ug/chronova-mcp/commit/381a0eb9880122ccc56ebfed42529b43013ee1a7))
+
 ## [1.8.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.8.0...v1.8.1) (2026-07-26)
 
 
