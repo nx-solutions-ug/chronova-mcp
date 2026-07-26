@@ -62,6 +62,17 @@ After semantic-release runs, `.github/workflows/release.yml` runs a post-release
 
 `renovate.json` configures dependency automation; `.github/` holds CI workflows (not inspected in detail here).
 
+## OMP agent automation
+
+Several GitHub Actions workflows under `.github/workflows/` drive an OMP agent for issue and PR automation:
+
+- **`omp.yml`** — triggered by `/omp` (or `/oc`) comments on issues and PR review comments. It loads the matching command prompt from `.omp/commands/<cmd>.md`, runs OMP with `--mode json`, and pipes the JSONL output through `.omp/stream-log.py` to produce readable CI logs.
+- **`omp-ci.yml`** — runs automatically on opened issues and on PR `opened`/`synchronize`/`ready_for_review` events. It triages issues, labels PRs (skipping when both a type and a priority label are already present), and reviews PRs (skipping `synchronize` events whose latest commit is from a known agent or bot).
+- **`omp-fix-issue.yml`** — invoked via `repository_dispatch` after an issue is triaged; it checks out the full history, loads `.omp/commands/fix-issue.md`, and runs OMP to propose a fix.
+- **`auto-manage.yml`** — tags new/reopened issues with `needs-triage` and auto-assigns new issues and PRs to `niklasschaeffer`.
+
+`.omp/stream-log.py` is a small Python helper that formats OMP JSONL tool-execution events (agent start, turn start, tool execution, message end, agent end) into compact, human-readable CI log lines. It recently gained hardening for issue-76 so that non-dict `args` payloads and non-string `text` fields are coerced to strings safely, preventing `TypeError` from breaking the OMP pipe when upstream tool results are not the expected shape.
+
 ## Publishing notes
 
 - `prepublishOnly` runs `npm run build`, ensuring `dist/` is fresh before publish.
