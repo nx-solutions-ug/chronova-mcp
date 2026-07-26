@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.8.0...v1.8.1) (2026-07-26)
+
+
+### Bug Fixes
+
+* **issue-76:** prevent stream-log.py from crashing on non-dict args or non-string text ([1e779d1](https://github.com/nx-solutions-ug/chronova-mcp/commit/1e779d13d23ff23afb13a131adab305e176cd7c6))
+
 # [1.8.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.7.0...v1.8.0) (2026-07-25)
 
 
