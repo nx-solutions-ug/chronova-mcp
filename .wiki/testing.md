@@ -26,6 +26,8 @@ tests/
 
 There are **no unit tests** per tool file and **no stdio entrypoint tests** — coverage is integration-level, exercising tools through the real HTTP transport.
 
+`test/stream-log.test.ts` is a small exception: it exercises the `.omp/stream-log.py` helper used by the OMP automation workflows. It spawns the script as a subprocess (matching the CI pipeline shape `omp -p --mode json ... | python3 .omp/stream-log.py`) and feeds it JSON events to guard against regressions that would break the agent's output stream parsing.
+
 ## The test harness — `tests/helpers/mock-server.ts`
 
 Provides two layers of fakes:

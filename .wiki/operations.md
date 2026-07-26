@@ -67,3 +67,37 @@ After semantic-release runs, `.github/workflows/release.yml` runs a post-release
 - `prepublishOnly` runs `npm run build`, ensuring `dist/` is fresh before publish.
 - `private: false` and `publishConfig.access: public` make the scoped package publicly installable.
 - The published tarball is limited to `dist/` + `README.md` by `files`; tests, sources, and configs are excluded.
+
+## Community, PR gating & agent automation
+
+The repository uses several GitHub workflows to manage contributions and automate agent-driven tasks.
+
+### Vouch PR gate (`vouch-pr.yml`, `vouch-manage.yml`, `.github/VOUCHED.td`)
+
+External pull requests are gated by the lightweight [vouch](https://github.com/mitchellh/vouch) system:
+
+- `.github/VOUCHED.td` stores the canonical list of vouched users (one GitHub handle per line, alphabetically sorted). Denounced users are prefixed with `-`. The file also documents how to request and grant a vouch.
+- `vouch-pr.yml` runs on `pull_request_target` (opened/reopened/ready for review). It auto-closes PRs from users who are not vouched, not a bot, and not a collaborator with write access. Vouched or allowed PRs receive the green `vouched` label.
+- `vouch-manage.yml` runs on `discussion_comment` events. Maintainers with `admin`, `maintain`, or `write` roles can manage vouches by commenting `!vouch`, `!vouch @user [reason]`, `!denounce [@user] [reason]`, or `!unvouch [@user]` in a discussion.
+
+### Automatic issue/PR management (`auto-manage.yml`)
+
+New and reopened issues are tagged with `needs-triage`. New issues and new PRs are auto-assigned to `niklasschaeffer`. Both actions use a generated GitHub App token (`APP_CLIENT_ID` + `APP_PRIVATE_KEY`).
+
+### OMP agent automation (`omp.yml`, `omp-ci.yml`, `omp-fix-issue.yml`, `.omp/`)
+
+The `.omp/` directory contains agent command prompts and rules for an OMP-based assistant:
+
+- `omp.yml` reacts to `!omp` or `/omp` comments on issues and PR review comments, dispatching a command from `.omp/commands/<cmd>.md`.
+- `omp-ci.yml` runs automatically on newly opened issues and PRs (opened, synchronize, ready for review). It triages issues, labels PRs by type/priority, and reviews PRs.
+- `omp-fix-issue.yml` is triggered after issue triage (`repository_dispatch: issue-triaged`) or manually; it attempts to generate a fix branch.
+
+Commands live under `.omp/commands/` (`fix-issue.md`, `label-pr.md`, `review-pr.md`, `triage-issue.md`) and shared rules under `.omp/rules/`. A small Python helper (`.omp/stream-log.py`) parses the agent's JSON stream and posts comments back to GitHub.
+
+### Release notes drafting (`.github/release-drafter.yml`)
+
+`.github/release-drafter.yml` configures the Release Drafter app (or workflow) with conventional categories: Features, Bug Fixes, Maintenance, and Dependencies. It uses label-based version resolution and excludes `needs-triage`, `needs-info`, and `released` labels. Note: the primary release pipeline is still `semantic-release` (see above); release-drafter is a complementary draft/notes helper.
+
+### Wiki updates (`update-wiki.yml`)
+
+`.github/workflows/update-wiki.yml` regenerates `.wiki/` on pushes to `main`, on a daily schedule (`0 8 * * *`), and via `workflow_dispatch`. It installs the `@chronova/wiki-agent` CLI, runs `wiki --update --print --verbose --wiki`, and — if content changed — publishes the flattened wiki to the repository's GitHub Wiki and opens a `wiki/staging-<timestamp>` pull request with the `.wiki/` changes.
