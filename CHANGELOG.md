@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.9.0...v1.9.1) (2026-07-26)
+
+
+### Bug Fixes
+
+* update actions/checkout to v7 in vouch-manage workflow ([3f8f762](https://github.com/nx-solutions-ug/chronova-mcp/commit/3f8f762d741606201960046169149be5985c7132))
+
 # [1.9.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.8.1...v1.9.0) (2026-07-26)
 
 
