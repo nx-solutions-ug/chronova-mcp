@@ -67,6 +67,7 @@ After semantic-release runs, `.github/workflows/release.yml` runs a post-release
 - `prepublishOnly` runs `npm run build`, ensuring `dist/` is fresh before publish.
 - `private: false` and `publishConfig.access: public` make the scoped package publicly installable.
 - The published tarball is limited to `dist/` + `README.md` by `files`; tests, sources, and configs are excluded.
+- `package.json` now declares `repository`, `homepage`, and `bugs` metadata pointing at `https://github.com/nx-solutions-ug/chronova-mcp`, so the npm registry page links back to the GitHub repo and issue tracker.
 
 ## Repository automation & vouch gate
 
