@@ -12,7 +12,7 @@ The server ships two entrypoints that register the **same four tools** against t
 ## stdio transport — `src/stdio.ts`
 
 - Published as the npm `bin` (`chronova-mcp-server`), so `npx -y @chronova/mcp-server` runs it.
-- Uses `StdioServerTransport` from `@modelcontextprotocol/sdk/server/stdio.js`.
+- Uses `StdioServerTransport` from `@modelcontextprotocol/sdk/server/stdio.js` (SDK v1.30.0).
 - Builds a single `McpServer({ name: "chronova-mcp", version: VERSION })` (where `VERSION` is read from `package.json`) and connects the stdio transport.
 - **Hard-fails on missing API key** — exits with code 1 and a message pointing to `CHRONOVA_API_KEY` / `~/.chronova.cfg` / `~/.wakatime.cfg`. This is the right behavior for clients that spawn the server as a child process: a missing key is unrecoverable.
 - No HTTP server, no port, no session map. One process = one client.
@@ -23,7 +23,7 @@ Use stdio when an AI client (Claude Desktop, Cursor, OpenCode) launches the serv
 
 - Runs an Express app (`createApp`) listening on `config.port` (default `3001`).
 - Exposes `POST`, `GET`, and `DELETE` on `/mcp` — all handled by `handleMcpRequest`.
-- Uses `StreamableHTTPServerTransport` with a `sessionIdGenerator: () => randomUUID()`.
+- Uses `StreamableHTTPServerTransport` from `@modelcontextprotocol/sdk/server/streamableHttp.js` (SDK v1.30.0) with a `sessionIdGenerator: () => randomUUID()`.
 - Sessions are tracked in an in-memory `Map<string, Session>` where `Session = { transport, server }`. New sessions are created lazily when a request arrives without an `mcp-session-id`; subsequent requests reuse the existing session by ID.
 - `GET /health` returns `{ status: "ok", version: VERSION }` — useful for liveness probes in containers.
 - Graceful shutdown on `SIGTERM`/`SIGINT` closes the HTTP server and exits.

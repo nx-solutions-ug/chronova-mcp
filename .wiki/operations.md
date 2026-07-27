@@ -47,7 +47,7 @@ Release is automated via **semantic-release** (`npm run semantic-release`). Conf
 - `@semantic-release/npm` — publish to npm (`"publishConfig": { "access": "public" }`).
 - `@semantic-release/github` — GitHub release.
 
-The npm package name is `@chronova/mcp-server`. `src/version.ts` reads `package.json#version` at import time, so the version reported by `/health` and MCP `initialize` is always the same as the published package version.
+The npm package name is `@chronova/mcp-server`. `src/version.ts` reads `package.json#version` at import time, so the version reported by `/health` and MCP `initialize` is always the same as the published package version. The runtime depends on `@modelcontextprotocol/sdk` ^1.30.0.
 
 Release branches: `.releaserc.json` targets `main` plus two prerelease channels, `beta` and `alpha`. Pushes to `beta` produce `v{version}-beta.N` tags/prereleases; pushes to `alpha` produce `v{version}-alpha.N`.
 
@@ -84,6 +84,10 @@ The `.github/workflows/` directory contains the full CI/automation stack. Many o
 | `omp-fix-issue.yml` | repository dispatch, manual | Attempts an automated fix for a triaged issue. |
 | `vouch-pr.yml` | `pull_request_target` opened/reopened/ready | PR gate: auto-closes PRs from unvouched users; labels vouched PRs. |
 | `vouch-manage.yml` | `discussion_comment` created | Lets maintainers vouch/denounce/unvouch users via discussion comments. |
+
+### Wiki update workflow
+
+`update-wiki.yml` regenerates `.wiki/` and publishes it to the repository's GitHub Wiki. It runs on pushes to `main`, daily at 08:00 UTC, and on manual dispatch. A GitHub App token is generated for authentication; if that fails, it falls back to `GITHUB_TOKEN`. The workflow uses Bun to install `@chronova/wiki-agent` globally, then runs `wiki --update --print --verbose --wiki` with the configured Ollama cloud model (`kimi-k2.7-code` by default, overridable via `vars.WIKI_MODEL`). If the wiki repo is already initialized, it flattens `.wiki/` and force-syncs it to the wiki git repo; otherwise it warns and still opens a staging PR. If any `.wiki` content changed, it also opens a staging pull request from a `wiki/staging-<timestamp>` branch using `peter-evans/create-pull-request@v8`.
 
 ### OMP agent automation
 

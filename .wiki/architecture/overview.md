@@ -7,7 +7,7 @@ tags: [architecture, mcp, chronova]
 
 # Architecture Overview
 
-The Chronova MCP server is a thin, read-only bridge between an MCP-capable AI client and the Chronova HTTP API. It does not persist data or mutate any state on Chronova.
+The Chronova MCP server is a thin, read-only bridge between an MCP-capable AI client and the Chronova HTTP API. It does not persist data or mutate any state on Chronova. It is built on `@modelcontextprotocol/sdk` v1.30.0.
 
 ## Component map
 

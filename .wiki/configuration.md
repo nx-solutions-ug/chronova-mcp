@@ -71,6 +71,8 @@ The stdio entrypoint (`src/stdio.ts`) does **not** parse these flags — stdio c
 | `CHRONOVA_API_URL` | No | `https://chronova.dev/api/v1` | Chronova API base URL |
 | `PORT` | No | `3001` | HTTP listen port |
 
+The server is built on MCP SDK ^1.30.0.
+
 `.env.example` ships with `CHRONOVA_API_URL=https://chronova.dev/api/v1`, matching the runtime default.
 
 ## Testability

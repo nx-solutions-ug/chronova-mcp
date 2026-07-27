@@ -13,7 +13,7 @@ tags: [quickstart, mcp, chronova]
 
 `@chronova/mcp-server` is a Model Context Protocol (MCP) server that exposes [Chronova](https://chronova.dev) developer productivity data — coding stats, recent activity, and AI-assisted coding analytics — to AI agents such as Claude Desktop, Cursor, and OpenCode.
 
-The package ships **two transports**:
+The package ships **two transports**, both built on `@modelcontextprotocol/sdk` v1.30.0:
 
 - **stdio** (`chronova-mcp-server` bin) — for MCP clients that spawn a local process.
 - **HTTP / Streamable HTTP** (`dist/index.js`) — a stateful Express server at `/mcp`, suited for remote/shared hosting and Docker.

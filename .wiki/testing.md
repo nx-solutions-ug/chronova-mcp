@@ -7,7 +7,7 @@ tags: [testing, vitest, integration]
 
 # Testing
 
-Tests run with **Vitest** (`npm test` → `vitest run`). Configuration: `vitest.config.ts` includes `tests/**/*.test.ts` with a 30-second timeout and `.ts` extension priority.
+Tests run with **Vitest** (`npm test` → `vitest run`) and require Node.js ≥ 18. Configuration: `vitest.config.ts` includes `tests/**/*.test.ts` with a 30-second timeout and `.ts` extension priority.
 
 There is no `tests/helpers/mock-server.test.ts` — the helpers are support code consumed by the integration tests.
 
@@ -50,6 +50,8 @@ Responses are wrapped in a real `Response` with `Content-Type: application/json`
 - `request(mcpReq)` — POSTs a JSON-RPC request to `/mcp` with `Accept: application/json, text/event-stream` and tracks `mcp-session-id`. Parses SSE `data:` lines via `parseSse`.
 - `initSession(server)` — sends `initialize` (protocolVersion `2025-03-26`) then `notifications/initialized`.
 - `callTool(server, name, args)` — sends `tools/call` and returns `result`, throwing on `res.error`.
+
+The harness exercises the same `@modelcontextprotocol/sdk` v1.30.0 transport code the production server uses.
 
 This lets tests drive the server exactly as a real MCP client would, without spawning a process.
 
