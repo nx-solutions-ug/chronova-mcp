@@ -85,6 +85,26 @@ The `.github/workflows/` directory contains the full CI/automation stack. Many o
 | `vouch-pr.yml` | `pull_request_target` opened/reopened/ready | PR gate: auto-closes PRs from unvouched users; labels vouched PRs. |
 | `vouch-manage.yml` | `discussion_comment` created | Lets maintainers vouch/denounce/unvouch users via discussion comments. |
 
+### OMP agent automation
+
+The repository uses the **OMP agent** for several automated tasks. The trigger workflow `omp.yml` runs when a comment containing `/omp` (or ` /omp`) is created on an issue or pull request review. It is also invoked by `omp-ci.yml` for triage, labeling, and review jobs.
+
+Command prompts live in `.omp/commands/` as Markdown files. The workflow extracts a command name from the comment (e.g. `/omp triage-issue 42` → `.omp/commands/triage-issue.md`), substitutes `$ARGUMENTS` with the rest of the comment, and passes the expanded prompt to OMP. The available commands are:
+
+| Command file | Used by | Purpose |
+|---|---|---|
+| `triage-issue.md` | `omp-ci.yml` (triage-issue job) | Classify a new issue, set type/priority fields, apply labels. |
+| `label-pr.md` | `omp-ci.yml` (label-pr job) | Apply type and priority labels to a PR. |
+| `review-pr.md` | `omp-ci.yml` (review-pr job) | Review a PR, post inline comments, and submit a review verdict. |
+| `fix-issue.md` | `omp-fix-issue.yml` | Read a triaged issue, implement a fix on a new branch, run quality gates, and open a draft PR. |
+| `_pr-commit-push.md` | `omp.yml` (freeform PR prompts) | Injected after freeform `/omp` prompts on PRs to ensure changes are committed and pushed to the PR branch. |
+
+The agent model is configured in `.omp/agent/config.yml`. The default role and most agent tasks use `ollama-cloud/minimax-m3`; planning and design tasks use `ollama-cloud/kimi-k2.6`, and larger reasoning/vision tasks use `ollama-cloud/qwen3.5:397b`. OMP JSONL output is piped through `.omp/stream-log.py` to produce readable CI log lines. Additional guard rules are in `.omp/rules/`, such as `gh-label-idempotent.md` (always append `|| true` to `gh label create`) and `tool-paths-must-be-arrays.md` (`find`/`search` `paths` must be an array).
+
+#### Commit/push behavior for PR commands
+
+A previous limitation was that freeform `/omp` prompts on pull requests could leave changes staged in the runner without pushing them back to the PR branch. The fix in PR #80 (commit `9d7a606`) appends `.omp/commands/_pr-commit-push.md` to freeform prompts on PR comments. This prompt instructs the agent to check out the PR branch, commit the changes with `git add -A && git commit -m "fix: apply requested changes from PR comment"`, and push to `origin HEAD:<headRefName>`. It explicitly forbids pushing to `main` or `develop`, merging the PR, or starting a dev server. Command-file prompts already contain their own commit/push logic, so the extra instructions are only appended for freeform prompts.
+
 ### Vouch system
 
 `.github/VOUCHED.td` stores the vouched and denounced user list. Only vouched users can open pull requests; bots and collaborators with write access are automatically allowed. To request a vouch, a user opens a Discussion, and a maintainer comments `!vouch` (optionally `!vouch @user [reason]`). The `vouch-manage.yml` workflow then updates `.github/VOUCHED.td` using the `mitchellh/vouch/action/manage-by-discussion@v1` action. `vouch-pr.yml` enforces the gate with `mitchellh/vouch/action/check-pr@v1`, using `auto-close: true` and `require-vouch: true`.
