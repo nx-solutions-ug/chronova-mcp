@@ -47,7 +47,7 @@ Release is automated via **semantic-release** (`npm run semantic-release`). Conf
 - `@semantic-release/npm` — publish to npm (`"publishConfig": { "access": "public" }`).
 - `@semantic-release/github` — GitHub release.
 
-The npm package name is `@chronova/mcp-server` (currently `version: "1.6.0"` in `package.json`). `src/version.ts` reads this value from `package.json` at import time, so the version reported by `/health` and MCP `initialize` is always the same as the published package version.
+The npm package name is `@chronova/mcp-server` (currently `version: "1.9.1"` in `package.json`). `src/version.ts` reads this value from `package.json` at import time, so the version reported by `/health` and MCP `initialize` is always the same as the published package version.
 
 Release branches: `.releaserc.json` targets `main` plus two prerelease channels, `beta` and `alpha`. Pushes to `beta` produce `v{version}-beta.N` tags/prereleases; pushes to `alpha` produce `v{version}-alpha.N`.
 
@@ -67,3 +67,23 @@ After semantic-release runs, `.github/workflows/release.yml` runs a post-release
 - `prepublishOnly` runs `npm run build`, ensuring `dist/` is fresh before publish.
 - `private: false` and `publishConfig.access: public` make the scoped package publicly installable.
 - The published tarball is limited to `dist/` + `README.md` by `files`; tests, sources, and configs are excluded.
+
+## Repository automation & vouch gate
+
+The `.github/workflows/` directory contains the full CI/automation stack. Many of these workflows authenticate as the **chronova-agent GitHub App** via `actions/create-github-app-token@v3`, using `secrets.APP_CLIENT_ID` and `secrets.APP_PRIVATE_KEY`, rather than the default `GITHUB_TOKEN`.
+
+| Workflow | Trigger | Purpose |
+|---|---|---|
+| `test.yml` | push/PR to `main`, `develop`, `feat/*`, `fix/*` | Runs type-check, lint, build, and test jobs in parallel. |
+| `release.yml` | push to `main` | Tests, then runs `semantic-release`; the app token writes release notes and publishes. |
+| `update-wiki.yml` | push to `main`, daily cron, manual | Regenerates `.wiki/` and pushes the flattened wiki to the wiki repo. |
+| `auto-manage.yml` | new/reopened issues, new PRs | Adds `needs-triage` to issues and assigns issues/PRs to `niklasschaeffer`. |
+| `omp.yml` | `/omp` comment | Runs the OMP agent from a comment trigger. |
+| `omp-ci.yml` | new issues/PRs, manual | Triage, label, and review automation via the OMP agent. |
+| `omp-fix-issue.yml` | repository dispatch, manual | Attempts an automated fix for a triaged issue. |
+| `vouch-pr.yml` | `pull_request_target` opened/reopened/ready | PR gate: auto-closes PRs from unvouched users; labels vouched PRs. |
+| `vouch-manage.yml` | `discussion_comment` created | Lets maintainers vouch/denounce/unvouch users via discussion comments. |
+
+### Vouch system
+
+`.github/VOUCHED.td` stores the vouched and denounced user list. Only vouched users can open pull requests; bots and collaborators with write access are automatically allowed. To request a vouch, a user opens a Discussion, and a maintainer comments `!vouch` (optionally `!vouch @user [reason]`). The `vouch-manage.yml` workflow then updates `.github/VOUCHED.td` using the `mitchellh/vouch/action/manage-by-discussion@v1` action. `vouch-pr.yml` enforces the gate with `mitchellh/vouch/action/check-pr@v1`, using `auto-close: true` and `require-vouch: true`.
