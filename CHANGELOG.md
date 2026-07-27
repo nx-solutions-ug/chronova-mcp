@@ -1,3 +1,10 @@
+## [1.9.3](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.9.2...v1.9.3) (2026-07-27)
+
+
+### Bug Fixes
+
+* **omp:** ensure /omp PR commands commit and push changes ([#80](https://github.com/nx-solutions-ug/chronova-mcp/issues/80)) ([9d7a606](https://github.com/nx-solutions-ug/chronova-mcp/commit/9d7a606c63d2eb6079ee7d4d117c55eff883db23)), closes [nx-solutions-ug/chronova#637](https://github.com/nx-solutions-ug/chronova/issues/637)
+
 ## [1.9.2](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.9.1...v1.9.2) (2026-07-27)
 
 
