@@ -29,6 +29,14 @@
   },
   "keywords": [],
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nx-solutions-ug/chronova-mcp.git"
+  },
+  "homepage": "https://github.com/nx-solutions-ug/chronova-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/nx-solutions-ug/chronova-mcp/issues"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "cors": "^2.8.6",
