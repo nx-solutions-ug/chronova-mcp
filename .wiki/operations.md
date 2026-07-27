@@ -75,7 +75,7 @@ The `.github/workflows/` directory contains the full CI/automation stack. Many o
 | Workflow | Trigger | Purpose |
 |---|---|---|
 | `test.yml` | push/PR to `main`, `develop`, `feat/*`, `fix/*` | Runs type-check, lint, build, and test jobs in parallel. |
-| `release.yml` | push to `main` | Tests, then runs `semantic-release`; the app token writes release notes and publishes. |
+| `release.yml` | push to `main` | Runs type-check + lint, then `semantic-release`; the app token writes release notes and publishes. The full Vitest suite is gated by `test.yml` on PRs/pushes. |
 | `update-wiki.yml` | push to `main`, daily cron, manual | Regenerates `.wiki/` and pushes the flattened wiki to the wiki repo. |
 | `auto-manage.yml` | new/reopened issues, new PRs | Adds `needs-triage` to issues and assigns issues/PRs to `niklasschaeffer`. |
 | `omp.yml` | `/omp` comment | Runs the OMP agent from a comment trigger. |
