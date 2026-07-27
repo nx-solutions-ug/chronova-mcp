@@ -27,7 +27,7 @@ The server is a typed read-only client for a subset of the Chronova HTTP API. `s
 
 All paths are relative to the configured base URL.
 
-`range` values for `get_productivity_summary` and `get_ai_insights` include the named ranges `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, and `all_time`. `get_productivity_summary` additionally accepts `YYYY` for a year, `YYYY-MM` for a month, and `YYYY-MM-DD_to_YYYY-MM-DD` for a custom date range. `get_ai_insights` accepts named ranges and `YYYY-MM-DD_to_YYYY-MM-DD`.
+`range` values for both tools include the named ranges `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, and `all_time`. `get_ai_insights` additionally accepts a custom date range in the form `YYYY-MM-DD_to_YYYY-MM-DD`. The source Zod schema for `get_productivity_summary` accepts only the named ranges.
 
 ## Response envelope
 
@@ -40,7 +40,7 @@ The shapes below mirror `src/lib/types.ts`. Field names use snake_case to match 
 - **`ChronovaUser`** — `id`, `username`, `email`, `avatar_url`, `subscription: { plan, status }`, `github_connected`, `organizations: Array<{ id, name, role }>`, `created_at`, `modified_at`.
 - **`ChronovaStatsRange`** — `range`, `total_seconds`; arrays `languages` / `projects` / `editors` / `operating_systems` each of `{ name, total_seconds, percent }`; `daily_stats: [{ date, total_seconds }]`; `hourly_stats: [{ hour, total_seconds }]`; `best_day: { date, total_seconds } | null`; `start`, `end`.
 - **`ChronovaHeartbeat`** — `id`, `time`, `type`, `project`, `language`, `editor`, `operating_system`, `machine`, `branch`, `created_at`.
-- **`ChronovaHeartbeatResponse`** — `heartbeats: ChronovaHeartbeat[]`, `total`, `page`, `per_page`, `total_pages`.
+- **`ChronovaHeartbeatResponse`** — `heartbeats: ChronovaHeartbeat[]`, `total`.
 - **`ChronovaAiAnalytics`** — `adoptionTimeline`, `contributionShare`, `comparison`, `languageMatrix`, `projectDependency`, `efficiencyTrend` (see [Tools reference](../tools/index.md#get_ai_insights) for sub-shapes).
 
 ## Heartbeats concept
