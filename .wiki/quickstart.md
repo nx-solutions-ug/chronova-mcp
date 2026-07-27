@@ -31,6 +31,8 @@ npm install -g @chronova/mcp-server
 chronova-mcp-server
 ```
 
+The package metadata links back to the source repository at `https://github.com/nx-solutions-ug/chronova-mcp` (home of this wiki).
+
 ## Configure the API key
 
 The server needs a Chronova API key. It resolves configuration in priority order (highest first):
