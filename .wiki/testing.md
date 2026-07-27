@@ -11,6 +11,8 @@ Tests run with **Vitest** (`npm test` → `vitest run`). Configuration: `vitest.
 
 There is no `tests/helpers/mock-server.test.ts` — the helpers are support code consumed by the integration tests.
 
+There is also a standalone regression suite at **`test/stream-log.test.ts`** (singular `test/`, not `tests/`). It drives `.omp/stream-log.py` as a Python subprocess and guards the log-formatter regressions that broke the OMP CI pipeline in issue #76 (non-string `text` content, non-dict tool `args`, malformed JSON lines). It is **not** picked up by the default `npm test` because `vitest.config.ts` only includes `tests/**/*.test.ts`; run it explicitly with `npx vitest test/stream-log.test.ts` if you change the OMP log formatter.
+
 ## Layout
 
 ```
