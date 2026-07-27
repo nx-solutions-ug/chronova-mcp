@@ -37,6 +37,33 @@ docker run -e CHRONOVA_API_KEY=your-key -p 3001:3001 chronova-mcp
 
 `/health` is available for liveness/readiness probes; graceful shutdown is handled via `SIGTERM`/`SIGINT` in `startServer()`.
 
+## Repository automation & agent workflows
+
+Beyond tests and release, `.github/workflows/` runs several helper workflows. These are operational infrastructure, not part of the MCP server runtime.
+
+### Vouch gate
+
+`.github/workflows/vouch-pr.yml` and `.github/workflows/vouch-manage.yml` implement a contributor trust gate using the `mitchellh/vouch` action:
+
+- **PR gate** (`vouch-pr.yml`) runs on `pull_request_target` for opened/reopened/ready-for-review PRs. It auto-closes PRs from users who are not vouched and do not have write access, then adds a `vouched` label to PRs that pass.
+- **Management** (`vouch-manage.yml`) lets maintainers vouch or denounce users by commenting on a Discussion: `!vouch`, `!vouch @user [reason]`, `!denounce [@user] [reason]`, `!unvouch [@user]`. Only collaborators with `admin`, `maintain`, or `write` roles are honored.
+
+The vouched user list lives in `.github/VOUCHED.td` — one handle per line, sorted alphabetically, with `-username` to denote active denouncement. Bots (login ending with `[bot]`) and collaborators with write access are allowed automatically.
+
+### Auto management
+
+`.github/workflows/auto-manage.yml` tags newly opened/reopened issues with `needs-triage` and auto-assigns new issues and PRs to `niklasschaeffer`.
+
+### OMP agent workflows
+
+Three workflows drive an OMP-based agent that can triage issues, label PRs, review PRs, and attempt fixes:
+
+- **`.github/workflows/omp.yml`** — comment-triggered. Runs when a comment contains `/omp` or ` /omp` on issues or pull-request review comments. It installs `gh extension install agynio/gh-pr-review --force`, installs the OMP source distribution, expands the requested `.omp/commands/<cmd>.md` prompt, and streams the agent output via `.omp/stream-log.py`.
+- **`.github/workflows/omp-ci.yml`** — event-driven. On new issues it runs `.omp/commands/triage-issue.md` and dispatches `issue-triaged`. On new/updated PRs it applies type/priority labels from `.omp/commands/label-pr.md` (skipping if both a type and priority label are already present) and reviews PRs using `.omp/commands/review-pr.md`. It uses the `gh-pr-review` extension for inline review comments and can skip re-review on `synchronize` when the latest commit is authored by a known agent or GitHub Actions.
+- **`.github/workflows/omp-fix-issue.yml`** — triggered by `repository_dispatch` with `issue-triaged` or manually via `workflow_dispatch`. It runs `.omp/commands/fix-issue.md` against the supplied issue number and pushes any resulting changes.
+
+Command prompts live in `.omp/commands/`; supporting rules (idempotent label handling, tool-path arrays) are in `.omp/rules/`. The recent commit `7bcec13` synced the `gh-pr-review` extension so the `/omp review-pr` command can post inline PR review comments.
+
 ## Release — semantic-release
 
 Release is automated via **semantic-release** (`npm run semantic-release`). Configuration in `.releaserc.json` plus these devDependencies:
