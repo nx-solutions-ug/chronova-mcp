@@ -86,7 +86,9 @@ Three jobs run on new issues/PRs (and manually):
 
 - **triage-issue** — runs `.omp/commands/triage-issue.md` against the issue body to set type/priority fields and labels.
 - **label-pr** — runs `.omp/commands/label-pr.md` to apply type and priority labels.
-- **review-pr** — runs `.omp/commands/review-pr.md` to post inline comments and submit a review verdict.
+- **review-pr** — runs `.omp/commands/review-pr.md` to post inline comments and submit a review verdict. It first deduplicates against the bot's own prior reviews and unresolved inline threads (including `APPROVED` reviews), resolves addressed threads, and re-approves when all prior findings are fixed.
+
+The `review-pr` job skips `synchronize` events when the most recent commit was authored or committed by an automation account (`opencode-agent`, `github-actions`, `omp-agent`, or `chronova-agent`) to avoid re-reviewing its own bot-driven pushes.
 
 ### `omp-fix-issue.yml` — automated fixes
 

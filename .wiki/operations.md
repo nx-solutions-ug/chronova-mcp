@@ -95,7 +95,7 @@ Command prompts live in `.omp/commands/` as Markdown files. The workflow extract
 |---|---|---|
 | `triage-issue.md` | `omp-ci.yml` (triage-issue job) | Classify a new issue, set type/priority fields, apply labels. |
 | `label-pr.md` | `omp-ci.yml` (label-pr job) | Apply type and priority labels to a PR. |
-| `review-pr.md` | `omp-ci.yml` (review-pr job) | Review a PR, post inline comments, and submit a review verdict. |
+| `review-pr.md` | `omp-ci.yml` (review-pr job) | Review a PR, deduplicate against prior bot reviews (including `APPROVED`), post inline comments, and submit a review verdict. |
 | `fix-issue.md` | `omp-fix-issue.yml` | Read a triaged issue, implement a fix on a new branch, run quality gates, and open a draft PR. |
 | `_pr-commit-push.md` | `omp.yml` (freeform PR prompts) | Injected after freeform `/omp` prompts on PRs to ensure changes are committed and pushed to the PR branch. |
 
