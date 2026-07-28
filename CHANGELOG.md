@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.10.0...v1.10.1) (2026-07-28)
+
+
+### Bug Fixes
+
+* **ci:** cancel omp-ci workflows when PR is merged ([a6e7210](https://github.com/nx-solutions-ug/chronova-mcp/commit/a6e72107f112b3db86e45af17a3c8eef016f6d45))
+
 # [1.10.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.9.4...v1.10.0) (2026-07-28)
 
 
