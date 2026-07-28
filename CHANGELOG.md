@@ -1,3 +1,15 @@
+# [1.10.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.9.4...v1.10.0) (2026-07-28)
+
+
+### Bug Fixes
+
+* include APPROVED state in review thread dedup filter ([b47a969](https://github.com/nx-solutions-ug/chronova-mcp/commit/b47a969305e092cd7ddb28d0360a4939d26b5347))
+
+
+### Features
+
+* add eyes reaction to /omp trigger comments ([24f7e58](https://github.com/nx-solutions-ug/chronova-mcp/commit/24f7e582d84d706841e91d621911d7e727b65bd3))
+
 ## [1.9.4](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.9.3...v1.9.4) (2026-07-28)
 
 
