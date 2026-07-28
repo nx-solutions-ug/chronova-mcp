@@ -140,3 +140,16 @@ Required env (see `.env.example`):
 - `renovate.json` — recommended preset; automated dependency PRs.
 
 Commit messages follow **Conventional Commits** (`feat:`, `fix:`, `docs:`, `ci:`, `BREAKING CHANGE:`). `feat` → minor, `fix` → patch, `BREAKING CHANGE` → major. Do not manually version or edit `CHANGELOG.md`.
+
+<!-- wiki-agent -->
+## Wiki Agent
+
+This repository is managed by [wiki-agent](https://github.com/nx-solutions-ug/wiki-agent).
+Documentation is generated under `.wiki/` and kept in sync via `wiki --update`.
+Do not hand-edit files under `.wiki/` — regenerate them with `wiki --update` instead.
+
+```yaml
+version: 1.13.1
+wiki-path: .wiki/
+initialized: 2026-07-28T07:44:56.008Z
+```

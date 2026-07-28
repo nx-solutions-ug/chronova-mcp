@@ -60,7 +60,7 @@ After semantic-release runs, `.github/workflows/release.yml` runs a post-release
 3. Writes the commit list under a `## What's Changed` header.
 4. If the body exceeds 120 kB, truncates at the last complete line and appends a link to `CHANGELOG.md`.
 
-`renovate.json` configures dependency automation; `.github/` holds CI workflows (not inspected in detail here).
+`renovate.json` configures dependency automation. For the full CI/CD story — workflows, OMP agent commands, the vouch system, and the wiki update pipeline — see [CI/CD workflows](operations/ci-cd.md).
 
 ## Publishing notes
 
