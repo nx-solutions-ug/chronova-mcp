@@ -80,7 +80,7 @@ The `.github/workflows/` directory contains the full CI/automation stack. Many o
 | `update-wiki.yml` | push to `main`, daily cron, manual | Regenerates `.wiki/` and pushes the flattened wiki to the wiki repo. |
 | `auto-manage.yml` | new/reopened issues, new PRs | Adds `needs-triage` to issues and assigns issues/PRs to `niklasschaeffer`. |
 | `omp.yml` | `/omp` comment | Runs the OMP agent from a comment trigger. |
-| `omp-ci.yml` | new issues/PRs, manual | Triage, label, and review automation via the OMP agent. |
+| `omp-ci.yml` | new issues/PRs, PR closed, manual | Triage, label, and review automation via the OMP agent. A PR `closed` event is now wired so in-flight OMP jobs for that PR are cancelled when the PR is merged (commit `a6e7210`). |
 | `omp-fix-issue.yml` | repository dispatch, manual | Attempts an automated fix for a triaged issue. |
 | `vouch-pr.yml` | `pull_request_target` opened/reopened/ready | PR gate: auto-closes PRs from unvouched users; labels vouched PRs. |
 | `vouch-manage.yml` | `discussion_comment` created | Lets maintainers vouch/denounce/unvouch users via discussion comments. |
@@ -89,7 +89,7 @@ The `.github/workflows/` directory contains the full CI/automation stack. Many o
 
 The repository uses the **OMP agent** for several automated tasks. The trigger workflow `omp.yml` runs when a comment containing `/omp` (or ` /omp`) is created on an issue or pull request review. It is also invoked by `omp-ci.yml` for triage, labeling, and review jobs.
 
-Command prompts live in `.omp/commands/` as Markdown files. The workflow extracts a command name from the comment (e.g. `/omp triage-issue 42` → `.omp/commands/triage-issue.md`), substitutes `$ARGUMENTS` with the rest of the comment, and passes the expanded prompt to OMP. The available commands are:
+Command prompts live in `.omp/commands/` as Markdown files. The workflow extracts a command name from the comment (e.g. `/omp triage-issue 42` → `.omp/commands/triage-issue.md`), substitutes `$ARGUMENTS` with the rest of the comment, and passes the expanded prompt to OMP. The `omp-ci.yml` trigger now also includes the `closed` PR action (commit `a6e7210`) so that dedicated `cancel-review-on-close` and `cancel-label-on-close` jobs cancel in-flight OMP jobs for a merged PR via their concurrency groups; the label and review jobs themselves skip actual work when the action is `closed`. The available commands are:
 
 | Command file | Used by | Purpose |
 |---|---|---|

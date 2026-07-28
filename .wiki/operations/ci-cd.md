@@ -16,7 +16,7 @@ This repository runs a large automation stack under `.github/workflows/`. Most w
 | [`update-wiki.yml`](#update-wikiyml) | push to `main`, daily cron, manual | Regenerates `.wiki/`, opens a staging PR, publishes to the wiki repo |
 | [`auto-manage.yml`](#auto-manageyml) | new/reopened issues, new PRs | Tags `needs-triage`, assigns to `niklasschaeffer` |
 | [`omp.yml`](#ompyml) | `/omp` or `/oc` comment | Runs the OMP agent from a comment trigger |
-| [`omp-ci.yml`](#omp-ciyml) | new issues/PRs, manual | Triage, label, and PR review automation via OMP |
+| [`omp-ci.yml`](#omp-ciyml) | new issues/PRs, PR closed, manual | Triage, label, and PR review automation via OMP; closed events cancel in-flight review/label runs for merged PRs |
 | [`omp-fix-issue.yml`](#omp-fix-issueyml) | repository dispatch, manual | Attempts an automated fix for a triaged issue |
 | [`vouch-pr.yml`](#vouch-pryml) | `pull_request_target` | PR gate: auto-closes PRs from unvouched users |
 | [`vouch-manage.yml`](#vouch-manageyml) | `discussion_comment` created | Lets maintainers vouch/denounce/unvouch users via discussions |
@@ -58,7 +58,7 @@ The wiki is **regenerated daily** (cron `0 8 * * *`), on every push to `main`, a
 7. **Publish to wiki repo** — `wiki-flatten` converts the nested `.wiki/` tree to the flat `Home.md` / `_Sidebar.md` layout GitHub Wikis require, then `rsync --delete` (with `--exclude='.git'`) syncs it into a fresh clone of the wiki repo. A `docs: update wiki` commit is pushed to `master` if and only if there are net content changes.
 8. **Staging snapshot PR** — uses `peter-evans/create-pull-request@v8` to open a PR on a `wiki/staging-<unix-seconds>` branch listing only `.wiki/` paths, with the report as the body. This is the PR that this very wiki-update run is invoked from.
 
-The dual PR + wiki-repo publish is intentional: the PR gives reviewers a diff on the source-of-truth `.wiki/` directory in the main repo, while the wiki-repo push makes the rendered pages visible to readers immediately.
+The dual PR + wiki-repo publish is intentional: the PR gives reviewers a diff on the source-of-truth `.wiki/` directory in the main repo, while the wiki-repo push makes the rendered pages visible to readers immediately. Staging PRs older than the latest commit are closed automatically by the wiki update run.
 
 ## `auto-manage.yml`
 
@@ -82,11 +82,12 @@ The expanded prompt is passed to `omp -p --model ollama-cloud/minimax-m3 --mode 
 
 ### `omp-ci.yml` — triage, label, and review
 
-Three jobs run on new issues/PRs (and manually):
+Three jobs run on new issues/PRs (and manually). The `pull_request` trigger includes `closed` (added in commit `a6e7210`) so that dedicated `cancel-*-on-close` jobs can cancel any still-running review or label jobs for a merged PR via their concurrency groups:
 
 - **triage-issue** — runs `.omp/commands/triage-issue.md` against the issue body to set type/priority fields and labels.
-- **label-pr** — runs `.omp/commands/label-pr.md` to apply type and priority labels.
-- **review-pr** — runs `.omp/commands/review-pr.md` to post inline comments and submit a review verdict.
+- **label-pr** — runs `.omp/commands/label-pr.md` to apply type and priority labels. Skipped when the PR action is `closed`.
+- **review-pr** — runs `.omp/commands/review-pr.md` to post inline comments and submit a review verdict. Skipped when the PR action is `closed` (`github.event.action != 'closed'`).
+- **cancel-review-on-close** / **cancel-label-on-close** — no-op jobs that run only on `pull_request` `closed`. They share the `omp-review-<n>` and `omp-label-<n>` concurrency groups with `cancel-in-progress: true`, cancelling in-flight review/label runs for the merged PR.
 
 ### `omp-fix-issue.yml` — automated fixes
 
