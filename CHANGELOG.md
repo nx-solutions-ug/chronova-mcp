@@ -1,3 +1,10 @@
+## [1.9.4](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.9.3...v1.9.4) (2026-07-28)
+
+
+### Bug Fixes
+
+* resolve review threads and approve PR when all findings addressed ([1488c3d](https://github.com/nx-solutions-ug/chronova-mcp/commit/1488c3d5409e66ced77a67a5ca108b76d489dacf))
+
 ## [1.9.3](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.9.2...v1.9.3) (2026-07-27)
 
 
