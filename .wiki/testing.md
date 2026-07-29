@@ -11,7 +11,15 @@ Tests run with **Vitest** (`npm test` → `vitest run`). Configuration: `vitest.
 
 There is no `tests/helpers/mock-server.test.ts` — the helpers are support code consumed by the integration tests.
 
-There is also a standalone regression suite at **`test/stream-log.test.ts`** (singular `test/`, not `tests/`). It drives `.omp/stream-log.py` as a Python subprocess and guards the log-formatter regressions that broke the OMP CI pipeline in issue #76 (non-string `text` content, non-dict tool `args`, malformed JSON lines). It is **not** picked up by the default `npm test` because `vitest.config.ts` only includes `tests/**/*.test.ts`; run it explicitly with `npx vitest test/stream-log.test.ts` if you change the OMP log formatter.
+There is also a standalone regression suite at **`test/stream-log.test.ts`** (singular `test/`, not `tests/`). It drives `.omp/stream-log.py` as a Python subprocess and guards the log-formatter regressions that broke the OMP CI pipeline in issue #76. It is **not** picked up by the default `npm test` because `vitest.config.ts` only includes `tests/**/*.test.ts`; run it explicitly with `npx vitest test/stream-log.test.ts` if you change the OMP log formatter.
+
+The suite covers:
+
+- Canonical event flow (`agent_start`, `turn_start`, `tool_execution_start/end`, `message_end`, `agent_end`) formatting without crashing.
+- `tool_execution_end` `text` fields that are `null`, numeric, lists, or dicts — all coerced safely instead of raising `TypeError` during string joins.
+- `tool_execution_start` `args` payloads that are strings, `null`, lists, or dicts — still producing a tool invocation line so the CI log shows the call was attempted.
+- Non-string `text` in `message_end` and `agent_end` events.
+- Malformed JSON lines skipped without aborting the formatter.
 
 ## Layout
 
@@ -68,6 +76,7 @@ and call `createApp(TEST_CONFIG)` directly (bypassing `resolveConfig`), so tests
 - **`server.test.ts`** — `/health` returns `{ status: "ok", version: VERSION }`; `initialize` returns `serverInfo.name = "chronova-mcp"` and `version = VERSION`; `tools/list` returns exactly 4 tools with the expected sorted names; every tool has `annotations.readOnlyHint: true` and an `inputSchema.type = "object"`; an unknown `Mcp-Session-Id` yields HTTP 400 with "Invalid or expired session ID".
 
   > Note: `server.test.ts` imports `VERSION` from `src/version.js`, which reads `package.json#version` at import time. This keeps the test assertions in sync with the published package version automatically and avoids the previous drift caused by a hard-coded version string.
+- **`stream-log.test.ts`** — `.omp/stream-log.py` exits 0 when fed the canonical OMP JSONL event flow and does not crash on malformed tool `args`, non-string tool `text`, malformed message/agent text, or invalid JSON lines.
 - **`tools.test.ts`** — for each tool: a happy path asserting parsed JSON content, a 401 path asserting `isError: true` and the "Unauthorized" message; plus parameter-passthrough checks (e.g. `get_productivity_summary` with `project`, `get_recent_activity` with filters/pagination).
 - **`config.test.ts`** — `resolveConfig` priority: env wins over `~/.chronova.cfg`, which wins over `~/.wakatime.cfg`, which wins over `none`; uses injected `readFile`/`getHomeDir`/`env` so no real filesystem access.
 - **`errors.test.ts`** — `mapHttpStatusToError` for 401/404/429/5xx/generic; 429 `retryAfter` from `Retry-After` and from `X-RateLimit-Reset`; `mapNetworkError` produces `CONNECTION_ERROR`.
@@ -75,9 +84,10 @@ and call `createApp(TEST_CONFIG)` directly (bypassing `resolveConfig`), so tests
 ## Running
 
 ```bash
-npm test           # vitest run (CI mode)
-npx vitest         # watch mode
-npm run type-check # tsc --noEmit, no tests
+npm test                        # vitest run (CI mode, tests/ only)
+npx vitest                      # watch mode
+npx vitest test/stream-log.test.ts  # OMP log-formatter regression suite
+npm run type-check              # tsc --noEmit, no tests
 ```
 
-No test runner script is needed beyond `vitest run`; there is no separate e2e suite or coverage threshold configured.
+No test runner script is needed beyond `vitest run`; there is no separate e2e suite or coverage threshold configured. The `stream-log.test.ts` path is in the separate `test/` directory, not `tests/integration/`, and must be invoked explicitly.
