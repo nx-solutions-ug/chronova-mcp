@@ -39,7 +39,7 @@ docker run -e CHRONOVA_API_KEY=your-key -p 3001:3001 chronova-mcp
 
 ## Release — semantic-release
 
-Release is automated via **semantic-release** (`npm run semantic-release`). Configuration in `.releaserc.json` plus these devDependencies:
+Release is automated via **semantic-release** v25.0.x (`npm run semantic-release`). Configuration in `.releaserc.json` plus these devDependencies:
 
 - `@semantic-release/commit-analyzer` — determines version bump from conventional commits.
 - `@semantic-release/release-notes-generator` — generates changelog.
@@ -48,6 +48,8 @@ Release is automated via **semantic-release** (`npm run semantic-release`). Conf
 - `@semantic-release/github` — GitHub release.
 
 The npm package name is `@chronova/mcp-server`. `src/version.ts` reads `package.json#version` at import time, so the version reported by `/health` and MCP `initialize` is always the same as the published package version.
+
+Git evidence: dependency `semantic-release` was updated to v25.0.9 in commit `26c7f0c` (Renovate PR #89).
 
 Release branches: `.releaserc.json` targets `main` plus two prerelease channels, `beta` and `alpha`. Pushes to `beta` produce `v{version}-beta.N` tags/prereleases; pushes to `alpha` produce `v{version}-alpha.N`.
 
