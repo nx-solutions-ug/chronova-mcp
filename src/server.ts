@@ -6,11 +6,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { ChronovaClient } from "./lib/chronova-client.js";
 import { resolveConfig, type ChronovaConfig } from "./lib/config.js";
-import { registerGetDeveloperContext } from "./tools/get-developer-context.js";
-import { registerGetAiInsights } from "./tools/get-ai-insights.js";
-import { registerGetProductivitySummary } from "./tools/get-productivity-summary.js";
-import { registerGetRecentActivity } from "./tools/get-recent-activity.js";
 import { VERSION } from "./version.js";
+import { registerAllTools } from "./tools/index.js";
 
 interface Session {
   transport: StreamableHTTPServerTransport;
@@ -21,10 +18,7 @@ function createMcpServer(config: ChronovaConfig): { server: McpServer; chronova:
   const server = new McpServer({ name: "chronova-mcp", version: VERSION });
   const chronova = new ChronovaClient(config.apiUrl, config.apiKey);
 
-  registerGetAiInsights(server, chronova);
-  registerGetDeveloperContext(server, chronova);
-  registerGetProductivitySummary(server, chronova);
-  registerGetRecentActivity(server, chronova);
+  registerAllTools(server, chronova);
 
   return { server, chronova };
 }
