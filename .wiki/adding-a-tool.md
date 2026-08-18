@@ -65,9 +65,21 @@ Conventions enforced by ESLint and code review:
 
 If the Chronova endpoint returns a shape the existing types don't cover, add a new interface here. The server passes JSON through unchanged, so field names should match the wire format (snake_case).
 
-## 3. Wire the tool into both entrypoints
+## 3. Wire the tool into `src/tools/index.ts`
 
-`src/server.ts` (HTTP transport) and `src/stdio.ts` (stdio transport) both call `register*` functions for every tool. Add your `registerMyNewTool` to **both** files in the same order as the other tools.
+`src/tools/index.ts` exports `registerAllTools(server, chronova)`. Import your new registrar and call it from `registerAllTools`. Because both `src/server.ts` (HTTP) and `src/stdio.ts` (stdio) call `registerAllTools`, a new tool only needs to be added in one place.
+
+```ts
+import { registerMyNewTool } from "./my-new-tool.js";
+
+export function registerAllTools(server: McpServer, chronova: ChronovaClient): void {
+  registerGetAiInsights(server, chronova);
+  registerGetDeveloperContext(server, chronova);
+  registerGetProductivitySummary(server, chronova);
+  registerGetRecentActivity(server, chronova);
+  registerMyNewTool(server, chronova);   // <- new tool
+}
+```
 
 If the Chronova endpoint needs a new error code (e.g. `402`, `503` with retry semantics), extend `mapHttpStatusToError` in `src/lib/errors.ts` rather than special-casing inside the handler.
 
@@ -112,11 +124,9 @@ For a new status-code path (e.g. `503` with `Retry-After`), add a test in `tests
 
 Mock fixtures are defined inline in `tools.test.ts` — there are no external fixture files.
 
-## 5. Update the `tools/list` count
+## 5. Update the `tools/list` count and document the tool
 
-`tests/integration/server.test.ts` asserts that `tools/list` returns **exactly 4 tools**. After adding a tool, update the count and add the new tool name to the sorted expected list in the `should list exactly 4 tools` test.
-
-## 6. Document the tool
+`tests/integration/server.test.ts` asserts that `tools/list` returns **exactly 4 tools**. After adding a tool, update the count and add the new tool name to the sorted expected list in the `should list exactly N tools` test.
 
 The wiki is auto-regenerated, but you should add a dedicated page under `.wiki/tools/`:
 
@@ -124,7 +134,7 @@ The wiki is auto-regenerated, but you should add a dedicated page under `.wiki/t
 - Update `.wiki/tools/index.md` "Tools at a glance" table to include the new row.
 - Update `.wiki/domain/chronova-api.md` if you added a new endpoint or response type.
 
-## 7. Sanity checks before opening the PR
+## 6. Sanity checks before opening the PR
 
 ```bash
 npm run type-check   # tsc --noEmit

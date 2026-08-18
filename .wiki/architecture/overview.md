@@ -27,6 +27,10 @@ AI client (Claude Desktop / Cursor / OpenCode / HTTP)
 │      per-session McpServer + StreamableHTTPServerTransport │
 │          │                                          │
 │          ▼                                          │
+│  src/tools/index.ts   registerAllTools(server, chronova)│
+│      imports and calls every registerXxx tool       │
+│          │                                          │
+│          ▼                                          │
 │  src/tools/*   registerXxx(server, chronova)        │
 │      zod inputSchema → chronova.get() → JSON text   │
 │          │                                          │
@@ -46,7 +50,7 @@ Two independent entrypoints share the same tool registrations and the same `Chro
 - **`src/index.ts`** — HTTP entrypoint. `parseArgs()` translates `--port` / `--api-url` / `--help` into `process.env`, then calls `startServer()` from `server.ts`. This is what `npm start` and the Docker image run.
 - **`src/stdio.ts`** — stdio entrypoint and the published `chronova-mcp-server` bin (`package.json#bin`). It creates an `McpServer` connected to `StdioServerTransport` and exits with an error if no API key is resolvable (HTTP entrypoint only warns).
 
-Both call `resolveConfig()` (`src/lib/config.ts`) and construct a `ChronovaClient` with the same four tool registrations.
+Both call `resolveConfig()` (`src/lib/config.ts`) and construct a `ChronovaClient`. Tool registration is centralized in `src/tools/index.ts` via `registerAllTools(server, chronova)`, so every tool is wired once for both transports.
 
 ## Server (HTTP transport)
 
@@ -59,7 +63,9 @@ Sessions are managed in an in-memory `Map<sessionId, Session>`. Each new session
 
 ## Tool registration pattern
 
-Every tool lives in `src/tools/<tool-name>.ts` and exports a `registerXxx(server: McpServer, chronova: ChronovaClient)` function. Inside, `server.registerTool(name, { description, inputSchema: z.object(...), annotations: { readOnlyHint: true } }, async (args) => {...})` registers it. All four tools are read-only.
+Each tool lives in its own `src/tools/<tool-name>.ts` and exports a `registerXxx(server: McpServer, chronova: ChronovaClient)` function. `src/tools/index.ts` exports `registerAllTools(server, chronova)`, which imports every tool registrar and calls it in one place. Both entrypoints call `registerAllTools` so new tools only need to be added to `src/tools/index.ts`, not to `src/server.ts` and `src/stdio.ts` individually.
+
+Inside each registrar, `server.registerTool(name, { description, inputSchema: z.object(...), annotations: { readOnlyHint: true } }, async (args) => {...})` registers it. All four tools are read-only.
 
 Each handler:
 
@@ -101,6 +107,7 @@ These types describe the Chronova API contract as the server understands it; the
 | `src/lib/errors.ts` | `ChronovaApiError` + status/network mappers + `formatToolError` |
 | `src/lib/types.ts` | Chronova response type definitions |
 | `src/version.ts` | Reads `package.json#version` at import time; shared by both entrypoints |
+| `src/tools/index.ts` | `registerAllTools` — central registrar that wires every tool into the server |
 | `src/tools/*.ts` | One file per MCP tool, `registerXxx` pattern |
 | `tests/helpers/mock-server.ts` | `fetch` mock + MCP-over-HTTP test harness |
 | `tests/integration/*.test.ts` | Integration tests for server + tools |

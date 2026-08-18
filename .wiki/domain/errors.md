@@ -7,7 +7,7 @@ tags: [domain, errors, error-handling]
 
 # Errors & status mapping
 
-`src/lib/errors.ts` defines `ChronovaApiError` and two mappers that translate raw `fetch` outcomes into structured, user-facing errors. Every tool handler catches `ChronovaApiError` and returns it as a tool error (`isError: true` with the message as text) rather than throwing — so AI clients see a readable message.
+`src/lib/errors.ts` defines `ChronovaApiError`, two mappers that translate raw `fetch` outcomes into structured errors, and `formatToolError` — the shared helper every tool handler calls in its `catch` block. Tool errors are returned as `isError: true` text content rather than thrown, so AI clients see a readable message.
 
 ## ChronovaApiError
 
