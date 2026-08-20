@@ -7,7 +7,7 @@ tags: [testing, vitest, integration]
 
 # Testing
 
-Tests run with **Vitest** (`npm test` → `vitest run`). Configuration: `vitest.config.ts` includes `tests/**/*.test.ts` with a 30-second timeout and `.ts` extension priority.
+Tests run with **Vitest** (`npm test` → `vitest run`). The lockfile currently resolves Vitest to `4.1.11` (Renovate PR #95, commit `9289547`). Configuration: `vitest.config.ts` includes `tests/**/*.test.ts` with a 30-second timeout and `.ts` extension priority.
 
 There is no `tests/helpers/mock-server.test.ts` — the helpers are support code consumed by the integration tests.
 

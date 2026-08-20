@@ -142,4 +142,4 @@ npm run lint         # eslint .
 npm test             # vitest run (full integration suite)
 ```
 
-The CI pipeline (`.github/workflows/test.yml`) runs all three in parallel on every push and PR.
+The CI pipeline (`.github/workflows/test.yml`) runs all three in parallel on every push and PR. The lockfile currently resolves Vitest to `4.1.11` (Renovate PR #95, commit `9289547`).
