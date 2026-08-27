@@ -2,6 +2,8 @@
 type: Documentation Index
 title: "Domain"
 description: "Files and subdirectories in Domain."
+last_updated: "2026-08-27T18:29:06.152Z"
+updated_by: "wiki-agent"
 ---
 
 # Files

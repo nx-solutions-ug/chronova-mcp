@@ -1,8 +1,11 @@
 ---
 type: Quickstart
 title: "Chronova MCP Server — Quickstart"
-description: "Install, configure, and run the Chronova MCP server with AI clients like Claude Desktop, Cursor, and OpenCode."
-tags: [quickstart, mcp, chronova]
+description: "Install, configure, and run the Chronova MCP server with AI
+  clients like Claude Desktop, Cursor, and OpenCode."
+tags: [ quickstart, mcp, chronova ]
+last_updated: 2026-08-27T18:29:00.257Z
+updated_by: wiki-agent
 ---
 
 <p align="center">
