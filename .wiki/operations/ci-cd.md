@@ -1,8 +1,11 @@
 ---
 type: Operations
 title: "CI/CD workflows"
-description: "GitHub Actions in this repository: test, release, OMP agent automation, the vouch system, and the wiki update pipeline."
-tags: [operations, ci, github-actions, omp, vouch, semantic-release]
+description: "GitHub Actions in this repository: test, release, OMP agent
+  automation, the vouch system, and the wiki update pipeline."
+tags: [ operations, ci, github-actions, omp, vouch, semantic-release ]
+last_updated: 2026-08-28T09:57:07.099Z
+updated_by: wiki-agent
 ---
 
 # CI/CD workflows
@@ -99,6 +102,10 @@ OMP-specific guardrails live under `.omp/rules/`. Two notable rules:
 
 - `gh-label-idempotent.md` — always append `|| true` to `gh label create`, so re-runs don't fail on existing labels.
 - `tool-paths-must-be-arrays.md` — `find` / `search` `paths` arguments must be arrays (e.g. `paths: ["./src"]`, not `"./src"`).
+
+### gh-pr-review extension pinning
+
+Both OMP workflows install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
 
 ## Vouch system
 
