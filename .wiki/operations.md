@@ -1,8 +1,11 @@
 ---
 type: Operations
 title: "Operations & release"
-description: "Building, running, Docker, and semantic-release pipeline for @chronova/mcp-server."
-tags: [operations, docker, release, ci]
+description: "Building, running, Docker, and semantic-release pipeline for
+  @chronova/mcp-server."
+tags: [ operations, docker, release, ci ]
+last_updated: 2026-08-28T09:57:11.340Z
+updated_by: wiki-agent
 ---
 
 # Operations & release
@@ -102,6 +105,10 @@ Command prompts live in `.omp/commands/` as Markdown files. The workflow extract
 | `_pr-commit-push.md` | `omp.yml` (freeform PR prompts) | Injected after freeform `/omp` prompts on PRs to ensure changes are committed and pushed to the PR branch. |
 
 The agent model is configured in `.omp/agent/config.yml`. The default role and most agent tasks use `ollama-cloud/minimax-m3`; planning and design tasks use `ollama-cloud/kimi-k2.6`, and larger reasoning/vision tasks use `ollama-cloud/qwen3.5:397b`. OMP JSONL output is piped through `.omp/stream-log.py` to produce readable CI log lines. Additional guard rules are in `.omp/rules/`, such as `gh-label-idempotent.md` (always append `|| true` to `gh label create`) and `tool-paths-must-be-arrays.md` (`find`/`search` `paths` must be an array).
+
+#### gh-pr-review extension pinning
+
+Both OMP workflows install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
 
 #### Commit/push behavior for PR commands
 
