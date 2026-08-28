@@ -1,8 +1,11 @@
 ---
 type: Operations
 title: "CI/CD workflows"
-description: "GitHub Actions in this repository: test, release, OMP agent automation, the vouch system, and the wiki update pipeline."
-tags: [operations, ci, github-actions, omp, vouch, semantic-release]
+description: "GitHub Actions in this repository: test, release, OMP agent
+  automation, the vouch system, and the wiki update pipeline."
+tags: [ operations, ci, github-actions, omp, vouch, semantic-release ]
+last_updated: 2026-08-28T09:10:29.036Z
+updated_by: wiki-agent
 ---
 
 # CI/CD workflows
@@ -86,7 +89,7 @@ Three jobs run on new issues/PRs (and manually). The `pull_request` trigger incl
 
 - **triage-issue** — runs `.omp/commands/triage-issue.md` against the issue body to set type/priority fields and labels.
 - **label-pr** — runs `.omp/commands/label-pr.md` to apply type and priority labels. Skipped when the PR action is `closed`.
-- **review-pr** — runs `.omp/commands/review-pr.md` to post inline comments and submit a review verdict. Skipped when the PR action is `closed` (`github.event.action != 'closed'`).
+- **review-pr** — runs `.omp/commands/review-pr.md` to post inline comments and submit a review verdict. Skipped when the PR action is `closed` (`github.event.action != 'closed'`). This job has `contents: write` so it can resolve review comment threads when a follow-up commit addresses an earlier review point (commit `fdc34c2`).
 - **cancel-review-on-close** / **cancel-label-on-close** — no-op jobs that run only on `pull_request` `closed`. They share the `omp-review-<n>` and `omp-label-<n>` concurrency groups with `cancel-in-progress: true`, cancelling in-flight review/label runs for the merged PR.
 
 ### `omp-fix-issue.yml` — automated fixes
