@@ -4,7 +4,7 @@ title: "Operations & release"
 description: "Building, running, Docker, and semantic-release pipeline for
   @chronova/mcp-server."
 tags: [ operations, docker, release, ci ]
-last_updated: 2026-08-28T09:57:11.340Z
+last_updated: 2026-08-30T11:58:34.457Z
 updated_by: wiki-agent
 ---
 
@@ -104,7 +104,16 @@ Command prompts live in `.omp/commands/` as Markdown files. The workflow extract
 | `fix-issue.md` | `omp-fix-issue.yml` | Read a triaged issue, implement a fix on a new branch, run quality gates, and open a draft PR. |
 | `_pr-commit-push.md` | `omp.yml` (freeform PR prompts) | Injected after freeform `/omp` prompts on PRs to ensure changes are committed and pushed to the PR branch. |
 
-The agent model is configured in `.omp/agent/config.yml`. The default role and most agent tasks use `ollama-cloud/minimax-m3`; planning and design tasks use `ollama-cloud/kimi-k2.6`, and larger reasoning/vision tasks use `ollama-cloud/qwen3.5:397b`. OMP JSONL output is piped through `.omp/stream-log.py` to produce readable CI log lines. Additional guard rules are in `.omp/rules/`, such as `gh-label-idempotent.md` (always append `|| true` to `gh label create`) and `tool-paths-must-be-arrays.md` (`find`/`search` `paths` must be an array).
+The agent model is configured in `.omp/agent/config.yml`. Workflow jobs call `ollama-cloud/glm-5.3-flash` directly, while the config file maps named roles to models:
+
+| Role | Model |
+|---|---|
+| `default`, `task`, `commit` | `ollama-cloud/glm-5.3-flash` |
+| `plan`, `designer` | `ollama-cloud/kimi-k2.6` |
+| `vision`, `slow` | `ollama-cloud/qwen3.5:397b` |
+| `smol` | `ollama-cloud/devstral-2:123b` |
+
+Git evidence: commit `99a6a8e` updated the active OMP model from `ollama-cloud/minimax-m3` to `ollama-cloud/glm-5.3-flash` across the workflows. OMP JSONL output is piped through `.omp/stream-log.py` to produce readable CI log lines. Additional guard rules are in `.omp/rules/`, such as `gh-label-idempotent.md` (always append `|| true` to `gh label create`) and `tool-paths-must-be-arrays.md` (`find`/`search` `paths` must be an array).
 
 #### gh-pr-review extension pinning
 
