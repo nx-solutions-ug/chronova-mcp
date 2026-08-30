@@ -4,7 +4,7 @@ title: "CI/CD workflows"
 description: "GitHub Actions in this repository: test, release, OMP agent
   automation, the vouch system, and the wiki update pipeline."
 tags: [ operations, ci, github-actions, omp, vouch, semantic-release ]
-last_updated: 2026-08-28T09:57:07.099Z
+last_updated: 2026-08-30T12:11:54.383Z
 updated_by: wiki-agent
 ---
 
@@ -55,7 +55,7 @@ The wiki is **regenerated daily** (cron `0 8 * * *`), on every push to `main`, a
 1. **Token** — mints a GitHub App token (`continue-on-error: true` so the run still proceeds with `GITHUB_TOKEN` if the app isn't available).
 2. **Checkout** — full clone with the app token.
 3. **Toolchain** — installs Bun (for the wiki agent) and Node 25.
-4. **Wiki agent** — installs `@chronova/wiki-agent` globally and runs `wiki --update --print --verbose --wiki`. Model and provider are env-configurable: `WIKI_OLLAMA_MODE=cloud`, `WIKI_OLLAMA_API_KEY`, `WIKI_MODEL` (default `kimi-k2.7-code`).
+4. **Wiki agent** — installs `@chronova/wiki-agent` globally and runs `wiki --update --print --verbose --wiki`. Model and provider are env-configurable: `WIKI_OLLAMA_MODE=cloud`, `WIKI_OLLAMA_API_KEY`, `WIKI_MODEL` (default `kimi-k3`).
 5. **Diff detection** — collects `git status --porcelain .wiki` minus run metadata files (`.last-update-report.md`, `.last-updated.json`). If non-empty, sets `has_changes=true` and stashes the report as the PR body.
 6. **Wiki repo init check** — `git ls-remote` against `https://github.com/<owner>/<repo>.wiki.git`. If HEAD does not exist yet (the wiki has never been initialized in the GitHub UI), the publish step is skipped with a warning — the staging PR is still opened.
 7. **Publish to wiki repo** — `wiki-flatten` converts the nested `.wiki/` tree to the flat `Home.md` / `_Sidebar.md` layout GitHub Wikis require, then `rsync --delete` (with `--exclude='.git'`) syncs it into a fresh clone of the wiki repo. A `docs: update wiki` commit is pushed to `master` if and only if there are net content changes.
@@ -69,7 +69,7 @@ A small triage workflow. On any new or reopened issue it adds the `needs-triage`
 
 ## OMP agent
 
-The repository uses the **OMP agent** for several automated tasks. The agent is installed in each OMP workflow via `curl -fsSL https://omp.sh/install | sh -s -- --source`, and is authenticated against the `ollama-cloud` provider by inserting the API key into the local SQLite store at `~/.omp/agent/agent.db`. The model used by the default role is `ollama-cloud/minimax-m3`; planning/design tasks use `ollama-cloud/kimi-k2.6`; larger reasoning/vision tasks use `ollama-cloud/qwen3.5:397b`. OMP JSONL output is piped through `.omp/stream-log.py` to produce readable CI log lines.
+The repository uses the **OMP agent** for several automated tasks. The agent is installed in each OMP workflow via the native bash installer `curl -fsSL https://omp.sh/install | sh`, and is authenticated against the `ollama-cloud` provider by inserting the API key into the local SQLite store at `~/.omp/agent/agent.db`. The model used by the default role is `ollama-cloud/glm-5.3-flash`; planning/design tasks use `ollama-cloud/kimi-k2.6`; larger reasoning/vision tasks use `ollama-cloud/qwen3.5:397b`. OMP JSONL output is piped through `.omp/stream-log.py` to produce readable CI log lines.
 
 ### `omp.yml` — `/omp` comment trigger
 
@@ -81,7 +81,7 @@ The workflow extracts the prompt from the comment body:
 2. Tries to match a known **command file** under `.omp/commands/` (e.g. `/omp triage-issue 42` → `.omp/commands/triage-issue.md`). If the file exists, `$ARGUMENTS` is substituted with the rest of the prompt and the file's contents are used.
 3. Otherwise the rest of the comment is treated as a **freeform prompt**. For **PR comments only**, `.omp/commands/_pr-commit-push.md` is appended so the agent knows to commit and push its changes back to the PR branch (this fix landed in PR #80 / commit `9d7a606` to address issue #637). The appended prompt forbids pushing to `main` or `develop`, merging the PR, or starting a dev server.
 
-The expanded prompt is passed to `omp -p --model ollama-cloud/minimax-m3 --mode json <file> | python3 .omp/stream-log.py`.
+The expanded prompt is passed to `omp -p --model ollama-cloud/glm-5.3-flash --mode json <file> | python3 .omp/stream-log.py`.
 
 ### `omp-ci.yml` — triage, label, and review
 
