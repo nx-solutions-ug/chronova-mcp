@@ -1,8 +1,11 @@
 ---
 type: Domain
 title: "Errors & status mapping"
-description: "How HTTP status codes and network failures from the Chronova API are mapped to actionable ChronovaApiError instances."
-tags: [domain, errors, error-handling]
+description: "How HTTP status codes and network failures from the Chronova API
+  are mapped to actionable ChronovaApiError instances."
+tags: [ domain, errors, error-handling ]
+last_updated: 2026-09-03T15:47:54.449Z
+updated_by: wiki-agent
 ---
 
 # Errors & status mapping
@@ -31,7 +34,7 @@ class ChronovaApiError extends Error {
 
 The 429 path is the most intricate: it tries `Retry-After` first (as seconds), then falls back to `X-RateLimit-Reset` (Unix epoch) minus the current time, clamped to a non-negative integer.
 
-## Network/abort mapping — `mapNetworkError
+## Network/abort mapping — `mapNetworkError`
 
 Triggered by `ChronovaClient.get` when the thrown error is a `TypeError` (fetch failure) or an `AbortError` (timeout). Produces:
 
