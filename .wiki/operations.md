@@ -4,7 +4,7 @@ title: "Operations & release"
 description: "Building, running, Docker, and semantic-release pipeline for
   @chronova/mcp-server."
 tags: [ operations, docker, release, ci ]
-last_updated: 2026-08-30T12:11:54.386Z
+last_updated: 2026-09-03T14:05:47.400Z
 updated_by: wiki-agent
 ---
 
@@ -86,6 +86,7 @@ The `.github/workflows/` directory contains the full CI/automation stack. Many o
 | `auto-manage.yml` | new/reopened issues, new PRs | Adds `needs-triage` to issues and assigns issues/PRs to `niklasschaeffer`. |
 | `omp.yml` | `/omp` comment | Runs the OMP agent from a comment trigger. |
 | `omp-ci.yml` | new issues/PRs, PR closed, manual | Triage, label, and review automation via the OMP agent. A PR `closed` event is now wired so in-flight OMP jobs for that PR are cancelled when the PR is merged (commit `a6e7210`). |
+| `omp-code-review.yml` | PR opened/synchronize/ready/review_requested, Jules reviews, manual | Dependency-bot PR review (changelog research) and full code review via the OMP agent; skips re-review of agent-authored pushes and detects Jules (Google) involvement. |
 | `omp-fix-issue.yml` | repository dispatch, manual | Attempts an automated fix for a triaged issue. |
 | `vouch-pr.yml` | `pull_request_target` opened/reopened/ready | PR gate: auto-closes PRs from unvouched users; labels vouched PRs. |
 | `vouch-manage.yml` | `discussion_comment` created | Lets maintainers vouch/denounce/unvouch users via discussion comments. |
@@ -100,7 +101,8 @@ Command prompts live in `.omp/commands/` as Markdown files. The workflow extract
 |---|---|---|
 | `triage-issue.md` | `omp-ci.yml` (triage-issue job) | Classify a new issue, set type/priority fields, apply labels. |
 | `label-pr.md` | `omp-ci.yml` (label-pr job) | Apply type and priority labels to a PR. |
-| `review-pr.md` | `omp-ci.yml` (review-pr job) | Review a PR, post inline comments, and submit a review verdict. |
+| `review-pr.md` | `omp-ci.yml` (review-pr job), `omp-code-review.yml` (code-review job) | Review a PR, post inline comments, and submit a review verdict. |
+| `dependency-review.md` | `omp-code-review.yml` (dependency-review job) | Research a dependency-bot PR's changelog and assess breaking changes before posting a review. |
 | `fix-issue.md` | `omp-fix-issue.yml` | Read a triaged issue, implement a fix on a new branch, run quality gates, and open a draft PR. |
 | `_pr-commit-push.md` | `omp.yml` (freeform PR prompts) | Injected after freeform `/omp` prompts on PRs to ensure changes are committed and pushed to the PR branch. |
 

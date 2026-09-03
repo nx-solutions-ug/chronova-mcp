@@ -4,7 +4,7 @@ title: "CI/CD workflows"
 description: "GitHub Actions in this repository: test, release, OMP agent
   automation, the vouch system, and the wiki update pipeline."
 tags: [ operations, ci, github-actions, omp, vouch, semantic-release ]
-last_updated: 2026-08-30T12:11:54.383Z
+last_updated: 2026-09-03T14:05:38.868Z
 updated_by: wiki-agent
 ---
 
@@ -20,6 +20,7 @@ This repository runs a large automation stack under `.github/workflows/`. Most w
 | [`auto-manage.yml`](#auto-manageyml) | new/reopened issues, new PRs | Tags `needs-triage`, assigns to `niklasschaeffer` |
 | [`omp.yml`](#ompyml) | `/omp` or `/oc` comment | Runs the OMP agent from a comment trigger |
 | [`omp-ci.yml`](#omp-ciyml) | new issues/PRs, PR closed, manual | Triage, label, and PR review automation via OMP; closed events cancel in-flight review/label runs for merged PRs |
+| [`omp-code-review.yml`](#omp-code-reviewyml) | PR opened/synchronize/ready/review_requested, Jules reviews, manual | Dependency-PR review and full code review via OMP with re-review skip and Jules detection |
 | [`omp-fix-issue.yml`](#omp-fix-issueyml) | repository dispatch, manual | Attempts an automated fix for a triaged issue |
 | [`vouch-pr.yml`](#vouch-pryml) | `pull_request_target` | PR gate: auto-closes PRs from unvouched users |
 | [`vouch-manage.yml`](#vouch-manageyml) | `discussion_comment` created | Lets maintainers vouch/denounce/unvouch users via discussions |
@@ -47,6 +48,8 @@ Runs only on push to `main`. Quality gates (type-check + lint) precede `semantic
    - Creates a GitHub release (`@semantic-release/github`), truncating the body at 120 kB with a pointer to `CHANGELOG.md` if exceeded.
 
 The app token is used so the release PR/branch and the GitHub release are authored by the same identity as the agent's other workflows.
+
+> **`.github/release-drafter.yml`** is also present (PR-label-based release-note categories and version resolution), but no workflow currently references it. It is leftover configuration — the active release-notes pipeline is semantic-release plus the "full-changelog" post-release step described in [Operations & release](../operations.md).
 
 ## `update-wiki.yml`
 
@@ -92,6 +95,13 @@ Three jobs run on new issues/PRs (and manually). The `pull_request` trigger incl
 - **review-pr** — runs `.omp/commands/review-pr.md` to post inline comments and submit a review verdict. Skipped when the PR action is `closed` (`github.event.action != 'closed'`).
 - **cancel-review-on-close** / **cancel-label-on-close** — no-op jobs that run only on `pull_request` `closed`. They share the `omp-review-<n>` and `omp-label-<n>` concurrency groups with `cancel-in-progress: true`, cancelling in-flight review/label runs for the merged PR.
 
+### `omp-code-review.yml` — dependency review + code review
+
+Runs on PR `opened`, `synchronize`, `ready_for_review`, `review_requested`, plus `pull_request_review`/`pull_request_review_comment` (for Jules integration) and manual dispatch. Concurrency group `omp-code-review-<n>` with `cancel-in-progress: true`. Two jobs:
+
+- **dependency-review** — only for PRs authored by `renovate[bot]` or `dependabot[bot]`. Expands `.omp/commands/dependency-review.md` (research changelogs, assess breaking changes) and runs it with `ollama-cloud/glm-5.3-flash:max`. A verification step fails the job if the agent posted neither a review nor a comment.
+- **code-review** — for all other PRs and explicit retriggers (`review_requested` is never skipped). On `synchronize` events, a `github-script` step inspects the head commit author/committer and skips re-review when it was authored by an agent (`opencode`, `github-actions`, `omp-agent`, `chronova-agent`), avoiding review loops on the agent's own pushes. A `jules-detect` step identifies PRs authored or reviewed by Google's Jules bot (`google-labs-jules[bot]`, or a body containing "created automatically by Jules") and passes `IS_JULES`/`JULES_CONTEXT` to the run so `.omp/commands/review-pr.md` can adapt its verdict. It checks out with `fetch-depth: 0` (required for the base-branch diff) and also runs `review-pr.md` with `glm-5.3-flash:max`. The final verification step fails the job when the agent posted nothing and the PR has no existing review threads — unless the PR modifies `omp-code-review.yml` itself, in which case verification is skipped by design (the agent would be reviewing its own workflow).
+
 ### `omp-fix-issue.yml` — automated fixes
 
 Triggered by repository dispatch (typically from a triaged issue) or manually. Reads a triaged issue, runs `.omp/commands/fix-issue.md`, implements the fix on a new branch, runs the quality gates, and opens a **draft** PR.
@@ -105,7 +115,7 @@ OMP-specific guardrails live under `.omp/rules/`. Two notable rules:
 
 ### gh-pr-review extension pinning
 
-Both OMP workflows install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
+All OMP workflows that review PRs (`omp.yml`, `omp-ci.yml`, `omp-code-review.yml`) install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
 
 ## Vouch system
 
