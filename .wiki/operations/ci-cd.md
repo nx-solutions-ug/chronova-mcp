@@ -4,7 +4,7 @@ title: "CI/CD workflows"
 description: "GitHub Actions in this repository: test, release, OMP agent
   automation, the vouch system, and the wiki update pipeline."
 tags: [ operations, ci, github-actions, omp, vouch, semantic-release ]
-last_updated: 2026-08-30T12:11:54.383Z
+last_updated: 2026-09-03T14:15:24.927Z
 updated_by: wiki-agent
 ---
 
@@ -19,7 +19,8 @@ This repository runs a large automation stack under `.github/workflows/`. Most w
 | [`update-wiki.yml`](#update-wikiyml) | push to `main`, daily cron, manual | Regenerates `.wiki/`, opens a staging PR, publishes to the wiki repo |
 | [`auto-manage.yml`](#auto-manageyml) | new/reopened issues, new PRs | Tags `needs-triage`, assigns to `niklasschaeffer` |
 | [`omp.yml`](#ompyml) | `/omp` or `/oc` comment | Runs the OMP agent from a comment trigger |
-| [`omp-ci.yml`](#omp-ciyml) | new issues/PRs, PR closed, manual | Triage, label, and PR review automation via OMP; closed events cancel in-flight review/label runs for merged PRs |
+| [`omp-ci.yml`](#omp-ciyml) | new issues/PRs, PR closed, manual | Issue triage and PR labeling via OMP; closed events cancel in-flight label runs |
+| [`omp-code-review.yml`](#omp-code-reviewyml) | PR opened/synchronize/ready/review-requested, Jules review events, manual | Dependency review (Renovate/Dependabot) and full code review via OMP |
 | [`omp-fix-issue.yml`](#omp-fix-issueyml) | repository dispatch, manual | Attempts an automated fix for a triaged issue |
 | [`vouch-pr.yml`](#vouch-pryml) | `pull_request_target` | PR gate: auto-closes PRs from unvouched users |
 | [`vouch-manage.yml`](#vouch-manageyml) | `discussion_comment` created | Lets maintainers vouch/denounce/unvouch users via discussions |
@@ -83,14 +84,26 @@ The workflow extracts the prompt from the comment body:
 
 The expanded prompt is passed to `omp -p --model ollama-cloud/glm-5.3-flash --mode json <file> | python3 .omp/stream-log.py`.
 
-### `omp-ci.yml` — triage, label, and review
+### `omp-ci.yml` — triage and label
 
-Three jobs run on new issues/PRs (and manually). The `pull_request` trigger includes `closed` (added in commit `a6e7210`) so that dedicated `cancel-*-on-close` jobs can cancel any still-running review or label jobs for a merged PR via their concurrency groups:
+Two jobs run on new issues/PRs (and manually). The `pull_request` trigger includes `closed` (added in commit `a6e7210`) so that a dedicated `cancel-label-on-close` job can cancel any still-running label job for a merged PR via its concurrency group. PR review was split out of this workflow into `omp-code-review.yml` (see below) — `omp-ci.yml` no longer carries a `review-pr` job.
 
-- **triage-issue** — runs `.omp/commands/triage-issue.md` against the issue body to set type/priority fields and labels.
-- **label-pr** — runs `.omp/commands/label-pr.md` to apply type and priority labels. Skipped when the PR action is `closed`.
-- **review-pr** — runs `.omp/commands/review-pr.md` to post inline comments and submit a review verdict. Skipped when the PR action is `closed` (`github.event.action != 'closed'`).
-- **cancel-review-on-close** / **cancel-label-on-close** — no-op jobs that run only on `pull_request` `closed`. They share the `omp-review-<n>` and `omp-label-<n>` concurrency groups with `cancel-in-progress: true`, cancelling in-flight review/label runs for the merged PR.
+- **triage-issue** — runs `.omp/commands/triage-issue.md` against the issue body to set type/priority fields and labels, then dispatches `issue-triaged` to `omp-fix-issue.yml`.
+- **label-pr** — runs `.omp/commands/label-pr.md` to apply type and priority labels. Runs only on `opened`/`ready_for_review` and self-skips when the PR already has both a type and a priority label (queried via `gh pr view --json labels`).
+- **cancel-label-on-close** — no-op job that runs only on `pull_request` `closed`. It shares the `omp-label-<n>` concurrency group with `cancel-in-progress: true`, cancelling any in-flight label run for the merged PR.
+
+### `omp-code-review.yml` — automated PR review
+
+The review surface was split out of `omp-ci.yml` into its own workflow (see commit `f7d1830`). It triggers on `pull_request` (`opened`, `synchronize`, `ready_for_review`, `review_requested`), on `pull_request_review` `submitted` and `pull_request_review_comment` `created` (to pick up reviews/suggestions from the `jules` bot), and on manual `workflow_dispatch` with a `pr_number`. Concurrency group `omp-code-review-<n>` with `cancel-in-progress: true`.
+
+Two jobs:
+
+- **dependency-review** — for `renovate[bot]` / `dependabot[bot]` PRs only. Runs `.omp/commands/dependency-review.md` (`$ARGUMENTS` = PR number) to research changelogs and assess breaking changes. A verification step fails the job if OMP posted neither a review nor a comment (so silent runs surface as CI failures, not approvals).
+- **code-review** — for human- and agent-authored PRs. Runs `.omp/commands/review-pr.md` to post inline comments and submit a review verdict. Skip logic:
+  - A `synchronize` event where the head commit was authored by an agent (`opencode-agent`, `opencode`, `github-actions`, `omp-agent`, `chronova-agent`) is skipped to avoid re-reviewing its own pushes.
+  - A `review_requested` event is treated as an explicit human retrigger from the GitHub UI and is never skipped.
+  - Jules involvement (Jules-authored PR, or a Jules review/review-comment) is detected by a `jules-detect` step and passed to the review prompt via `IS_JULES`/`JULES_CONTEXT`.
+  - A verification step fails the job when the PR has no review threads and no agent reviews, unless the PR modifies `omp-code-review.yml` itself (in which case verification is skipped by design). The checkout uses full history (`fetch-depth: 0`) so `git diff` against the base avoids HTTP 406 on PRs with >300 files.
 
 ### `omp-fix-issue.yml` — automated fixes
 
@@ -105,7 +118,7 @@ OMP-specific guardrails live under `.omp/rules/`. Two notable rules:
 
 ### gh-pr-review extension pinning
 
-Both OMP workflows install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
+All OMP workflows act through `gh`. The review-producing workflows (`omp-code-review.yml`, plus `omp.yml` when the comment trigger runs a review command) install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
 
 ## Vouch system
 
