@@ -45,7 +45,7 @@ Chronova REST API  (https://chronova.dev/api/v1)
 | `tests/integration/` | `*.test.ts` integration tests (server, tools, errors, config) |
 | `tests/helpers/mock-server.ts` | `mockChronovaApi`, `startMcpTestServer`, `initSession`, `callTool` |
 | `.wiki/` | Generated project documentation (architecture, configuration, operations, testing, tools, domain) |
-| `.github/workflows/` | CI: `test.yml`, `release.yml`, OMP automation (`omp.yml`, `omp-ci.yml`, `omp-fix-issue.yml`), `auto-manage.yml`, `update-wiki.yml` |
+| `.github/workflows/` | CI: `test.yml`, `release.yml`, OMP automation (`omp.yml`, `omp-ci.yml`, `omp-code-review.yml`, `omp-fix-issue.yml`), `auto-manage.yml`, `update-wiki.yml` |
 
 ## Development Commands
 
@@ -134,7 +134,7 @@ Required env (see `.env.example`):
 
 - `test.yml` — type-check + lint + build + test on push/PR to `main`, `develop`, feature branches.
 - `release.yml` — runs tests then `semantic-release` on `main` pushes (conventional commits → npm + GitHub release + `CHANGELOG.md`).
-- `omp.yml`, `omp-ci.yml`, `omp-fix-issue.yml` — OMP agent automation (issue triage, PR review, `/omp` comment triggers).
+- `omp.yml`, `omp-ci.yml`, `omp-code-review.yml`, `omp-fix-issue.yml` — OMP agent automation (issue triage, PR labeling, PR review, `/omp` comment triggers).
 - `auto-manage.yml` — auto-tags issues `needs-triage`, assigns to `niklasschaeffer`.
 - `update-wiki.yml` — regenerates `.wiki/` daily and on `main` pushes.
 - `renovate.json` — recommended preset; automated dependency PRs.
