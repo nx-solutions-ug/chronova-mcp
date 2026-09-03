@@ -4,7 +4,7 @@ title: "Operations & release"
 description: "Building, running, Docker, and semantic-release pipeline for
   @chronova/mcp-server."
 tags: [ operations, docker, release, ci ]
-last_updated: 2026-08-30T12:11:54.386Z
+last_updated: 2026-09-03T15:48:12.614Z
 updated_by: wiki-agent
 ---
 
@@ -84,23 +84,25 @@ The `.github/workflows/` directory contains the full CI/automation stack. Many o
 | `release.yml` | push to `main` | Runs type-check + lint, then `semantic-release`; the app token writes release notes and publishes. The full Vitest suite is gated by `test.yml` on PRs/pushes. |
 | `update-wiki.yml` | push to `main`, daily cron, manual | Regenerates `.wiki/` and pushes the flattened wiki to the wiki repo. |
 | `auto-manage.yml` | new/reopened issues, new PRs | Adds `needs-triage` to issues and assigns issues/PRs to `niklasschaeffer`. |
-| `omp.yml` | `/omp` comment | Runs the OMP agent from a comment trigger. |
-| `omp-ci.yml` | new issues/PRs, PR closed, manual | Triage, label, and review automation via the OMP agent. A PR `closed` event is now wired so in-flight OMP jobs for that PR are cancelled when the PR is merged (commit `a6e7210`). |
+| `omp.yml` | `/omp` or `/oc` comment | Runs the OMP agent from a comment trigger. |
+| `omp-ci.yml` | new issues/PRs, PR closed, manual | Issue triage and PR labeling via the OMP agent. The PR `closed` event (commit `a6e7210`) lets a `cancel-label-on-close` job cancel in-flight label runs for a merged PR via its concurrency group. |
+| `omp-code-review.yml` | PR opened/synchronize/ready/review-requested, Jules review events, manual | Dependency review (Renovate/Dependabot) and full code review via OMP; split out of `omp-ci.yml` (commit `f7d1830`). |
 | `omp-fix-issue.yml` | repository dispatch, manual | Attempts an automated fix for a triaged issue. |
 | `vouch-pr.yml` | `pull_request_target` opened/reopened/ready | PR gate: auto-closes PRs from unvouched users; labels vouched PRs. |
 | `vouch-manage.yml` | `discussion_comment` created | Lets maintainers vouch/denounce/unvouch users via discussion comments. |
 
 ### OMP agent automation
 
-The repository uses the **OMP agent** for several automated tasks. The trigger workflow `omp.yml` runs when a comment containing `/omp` (or ` /omp`) is created on an issue or pull request review. It is also invoked by `omp-ci.yml` for triage, labeling, and review jobs.
+The repository uses the **OMP agent** for several automated tasks. The trigger workflow `omp.yml` runs when a comment containing `/omp` or `/oc` is created on an issue or pull request review.
 
-Command prompts live in `.omp/commands/` as Markdown files. The workflow extracts a command name from the comment (e.g. `/omp triage-issue 42` → `.omp/commands/triage-issue.md`), substitutes `$ARGUMENTS` with the rest of the comment, and passes the expanded prompt to OMP. The `omp-ci.yml` trigger now also includes the `closed` PR action (commit `a6e7210`) so that dedicated `cancel-review-on-close` and `cancel-label-on-close` jobs cancel in-flight OMP jobs for a merged PR via their concurrency groups; the label and review jobs themselves skip actual work when the action is `closed`. The available commands are:
+Command prompts live in `.omp/commands/` as Markdown files. The workflow extracts a command name from the comment (e.g. `/omp triage-issue 42` → `.omp/commands/triage-issue.md`), substitutes `$ARGUMENTS` with the rest of the comment, and passes the expanded prompt to OMP. PR review was split out of `omp-ci.yml` into `omp-code-review.yml` (commit `f7d1830`), so `omp-ci.yml` covers only issue triage and PR labeling; its `closed` PR trigger (commit `a6e7210`) powers a `cancel-label-on-close` job that cancels in-flight label runs for merged PRs via their concurrency group. The available commands are:
 
 | Command file | Used by | Purpose |
 |---|---|---|
 | `triage-issue.md` | `omp-ci.yml` (triage-issue job) | Classify a new issue, set type/priority fields, apply labels. |
 | `label-pr.md` | `omp-ci.yml` (label-pr job) | Apply type and priority labels to a PR. |
-| `review-pr.md` | `omp-ci.yml` (review-pr job) | Review a PR, post inline comments, and submit a review verdict. |
+| `review-pr.md` | `omp-code-review.yml` (code-review job) | Review a PR, post inline comments, and submit a review verdict. |
+| `dependency-review.md` | `omp-code-review.yml` (dependency-review job) | Research changelogs and assess breaking changes on Renovate/Dependabot PRs. |
 | `fix-issue.md` | `omp-fix-issue.yml` | Read a triaged issue, implement a fix on a new branch, run quality gates, and open a draft PR. |
 | `_pr-commit-push.md` | `omp.yml` (freeform PR prompts) | Injected after freeform `/omp` prompts on PRs to ensure changes are committed and pushed to the PR branch. |
 
@@ -108,7 +110,7 @@ The agent model is configured in `.omp/agent/config.yml`. The default role and m
 
 #### gh-pr-review extension pinning
 
-Both OMP workflows install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
+The review-producing OMP workflows (`omp-code-review.yml`, plus `omp.yml` when the comment trigger runs a review command) install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
 
 #### Commit/push behavior for PR commands
 
