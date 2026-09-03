@@ -4,7 +4,7 @@ title: "CI/CD workflows"
 description: "GitHub Actions in this repository: test, release, OMP agent
   automation, the vouch system, and the wiki update pipeline."
 tags: [ operations, ci, github-actions, omp, vouch, semantic-release ]
-last_updated: 2026-09-03T14:15:24.927Z
+last_updated: 2026-09-03T18:42:52.426Z
 updated_by: wiki-agent
 ---
 
@@ -94,7 +94,7 @@ Two jobs run on new issues/PRs (and manually). The `pull_request` trigger includ
 
 ### `omp-code-review.yml` — automated PR review
 
-The review surface was split out of `omp-ci.yml` into its own workflow (see commit `f7d1830`). It triggers on `pull_request` (`opened`, `synchronize`, `ready_for_review`, `review_requested`), on `pull_request_review` `submitted` and `pull_request_review_comment` `created` (to pick up reviews/suggestions from the `jules` bot), and on manual `workflow_dispatch` with a `pr_number`. Concurrency group `omp-code-review-<n>` with `cancel-in-progress: true`.
+The review surface was split out of `omp-ci.yml` into its own workflow (see commit `f7d1830`). It triggers on `pull_request` (`opened`, `synchronize`, `ready_for_review`, `review_requested`), on `pull_request_review` `submitted` and `pull_request_review_comment` `created` (to pick up reviews/suggestions from the `jules` bot), and on manual `workflow_dispatch` with a `pr_number`. Concurrency group `omp-code-review-<n>`. `cancel-in-progress` is conditional (commit `5bcbc86`): only `pull_request` and `workflow_dispatch` events supersede an in-flight run; `pull_request_review`/`pull_request_review_comment` runs queue behind it instead of cancelling. This prevents the required `code-review` check from wedging at CANCELLED when a `chronova-agent` review lands while a `pull_request` run is still in flight — the replacement review-event run is gated to Jules activity by job conditions, so a cancellation would leave the check unrecoverable and the PR UNSTABLE.
 
 Two jobs:
 
