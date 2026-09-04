@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.10.1...v1.11.0) (2026-09-04)
+
+
+### Features
+
+* centralize tool registration and add workflow_dispatch to release ([ca506c5](https://github.com/nx-solutions-ug/chronova-mcp/commit/ca506c55bf6e69f374c47d7238321d2125c42dd1))
+
 ## [1.10.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.10.0...v1.10.1) (2026-07-28)
 
 
