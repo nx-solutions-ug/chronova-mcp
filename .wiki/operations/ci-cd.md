@@ -4,7 +4,7 @@ title: "CI/CD workflows"
 description: "GitHub Actions in this repository: test, release, OMP agent
   automation, the vouch system, and the wiki update pipeline."
 tags: [ operations, ci, github-actions, omp, vouch, semantic-release ]
-last_updated: 2026-09-03T18:42:52.426Z
+last_updated: 2026-09-04T18:41:29.802Z
 updated_by: wiki-agent
 ---
 
@@ -56,7 +56,7 @@ The wiki is **regenerated daily** (cron `0 8 * * *`), on every push to `main`, a
 1. **Token** — mints a GitHub App token (`continue-on-error: true` so the run still proceeds with `GITHUB_TOKEN` if the app isn't available).
 2. **Checkout** — full clone with the app token.
 3. **Toolchain** — installs Bun (for the wiki agent) and Node 25.
-4. **Wiki agent** — installs `@chronova/wiki-agent` globally and runs `wiki --update --print --verbose --wiki`. Model and provider are env-configurable: `WIKI_OLLAMA_MODE=cloud`, `WIKI_OLLAMA_API_KEY`, `WIKI_MODEL` (default `kimi-k3`).
+4. **Wiki agent** — installs `@chronova/wiki-agent` globally and runs `wiki --update --print --verbose --wiki`. Model and provider are env-configurable: `WIKI_OLLAMA_MODE=cloud`, `WIKI_OLLAMA_API_KEY`, `WIKI_MODEL` (default `glm-5.3-flash`, overridable via the `WIKI_MODEL` repository variable).
 5. **Diff detection** — collects `git status --porcelain .wiki` minus run metadata files (`.last-update-report.md`, `.last-updated.json`). If non-empty, sets `has_changes=true` and stashes the report as the PR body.
 6. **Wiki repo init check** — `git ls-remote` against `https://github.com/<owner>/<repo>.wiki.git`. If HEAD does not exist yet (the wiki has never been initialized in the GitHub UI), the publish step is skipped with a warning — the staging PR is still opened.
 7. **Publish to wiki repo** — `wiki-flatten` converts the nested `.wiki/` tree to the flat `Home.md` / `_Sidebar.md` layout GitHub Wikis require, then `rsync --delete` (with `--exclude='.git'`) syncs it into a fresh clone of the wiki repo. A `docs: update wiki` commit is pushed to `master` if and only if there are net content changes.
