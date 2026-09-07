@@ -4,7 +4,7 @@ title: "Operations & release"
 description: "Building, running, Docker, and semantic-release pipeline for
   @chronova/mcp-server."
 tags: [ operations, docker, release, ci ]
-last_updated: 2026-09-07T13:46:11.310Z
+last_updated: 2026-09-07T17:14:42.329Z
 updated_by: wiki-agent
 ---
 
@@ -73,6 +73,7 @@ After semantic-release runs, `.github/workflows/release.yml` runs a post-release
 - `private: false` and `publishConfig.access: public` make the scoped package publicly installable.
 - The published tarball is limited to `dist/` + `README.md` by `files`; tests, sources, and configs are excluded.
 - `package.json` now declares `repository`, `homepage`, and `bugs` metadata pointing at `https://github.com/nx-solutions-ug/chronova-mcp`, so the npm registry page links back to the GitHub repo and issue tracker.
+- `.github/release-drafter.yml` defines release-drafter categories (`feature`/`enhancement`, `bug`/`fix`, `chore`/`docs`, `renovatebot`) and a label-based version resolver, but **no workflow currently invokes the release-drafter action** — release notes come from semantic-release plus the full-changelog step above. The config is dormant/reserved.
 
 ## Repository automation & vouch gate
 
@@ -84,7 +85,7 @@ The `.github/workflows/` directory contains the full CI/automation stack. Many o
 | `release.yml` | push to `main`, manual dispatch | Runs type-check + lint, then `semantic-release`; the app token writes release notes and publishes. The full Vitest suite is gated by `test.yml` on PRs/pushes. |
 | `update-wiki.yml` | push to `main`, daily cron, manual | Regenerates `.wiki/` and pushes the flattened wiki to the wiki repo. |
 | `auto-manage.yml` | new/reopened issues, new PRs | Adds `needs-triage` to issues and assigns issues/PRs to `niklasschaeffer`. |
-| `omp.yml` | `/omp` or `/oc` comment | Runs the OMP agent from a comment trigger. |
+| `omp.yml` | `/omp` comment (case-sensitive) | Runs the OMP agent from a comment trigger. |
 | `omp-ci.yml` | new issues/PRs, PR closed, manual | Issue triage and PR labeling via the OMP agent. The PR `closed` event (commit `a6e7210`) lets a `cancel-label-on-close` job cancel in-flight label runs for a merged PR via its concurrency group. |
 | `omp-code-review.yml` | PR opened/synchronize/ready/review-requested, Jules review events, manual | Dependency review (Renovate/Dependabot) and full code review via OMP; split out of `omp-ci.yml` (commit `f7d1830`). |
 | `omp-fix-issue.yml` | repository dispatch, manual | Attempts an automated fix for a triaged issue. |
@@ -93,7 +94,7 @@ The `.github/workflows/` directory contains the full CI/automation stack. Many o
 
 ### OMP agent automation
 
-The repository uses the **OMP agent** for several automated tasks. The trigger workflow `omp.yml` runs when a comment containing `/omp` or `/oc` is created on an issue or pull request review.
+The repository uses the **OMP agent** for several automated tasks. The trigger workflow `omp.yml` runs when a comment containing `/omp` is created on an issue or pull request review (case-sensitive; `/oc` does not trigger a run).
 
 Command prompts live in `.omp/commands/` as Markdown files. The workflow extracts a command name from the comment (e.g. `/omp triage-issue 42` → `.omp/commands/triage-issue.md`), substitutes `$ARGUMENTS` with the rest of the comment, and passes the expanded prompt to OMP. PR review was split out of `omp-ci.yml` into `omp-code-review.yml` (commit `f7d1830`), so `omp-ci.yml` covers only issue triage and PR labeling; its `closed` PR trigger (commit `a6e7210`) powers a `cancel-label-on-close` job that cancels in-flight label runs for merged PRs via their concurrency group. The available commands are:
 
@@ -106,15 +107,15 @@ Command prompts live in `.omp/commands/` as Markdown files. The workflow extract
 | `fix-issue.md` | `omp-fix-issue.yml` | Read a triaged issue, implement a fix on a new branch, run quality gates, and open a draft PR. |
 | `_pr-commit-push.md` | `omp.yml` (freeform PR prompts) | Injected after freeform `/omp` prompts on PRs to ensure changes are committed and pushed to the PR branch. |
 
-The agent model is configured in `.omp/agent/config.yml`. The default role and most agent tasks use `ollama-cloud/glm-5.3-flash`; planning and design tasks use `ollama-cloud/kimi-k2.6`, and larger reasoning/vision tasks use `ollama-cloud/qwen3.5:397b`. OMP JSONL output is piped through `.omp/stream-log.py` to produce readable CI log lines. Additional guard rules are in `.omp/rules/`, such as `gh-label-idempotent.md` (always append `|| true` to `gh label create`) and `tool-paths-must-be-arrays.md` (`find`/`search` `paths` must be an array).
+The agent model is configured in `.omp/agent/config.yml`. The default/task/commit roles use `ollama-cloud/glm-5.3-flash`; planning and design use `ollama-cloud/kimi-k2.6`; vision and slow tasks use `ollama-cloud/qwen3.5:397b`; a `smol` role uses `ollama-cloud/devstral-2:123b`. In the workflows every OMP invocation additionally carries a `:max` reasoning-effort suffix (e.g. `glm-5.3-flash:max`) that overrides the role default. OMP JSONL output is piped through `.omp/stream-log.py` to produce readable CI log lines. Additional guard rules are in `.omp/rules/`, such as `gh-label-idempotent.md` (always append `|| true` to `gh label create`) and `tool-paths-must-be-arrays.md` (`find`/`search` `paths` must be an array).
 
 #### gh-pr-review extension pinning
 
-The review-producing OMP workflows (`omp-code-review.yml`, plus `omp.yml` when the comment trigger runs a review command) install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
+The review-producing OMP workflows (`omp-code-review.yml`, plus `omp.yml` for every comment-triggered run) install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
 
 #### Commit/push behavior for PR commands
 
-A previous limitation was that freeform `/omp` prompts on pull requests could leave changes staged in the runner without pushing them back to the PR branch. The fix in PR #80 (commit `9d7a606`) appends `.omp/commands/_pr-commit-push.md` to freeform prompts on PR comments. This prompt instructs the agent to check out the PR branch, commit the changes with `git add -A && git commit -m "fix: apply requested changes from PR comment"`, and push to `origin HEAD:<headRefName>`. It explicitly forbids pushing to `main` or `develop`, merging the PR, or starting a dev server. Command-file prompts already contain their own commit/push logic, so the extra instructions are only appended for freeform prompts.
+A previous limitation was that freeform `/omp` prompts on pull requests could leave changes staged in the runner without pushing them back to the PR branch. The fix (PR #636, per the workflow's own comment) appends `.omp/commands/_pr-commit-push.md` — with `__PR_NUMBER__` substituted — to freeform prompts on PR comments. This prompt instructs the agent to check out the PR branch, commit the changes with `git add -A && git commit -m "fix: apply requested changes from PR comment"`, and push to `origin HEAD:<headRefName>`. It explicitly forbids pushing to `main` or `develop`, merging the PR, or starting a dev server. Command-file prompts already contain their own commit/push logic, so the extra instructions are only appended for freeform prompts.
 
 ### Vouch system
 
