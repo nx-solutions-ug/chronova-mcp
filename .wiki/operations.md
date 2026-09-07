@@ -4,7 +4,7 @@ title: "Operations & release"
 description: "Building, running, Docker, and semantic-release pipeline for
   @chronova/mcp-server."
 tags: [ operations, docker, release, ci ]
-last_updated: 2026-09-03T15:48:12.614Z
+last_updated: 2026-09-07T13:46:11.310Z
 updated_by: wiki-agent
 ---
 
@@ -81,7 +81,7 @@ The `.github/workflows/` directory contains the full CI/automation stack. Many o
 | Workflow | Trigger | Purpose |
 |---|---|---|
 | `test.yml` | push/PR to `main`, `develop`, `feat/*`, `fix/*` | Runs type-check, lint, build, and test jobs in parallel. |
-| `release.yml` | push to `main` | Runs type-check + lint, then `semantic-release`; the app token writes release notes and publishes. The full Vitest suite is gated by `test.yml` on PRs/pushes. |
+| `release.yml` | push to `main`, manual dispatch | Runs type-check + lint, then `semantic-release`; the app token writes release notes and publishes. The full Vitest suite is gated by `test.yml` on PRs/pushes. |
 | `update-wiki.yml` | push to `main`, daily cron, manual | Regenerates `.wiki/` and pushes the flattened wiki to the wiki repo. |
 | `auto-manage.yml` | new/reopened issues, new PRs | Adds `needs-triage` to issues and assigns issues/PRs to `niklasschaeffer`. |
 | `omp.yml` | `/omp` or `/oc` comment | Runs the OMP agent from a comment trigger. |

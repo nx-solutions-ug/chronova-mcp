@@ -4,7 +4,7 @@ title: "CI/CD workflows"
 description: "GitHub Actions in this repository: test, release, OMP agent
   automation, the vouch system, and the wiki update pipeline."
 tags: [ operations, ci, github-actions, omp, vouch, semantic-release ]
-last_updated: 2026-09-03T18:42:52.426Z
+last_updated: 2026-09-07T13:46:11.307Z
 updated_by: wiki-agent
 ---
 
@@ -15,7 +15,7 @@ This repository runs a large automation stack under `.github/workflows/`. Most w
 | Workflow | Trigger | Purpose |
 |---|---|---|
 | [`test.yml`](#testyml) | push/PR to `main`, `develop`, `feat/*`, `fix/*` | Parallel jobs: type-check, lint, build, test |
-| [`release.yml`](#releaseyml) | push to `main` | Pre-release quality gates + `semantic-release` |
+| [`release.yml`](#releaseyml) | push to `main`, manual dispatch | Pre-release quality gates + `semantic-release` |
 | [`update-wiki.yml`](#update-wikiyml) | push to `main`, daily cron, manual | Regenerates `.wiki/`, opens a staging PR, publishes to the wiki repo |
 | [`auto-manage.yml`](#auto-manageyml) | new/reopened issues, new PRs | Tags `needs-triage`, assigns to `niklasschaeffer` |
 | [`omp.yml`](#ompyml) | `/omp` or `/oc` comment | Runs the OMP agent from a comment trigger |
@@ -38,7 +38,7 @@ All four use Node 25 and `actions/setup-node@v7` with npm cache. Concurrency gro
 
 ## `release.yml`
 
-Runs only on push to `main`. Quality gates (type-check + lint) precede `semantic-release`. The release step:
+Runs on push to `main` and on manual `workflow_dispatch` (useful for retrying a failed or skipped release without a new commit). Quality gates (type-check + lint) precede `semantic-release`. The release step:
 
 1. Runs `semantic-release` (configured by `.releaserc.json`), which:
    - Determines the next version from conventional commits.
