@@ -4,7 +4,7 @@ title: "CI/CD workflows"
 description: "GitHub Actions in this repository: test, release, OMP agent
   automation, the vouch system, and the wiki update pipeline."
 tags: [ operations, ci, github-actions, omp, vouch, semantic-release ]
-last_updated: 2026-09-07T13:46:11.307Z
+last_updated: 2026-09-07T17:14:57.932Z
 updated_by: wiki-agent
 ---
 
@@ -18,7 +18,7 @@ This repository runs a large automation stack under `.github/workflows/`. Most w
 | [`release.yml`](#releaseyml) | push to `main`, manual dispatch | Pre-release quality gates + `semantic-release` |
 | [`update-wiki.yml`](#update-wikiyml) | push to `main`, daily cron, manual | Regenerates `.wiki/`, opens a staging PR, publishes to the wiki repo |
 | [`auto-manage.yml`](#auto-manageyml) | new/reopened issues, new PRs | Tags `needs-triage`, assigns to `niklasschaeffer` |
-| [`omp.yml`](#ompyml) | `/omp` or `/oc` comment | Runs the OMP agent from a comment trigger |
+| [`omp.yml`](#ompyml) | `/omp` comment (case-sensitive) | Runs the OMP agent from a comment trigger |
 | [`omp-ci.yml`](#omp-ciyml) | new issues/PRs, PR closed, manual | Issue triage and PR labeling via OMP; closed events cancel in-flight label runs |
 | [`omp-code-review.yml`](#omp-code-reviewyml) | PR opened/synchronize/ready/review-requested, Jules review events, manual | Dependency review (Renovate/Dependabot) and full code review via OMP |
 | [`omp-fix-issue.yml`](#omp-fix-issueyml) | repository dispatch, manual | Attempts an automated fix for a triaged issue |
@@ -38,7 +38,7 @@ All four use Node 25 and `actions/setup-node@v7` with npm cache. Concurrency gro
 
 ## `release.yml`
 
-Runs on push to `main` and on manual `workflow_dispatch` (useful for retrying a failed or skipped release without a new commit). Quality gates (type-check + lint) precede `semantic-release`. The release step:
+Runs on push to `main` and on manual `workflow_dispatch` (useful for retrying a failed or skipped release without a new commit). Quality gates (type-check + lint) precede `semantic-release`; the job also runs `npm audit signatures` first, verifying the provenance attestations and registry signatures of installed dependencies. The release step:
 
 1. Runs `semantic-release` (configured by `.releaserc.json`), which:
    - Determines the next version from conventional commits.
@@ -56,8 +56,8 @@ The wiki is **regenerated daily** (cron `0 8 * * *`), on every push to `main`, a
 1. **Token** — mints a GitHub App token (`continue-on-error: true` so the run still proceeds with `GITHUB_TOKEN` if the app isn't available).
 2. **Checkout** — full clone with the app token.
 3. **Toolchain** — installs Bun (for the wiki agent) and Node 25.
-4. **Wiki agent** — installs `@chronova/wiki-agent` globally and runs `wiki --update --print --verbose --wiki`. Model and provider are env-configurable: `WIKI_OLLAMA_MODE=cloud`, `WIKI_OLLAMA_API_KEY`, `WIKI_MODEL` (default `kimi-k3`).
-5. **Diff detection** — collects `git status --porcelain .wiki` minus run metadata files (`.last-update-report.md`, `.last-updated.json`). If non-empty, sets `has_changes=true` and stashes the report as the PR body.
+4. **Wiki agent** — installs `@chronova/wiki-agent` globally and runs `wiki --update --print --verbose --wiki`. Model and provider are env-configurable: `WIKI_OLLAMA_MODE=cloud`, `WIKI_OLLAMA_API_KEY`, `WIKI_MODEL` (a repository *variable*; default `glm-5.3-flash`).
+5. **Diff detection** — collects `git status --porcelain .wiki` minus run metadata files (`.last-update-report.md`, `.last-update-title.txt`, `.last-updated.json`). If non-empty, sets `has_changes=true`, stashes the report as the PR body, and uses `.last-update-title.txt` (when the agent wrote one) as the PR/commit title. Wiki-repo push authentication falls back through `WIKI_PUSH_TOKEN` → app token → `GITHUB_TOKEN`.
 6. **Wiki repo init check** — `git ls-remote` against `https://github.com/<owner>/<repo>.wiki.git`. If HEAD does not exist yet (the wiki has never been initialized in the GitHub UI), the publish step is skipped with a warning — the staging PR is still opened.
 7. **Publish to wiki repo** — `wiki-flatten` converts the nested `.wiki/` tree to the flat `Home.md` / `_Sidebar.md` layout GitHub Wikis require, then `rsync --delete` (with `--exclude='.git'`) syncs it into a fresh clone of the wiki repo. A `docs: update wiki` commit is pushed to `master` if and only if there are net content changes.
 8. **Staging snapshot PR** — uses `peter-evans/create-pull-request@v8` to open a PR on a `wiki/staging-<unix-seconds>` branch listing only `.wiki/` paths, with the report as the body. This is the PR that this very wiki-update run is invoked from.
@@ -70,19 +70,19 @@ A small triage workflow. On any new or reopened issue it adds the `needs-triage`
 
 ## OMP agent
 
-The repository uses the **OMP agent** for several automated tasks. The agent is installed in each OMP workflow via the native bash installer `curl -fsSL https://omp.sh/install | sh`, and is authenticated against the `ollama-cloud` provider by inserting the API key into the local SQLite store at `~/.omp/agent/agent.db`. The model used by the default role is `ollama-cloud/glm-5.3-flash`; planning/design tasks use `ollama-cloud/kimi-k2.6`; larger reasoning/vision tasks use `ollama-cloud/qwen3.5:397b`. OMP JSONL output is piped through `.omp/stream-log.py` to produce readable CI log lines.
+The repository uses the **OMP agent** for several automated tasks. The agent is installed in each OMP workflow via the native bash installer `curl -fsSL https://omp.sh/install | sh`, and is authenticated against the `ollama-cloud` provider by inserting the API key into the local SQLite store at `~/.omp/agent/agent.db`. The `:max` reasoning-effort suffix is appended to the model ID in every OMP invocation (e.g. `ollama-cloud/glm-5.3-flash:max`). OMP JSONL output is piped through `.omp/stream-log.py` to produce readable CI log lines.
 
 ### `omp.yml` — `/omp` comment trigger
 
-Runs on any `issue_comment` or `pull_request_review_comment` containing `/omp` or `/oc` (case-insensitive prefix or `" /omp"` substring). The `if` guard also excludes any user whose login ends in `[bot]`.
+Runs on any `issue_comment` or `pull_request_review_comment` whose body contains `/omp` — either at the start or after a space. The check is **case-sensitive** and excludes any user whose login ends in `[bot]`. (The prompt-extraction sed also strips a leading `/oc`, but no trigger matches it, so `/oc` comments do not actually start a run.)
 
 The workflow extracts the prompt from the comment body:
 
-1. Strips the leading `/omp` or `/oc`.
+1. Strips the leading `/omp` (or `/oc`, which as noted above never triggers a run).
 2. Tries to match a known **command file** under `.omp/commands/` (e.g. `/omp triage-issue 42` → `.omp/commands/triage-issue.md`). If the file exists, `$ARGUMENTS` is substituted with the rest of the prompt and the file's contents are used.
-3. Otherwise the rest of the comment is treated as a **freeform prompt**. For **PR comments only**, `.omp/commands/_pr-commit-push.md` is appended so the agent knows to commit and push its changes back to the PR branch (this fix landed in PR #80 / commit `9d7a606` to address issue #637). The appended prompt forbids pushing to `main` or `develop`, merging the PR, or starting a dev server.
+3. Otherwise the rest of the comment is treated as a **freeform prompt**. For **PR comments only**, `.omp/commands/_pr-commit-push.md` is appended (with `__PR_NUMBER__` substituted) so the agent knows to commit and push its changes back to the PR branch. The appended prompt forbids pushing to `main` or `develop`, merging the PR, or starting a dev server.
 
-The expanded prompt is passed to `omp -p --model ollama-cloud/glm-5.3-flash --mode json <file> | python3 .omp/stream-log.py`.
+The expanded prompt is passed to `omp -p --model ollama-cloud/glm-5.3-flash:max --mode json <file> | python3 .omp/stream-log.py` — note the `:max` reasoning-effort suffix on the model.
 
 ### `omp-ci.yml` — triage and label
 
@@ -118,7 +118,7 @@ OMP-specific guardrails live under `.omp/rules/`. Two notable rules:
 
 ### gh-pr-review extension pinning
 
-All OMP workflows act through `gh`. The review-producing workflows (`omp-code-review.yml`, plus `omp.yml` when the comment trigger runs a review command) install the `agynio/gh-pr-review` CLI extension and pin it to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
+All OMP workflows act through `gh`. `omp.yml` installs the `agynio/gh-pr-review` CLI extension unconditionally for every run (after reacting to the comment, before configuring git for push), and `omp-code-review.yml` installs it in both the dependency-review and code-review jobs, pinned to **v1.6.2** (`gh extension install agynio/gh-pr-review --pin v1.6.2 --force`), so the PR review surface is stable and immutable across CI runs. Git evidence: commit `7c2ff66`.
 
 ## Vouch system
 
