@@ -4,7 +4,7 @@ title: "CI/CD workflows"
 description: "GitHub Actions in this repository: test, release, OMP agent
   automation, the vouch system, and the wiki update pipeline."
 tags: [ operations, ci, github-actions, omp, vouch, semantic-release ]
-last_updated: 2026-09-07T17:14:57.932Z
+last_updated: 2026-09-10T03:02:00.770Z
 updated_by: wiki-agent
 ---
 
@@ -16,7 +16,7 @@ This repository runs a large automation stack under `.github/workflows/`. Most w
 |---|---|---|
 | [`test.yml`](#testyml) | push/PR to `main`, `develop`, `feat/*`, `fix/*` | Parallel jobs: type-check, lint, build, test |
 | [`release.yml`](#releaseyml) | push to `main`, manual dispatch | Pre-release quality gates + `semantic-release` |
-| [`update-wiki.yml`](#update-wikiyml) | push to `main`, daily cron, manual | Regenerates `.wiki/`, opens a staging PR, publishes to the wiki repo |
+| [`update-wiki.yml`](#update-wikiyml) | daily cron + manual dispatch (no push trigger) | Regenerates `.wiki/`, opens a staging PR, publishes to the wiki repo |
 | [`auto-manage.yml`](#auto-manageyml) | new/reopened issues, new PRs | Tags `needs-triage`, assigns to `niklasschaeffer` |
 | [`omp.yml`](#ompyml) | `/omp` comment (case-sensitive) | Runs the OMP agent from a comment trigger |
 | [`omp-ci.yml`](#omp-ciyml) | new issues/PRs, PR closed, manual | Issue triage and PR labeling via OMP; closed events cancel in-flight label runs |
@@ -51,7 +51,7 @@ The app token is used so the release PR/branch and the GitHub release are author
 
 ## `update-wiki.yml`
 
-The wiki is **regenerated daily** (cron `0 8 * * *`), on every push to `main`, and on manual dispatch. The pipeline:
+The wiki is **regenerated daily** (cron `0 0 * * *`) and on manual dispatch; the workflow has no push trigger. The pipeline:
 
 1. **Token** — mints a GitHub App token (`continue-on-error: true` so the run still proceeds with `GITHUB_TOKEN` if the app isn't available).
 2. **Checkout** — full clone with the app token.

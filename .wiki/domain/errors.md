@@ -4,7 +4,7 @@ title: "Errors & status mapping"
 description: "How HTTP status codes and network failures from the Chronova API
   are mapped to actionable ChronovaApiError instances."
 tags: [ domain, errors, error-handling ]
-last_updated: 2026-09-03T15:47:54.449Z
+last_updated: 2026-09-10T03:02:10.147Z
 updated_by: wiki-agent
 ---
 
@@ -27,12 +27,12 @@ class ChronovaApiError extends Error {
 | Status | `code` | Message | Extra |
 |---|---|---|---|
 | 401 | `UNAUTHORIZED` | "Unauthorized: Invalid or expired API key. Check your CHRONOVA_API_KEY configuration." | — |
-| 429 | `RATE_LIMITED` | "Rate limited: Too many requests." + optional " Retry after N seconds." | `retryAfter` from `Retry-After` header, else computed from `X-RateLimit-Reset` (epoch minus now, floored at 0) |
+| 429 | `RATE_LIMITED` | "Rate limited: Too many requests." + optional " Retry after N seconds." | `retryAfter` from `Retry-After` header, else computed from `X-RateLimit-Reset` (epoch minus now, ceil, clamped ≥ 0) |
 | 404 | `NOT_FOUND` | "Not found: The requested resource does not exist." | — |
 | ≥ 500 | `SERVER_ERROR` | "Chronova server error: {statusText}. Please try again later." | — |
 | other | `API_ERROR` | "Chronova API error: {status} {statusText}" | — |
 
-The 429 path is the most intricate: it tries `Retry-After` first (as seconds), then falls back to `X-RateLimit-Reset` (Unix epoch) minus the current time, clamped to a non-negative integer.
+The 429 path is the most intricate: it tries `Retry-After` first (as seconds), then falls back to `X-RateLimit-Reset` (Unix epoch) minus the current time. The fallback value is rounded up (`Math.ceil`) and clamped to ≥ 0, and a non-numeric or non-positive reset epoch is ignored entirely (leaving `retryAfter` undefined).
 
 ## Network/abort mapping — `mapNetworkError`
 

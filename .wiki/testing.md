@@ -1,8 +1,11 @@
 ---
 type: Testing
 title: "Testing"
-description: "Vitest-based integration tests using an in-memory MCP-over-HTTP harness and a fetch mock for the Chronova API."
-tags: [testing, vitest, integration]
+description: "Vitest-based integration tests using an in-memory MCP-over-HTTP
+  harness and a fetch mock for the Chronova API."
+tags: [ testing, vitest, integration ]
+last_updated: 2026-09-10T03:02:15.646Z
+updated_by: wiki-agent
 ---
 
 # Testing
@@ -79,7 +82,7 @@ and call `createApp(TEST_CONFIG)` directly (bypassing `resolveConfig`), so tests
 - **`stream-log.test.ts`** — `.omp/stream-log.py` exits 0 when fed the canonical OMP JSONL event flow and does not crash on malformed tool `args`, non-string tool `text`, malformed message/agent text, or invalid JSON lines.
 - **`tools.test.ts`** — for each tool: a happy path asserting parsed JSON content, a 401 path asserting `isError: true` and the "Unauthorized" message; plus parameter-passthrough checks (e.g. `get_productivity_summary` with `project`, `get_recent_activity` with filters/pagination).
 - **`config.test.ts`** — `resolveConfig` priority: env wins over `~/.chronova.cfg`, which wins over `~/.wakatime.cfg`, which wins over `none`; uses injected `readFile`/`getHomeDir`/`env` so no real filesystem access.
-- **`errors.test.ts`** — `mapHttpStatusToError` for 401/404/429/5xx/generic; 429 `retryAfter` from `Retry-After` and from `X-RateLimit-Reset`; `mapNetworkError` produces `CONNECTION_ERROR`.
+- **`errors.test.ts`** — `mapHttpStatusToError` for 401, 429 (with and without a `Retry-After` header), 500, 502, and 404; `mapNetworkError` produces `CONNECTION_ERROR`. There is no generic-status or `X-RateLimit-Reset` fallback test case.
 
 ## Running
 
