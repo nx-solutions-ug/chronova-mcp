@@ -1,3 +1,10 @@
+## [1.11.3](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.11.2...v1.11.3) (2026-09-12)
+
+
+### Bug Fixes
+
+* do not fail pack/publish when husky is unavailable ([e637746](https://github.com/nx-solutions-ug/chronova-mcp/commit/e637746354ac32e1e20a58129fcd3328997de859))
+
 ## [1.11.2](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.11.1...v1.11.2) (2026-09-12)
 
 
