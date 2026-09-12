@@ -84,9 +84,7 @@ describe("resolveConfig", () => {
     const config = resolveConfig({
       env: { CHRONOVA_API_KEY: "env-key" },
       readFile: (path: string) =>
-        path.includes(".chronova.cfg")
-          ? makeConfigFile({ api_key: "file-key" })
-          : NO_CONFIG,
+        path.includes(".chronova.cfg") ? makeConfigFile({ api_key: "file-key" }) : NO_CONFIG,
     });
     expect(config.apiKey).toBe("env-key");
     expect(config.configSource).toBe("env");
@@ -138,7 +136,10 @@ describe("resolveConfig", () => {
       env: {},
       readFile: (path: string) =>
         path.includes(".chronova.cfg")
-          ? makeConfigFile({ api_key: "chronova-cfg-key", api_url: "https://chronova-cfg.example.com" })
+          ? makeConfigFile({
+              api_key: "chronova-cfg-key",
+              api_url: "https://chronova-cfg.example.com",
+            })
           : NO_CONFIG,
     });
     expect(config.apiKey).toBe("chronova-cfg-key");
@@ -150,7 +151,10 @@ describe("resolveConfig", () => {
       env: {},
       readFile: (path: string) =>
         path.includes(".wakatime.cfg")
-          ? makeConfigFile({ api_key: "wakatime-cfg-key", api_url: "https://wakatime-cfg.example.com" })
+          ? makeConfigFile({
+              api_key: "wakatime-cfg-key",
+              api_url: "https://wakatime-cfg.example.com",
+            })
           : NO_CONFIG,
     });
     expect(config.apiKey).toBe("wakatime-cfg-key");
@@ -162,10 +166,16 @@ describe("resolveConfig", () => {
       env: {},
       readFile: (path: string) => {
         if (path.includes(".chronova.cfg")) {
-          return makeConfigFile({ api_key: "chronova-priority", api_url: "https://chronova.example.com" });
+          return makeConfigFile({
+            api_key: "chronova-priority",
+            api_url: "https://chronova.example.com",
+          });
         }
         if (path.includes(".wakatime.cfg")) {
-          return makeConfigFile({ api_key: "wakatime-lower", api_url: "https://wakatime.example.com" });
+          return makeConfigFile({
+            api_key: "wakatime-lower",
+            api_url: "https://wakatime.example.com",
+          });
         }
         return NO_CONFIG;
       },

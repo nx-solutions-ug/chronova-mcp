@@ -6,9 +6,9 @@ name: claude-ci
 
 on:
   issues:
-    types: [ opened ]
+    types: [opened]
   pull_request:
-    types: [ opened, ready_for_review, closed ]
+    types: [opened, ready_for_review, closed]
   workflow_dispatch:
     inputs:
       pr_number:

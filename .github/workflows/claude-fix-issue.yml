@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       issue_number:
-        description: 'Issue number to fix'
+        description: "Issue number to fix"
         required: true
         type: number
 
@@ -60,6 +60,13 @@ jobs:
           gh auth setup-git
           git config --global user.name "chronova-agent[bot]"
           git config --global user.email "286787224+chronova-agent[bot]@users.noreply.github.com"
+
+      # The agent runs `bun install` + the bun quality gates from
+      # .claude/commands/fix-issue.md; ubuntu-latest does not ship Bun.
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
 
       - name: Fix issue
         id: claude

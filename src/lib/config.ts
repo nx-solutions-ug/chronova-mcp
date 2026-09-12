@@ -22,7 +22,12 @@ export function parseIniFile(content: string): Record<string, string> {
   const result: Record<string, string> = {};
   for (const line of content.split("\n")) {
     const trimmed = line.trim();
-    if (trimmed === "" || trimmed.startsWith("[") || trimmed.startsWith("#") || trimmed.startsWith(";")) {
+    if (
+      trimmed === "" ||
+      trimmed.startsWith("[") ||
+      trimmed.startsWith("#") ||
+      trimmed.startsWith(";")
+    ) {
       continue;
     }
     const eqIndex = trimmed.indexOf("=");

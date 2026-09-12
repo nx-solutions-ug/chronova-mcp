@@ -34,10 +34,7 @@ describe("MCP Error propagation", () => {
     await mcpServer.close();
   });
 
-  async function callToolAsResult(
-    name: string,
-    args: Record<string, unknown> = {},
-  ) {
+  async function callToolAsResult(name: string, args: Record<string, unknown> = {}) {
     const result = (await callTool(mcpServer, name, args)) as {
       content: Array<{ type: string; text: string }>;
       isError?: boolean;

@@ -4,10 +4,7 @@ import { ChronovaClient } from "../lib/chronova-client.js";
 import { formatToolError } from "../lib/errors.js";
 import type { ChronovaUser } from "../lib/types.js";
 
-export function registerGetDeveloperContext(
-  server: McpServer,
-  chronova: ChronovaClient,
-): void {
+export function registerGetDeveloperContext(server: McpServer, chronova: ChronovaClient): void {
   server.registerTool(
     "get_developer_context",
     {
@@ -18,13 +15,9 @@ export function registerGetDeveloperContext(
     },
     async () => {
       try {
-        const response = await chronova.get<{ data: ChronovaUser }>(
-          "users/current",
-        );
+        const response = await chronova.get<{ data: ChronovaUser }>("users/current");
         return {
-          content: [
-            { type: "text" as const, text: JSON.stringify(response.data, null, 2) },
-          ],
+          content: [{ type: "text" as const, text: JSON.stringify(response.data, null, 2) }],
         };
       } catch (error) {
         return formatToolError(error);
