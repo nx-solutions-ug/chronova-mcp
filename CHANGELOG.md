@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.11.0...v1.11.1) (2026-09-12)
+
+
+### Bug Fixes
+
+* **ci:** bind the head SHA with real jq, not gh api --jq ([e2287c2](https://github.com/nx-solutions-ug/chronova-mcp/commit/e2287c21fd7ce6ee6e4d897d867ebba00ffeaea6))
+
 # [1.11.0](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.10.1...v1.11.0) (2026-09-04)
 
 
