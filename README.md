@@ -38,11 +38,11 @@ api_key = waka_your-api-key-here
 api_url = https://chronova.dev/api/v1
 ```
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `CHRONOVA_API_KEY` | Yes* | — | Your Chronova API key (*or set in config file) |
-| `CHRONOVA_API_URL` | No | `https://chronova.dev/api/v1` | Chronova API base URL |
-| `PORT` | No | `3001` | Server listen port |
+| Variable           | Required | Default                       | Description                                    |
+| ------------------ | -------- | ----------------------------- | ---------------------------------------------- |
+| `CHRONOVA_API_KEY` | Yes*     | —                             | Your Chronova API key (*or set in config file) |
+| `CHRONOVA_API_URL` | No       | `https://chronova.dev/api/v1` | Chronova API base URL                          |
+| `PORT`             | No       | `3001`                        | Server listen port                             |
 
 CLI flags override env vars: `--port 3001`, `--api-url https://chronova.dev/api/v1`, `--help`.
 
@@ -105,22 +105,25 @@ Add to `opencode.json` under `mcp`:
 
 ## Tools
 
-| Tool | Description | Parameters |
-|---|---|---|
-| `get_developer_context` | Get user profile, subscription, GitHub status, org memberships | None |
-| `get_productivity_summary` | Aggregated coding stats by time range | `range` (required), `project` (optional) |
-| `get_ai_insights` | AI vs manual coding analytics | `range` (required) |
-| `get_recent_activity` | Recent coding heartbeats with filters and pagination | `date`, `start`, `end`, `project`, `language`, `editor`, `page`, `per_page` (all optional) |
+| Tool                       | Description                                                    | Parameters                                                                                 |
+| -------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `get_developer_context`    | Get user profile, subscription, GitHub status, org memberships | None                                                                                       |
+| `get_productivity_summary` | Aggregated coding stats by time range                          | `range` (required), `project` (optional)                                                   |
+| `get_ai_insights`          | AI vs manual coding analytics                                  | `range` (required)                                                                         |
+| `get_recent_activity`      | Recent coding heartbeats with filters and pagination           | `date`, `start`, `end`, `project`, `language`, `editor`, `page`, `per_page` (all optional) |
 
 Named ranges: `today`, `last_7_days`, `last_30_days`, `last_3_months`, `last_6_months`, `last_year`, `all_time`. Custom: `YYYY-MM-DD_to_YYYY-MM-DD`.
 
 ## Development
 
 ```bash
-npm run dev          # Watch mode
-npm test             # Run tests
-npm run build        # Compile TypeScript
-npm run type-check   # Type check only
+bun install            # Install dependencies
+bun run dev            # Watch mode
+bun run test           # Run tests
+bun run build          # Build dist/ (bun build + tsc declarations)
+bun run type-check     # Type check only
+bun run lint           # Lint with oxlint
+bun run format         # Format with oxfmt
 ```
 
 ## Docker

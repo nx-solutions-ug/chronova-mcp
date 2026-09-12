@@ -69,9 +69,7 @@ describe("MCP Tools", () => {
   };
 
   const mockAiAnalytics = {
-    adoptionTimeline: [
-      { date: "2024-06-01", aiSeconds: 3600, manualSeconds: 7200 },
-    ],
+    adoptionTimeline: [{ date: "2024-06-01", aiSeconds: 3600, manualSeconds: 7200 }],
     contributionShare: {
       aiPercent: 33,
       manualPercent: 67,
@@ -82,12 +80,8 @@ describe("MCP Tools", () => {
       withAi: { totalSeconds: 10800, avgDaily: 3600 },
       withoutAi: { totalSeconds: 5400, avgDaily: 1800 },
     },
-    languageMatrix: [
-      { language: "TypeScript", aiPercent: 40, manualPercent: 60 },
-    ],
-    projectDependency: [
-      { project: "chronova", aiPercent: 35, manualPercent: 65 },
-    ],
+    languageMatrix: [{ language: "TypeScript", aiPercent: 40, manualPercent: 60 }],
+    projectDependency: [{ project: "chronova", aiPercent: 35, manualPercent: 65 }],
     efficiencyTrend: [{ period: "2024-W22", productivity: 1.2 }],
   };
 

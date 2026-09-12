@@ -292,7 +292,7 @@ jobs:
           # `git diff origin/<base>...HEAD` would report no changes at all and
           # the review would run against an empty diff.
           ref: refs/pull/${{ github.event.pull_request.number || github.event.inputs.pr_number }}/head
-          fetch-depth: 0  # Required for git diff against base branch to prevent HTTP 406 on >300 files
+          fetch-depth: 0 # Required for git diff against base branch to prevent HTTP 406 on >300 files
           persist-credentials: false
 
       - name: Generate app token

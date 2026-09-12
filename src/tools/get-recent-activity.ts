@@ -4,10 +4,7 @@ import { ChronovaClient } from "../lib/chronova-client.js";
 import { formatToolError } from "../lib/errors.js";
 import type { ChronovaHeartbeatResponse } from "../lib/types.js";
 
-export function registerGetRecentActivity(
-  server: McpServer,
-  chronova: ChronovaClient,
-): void {
+export function registerGetRecentActivity(server: McpServer, chronova: ChronovaClient): void {
   server.registerTool(
     "get_recent_activity",
     {
@@ -29,18 +26,9 @@ export function registerGetRecentActivity(
           .regex(/^\d{4}-\d{2}-\d{2}$/)
           .optional()
           .describe("End date for range (YYYY-MM-DD)"),
-        project: z
-          .string()
-          .optional()
-          .describe("Filter by project name"),
-        language: z
-          .string()
-          .optional()
-          .describe("Filter by programming language"),
-        editor: z
-          .string()
-          .optional()
-          .describe("Filter by editor/IDE name"),
+        project: z.string().optional().describe("Filter by project name"),
+        language: z.string().optional().describe("Filter by programming language"),
+        editor: z.string().optional().describe("Filter by editor/IDE name"),
         page: z
           .number()
           .int()
@@ -74,9 +62,7 @@ export function registerGetRecentActivity(
         );
 
         return {
-          content: [
-            { type: "text" as const, text: JSON.stringify(response, null, 2) },
-          ],
+          content: [{ type: "text" as const, text: JSON.stringify(response, null, 2) }],
         };
       } catch (error) {
         return formatToolError(error);

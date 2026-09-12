@@ -4,10 +4,7 @@ import { ChronovaClient } from "../lib/chronova-client.js";
 import { formatToolError } from "../lib/errors.js";
 import type { ChronovaAiAnalytics } from "../lib/types.js";
 
-export function registerGetAiInsights(
-  server: McpServer,
-  chronova: ChronovaClient,
-): void {
+export function registerGetAiInsights(server: McpServer, chronova: ChronovaClient): void {
   server.registerTool(
     "get_ai_insights",
     {
@@ -24,11 +21,9 @@ export function registerGetAiInsights(
             "last_year",
             "all_time",
           ])
-          .or(
-            z.string().regex(/^\d{4}-\d{2}-\d{2}_to_\d{4}-\d{2}-\d{2}$/),
-          )
+          .or(z.string().regex(/^\d{4}-\d{2}-\d{2}_to_\d{4}-\d{2}-\d{2}$/))
           .describe(
-            'Time range for analytics. Named ranges (today, last_7_days, etc.) or custom date range (YYYY-MM-DD_to_YYYY-MM-DD).',
+            "Time range for analytics. Named ranges (today, last_7_days, etc.) or custom date range (YYYY-MM-DD_to_YYYY-MM-DD).",
           ),
       }),
       annotations: { readOnlyHint: true },
@@ -41,9 +36,7 @@ export function registerGetAiInsights(
         );
 
         return {
-          content: [
-            { type: "text" as const, text: JSON.stringify(response.data, null, 2) },
-          ],
+          content: [{ type: "text" as const, text: JSON.stringify(response.data, null, 2) }],
         };
       } catch (error) {
         return formatToolError(error);

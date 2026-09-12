@@ -4,10 +4,7 @@ import { ChronovaClient } from "../lib/chronova-client.js";
 import { formatToolError } from "../lib/errors.js";
 import type { ChronovaStatsRange } from "../lib/types.js";
 
-export function registerGetProductivitySummary(
-  server: McpServer,
-  chronova: ChronovaClient,
-): void {
+export function registerGetProductivitySummary(server: McpServer, chronova: ChronovaClient): void {
   server.registerTool(
     "get_productivity_summary",
     {
@@ -25,12 +22,9 @@ export function registerGetProductivitySummary(
             "all_time",
           ])
           .describe(
-            'Time range for statistics. Named ranges (today, last_7_days, etc.) or custom formats (YYYY for year, YYYY-MM for month, YYYY-MM-DD_to_YYYY-MM-DD for date range).',
+            "Time range for statistics. Named ranges (today, last_7_days, etc.) or custom formats (YYYY for year, YYYY-MM for month, YYYY-MM-DD_to_YYYY-MM-DD for date range).",
           ),
-        project: z
-          .string()
-          .optional()
-          .describe("Filter results to a specific project name"),
+        project: z.string().optional().describe("Filter results to a specific project name"),
       }),
       annotations: { readOnlyHint: true },
     },
@@ -48,9 +42,7 @@ export function registerGetProductivitySummary(
         );
 
         return {
-          content: [
-            { type: "text" as const, text: JSON.stringify(response.data, null, 2) },
-          ],
+          content: [{ type: "text" as const, text: JSON.stringify(response.data, null, 2) }],
         };
       } catch (error) {
         return formatToolError(error);

@@ -29,39 +29,46 @@ Chronova REST API  (https://chronova.dev/api/v1)
 
 ## Key Directories
 
-| Path | Purpose |
-|------|---------|
-| `src/index.ts` | HTTP entrypoint; exports `createApp`, `startServer`; CLI flags `--port`, `--api-url`, `--help` |
-| `src/stdio.ts` | stdio entrypoint (npm `bin`); exits if `CHRONOVA_API_KEY` missing |
-| `src/server.ts` | `McpServer` construction; registers all four tools; Express app with `/health` and `/mcp` |
-| `src/lib/chronova-client.ts` | `ChronovaClient`: `get<T>(path, params)`, `fetch`, Bearer auth, 30s `AbortSignal.timeout` |
-| `src/lib/config.ts` | `resolveConfig()` — env → `~/.chronova.cfg` → `~/.wakatime.cfg` → defaults |
-| `src/lib/errors.ts` | `ChronovaApiError`, `mapHttpStatusToError`, `mapNetworkError` |
-| `src/lib/types.ts` | Response interfaces: `ChronovaUser`, `ChronovaStatsRange`, `ChronovaHeartbeat`, `ChronovaHeartbeatResponse`, `ChronovaAiAnalytics` |
-| `src/tools/get-developer-context.ts` | `get_developer_context` → `users/current` (profile, subscription, GitHub orgs) |
-| `src/tools/get-productivity-summary.ts` | `get_productivity_summary` → `users/current/stats/{range}` (languages, projects, editors) |
-| `src/tools/get-recent-activity.ts` | `get_recent_activity` → `users/current/heartbeats` (paginated coding events) |
-| `src/tools/get-ai-insights.ts` | `get_ai_insights` → `users/current/analytics/ai` (AI-assisted coding analytics) |
-| `tests/integration/` | `*.test.ts` integration tests (server, tools, errors, config) |
-| `tests/helpers/mock-server.ts` | `mockChronovaApi`, `startMcpTestServer`, `initSession`, `callTool` |
-| `.wiki/` | Generated project documentation (architecture, configuration, operations, testing, tools, domain) |
-| `.github/workflows/` | CI: `test.yml`, `release.yml`, Claude Code automation (`claude.yml`, `claude-ci.yml`, `claude-code-review.yml`, `claude-fix-issue.yml`), `auto-manage.yml`, `update-wiki.yml` |
+| Path                                    | Purpose                                                                                                                                                                       |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/index.ts`                          | HTTP entrypoint; exports `createApp`, `startServer`; CLI flags `--port`, `--api-url`, `--help`                                                                                |
+| `src/stdio.ts`                          | stdio entrypoint (npm `bin`); exits if `CHRONOVA_API_KEY` missing                                                                                                             |
+| `src/server.ts`                         | `McpServer` construction; registers all four tools; Express app with `/health` and `/mcp`                                                                                     |
+| `src/lib/chronova-client.ts`            | `ChronovaClient`: `get<T>(path, params)`, `fetch`, Bearer auth, 30s `AbortSignal.timeout`                                                                                     |
+| `src/lib/config.ts`                     | `resolveConfig()` — env → `~/.chronova.cfg` → `~/.wakatime.cfg` → defaults                                                                                                    |
+| `src/lib/errors.ts`                     | `ChronovaApiError`, `mapHttpStatusToError`, `mapNetworkError`                                                                                                                 |
+| `src/lib/types.ts`                      | Response interfaces: `ChronovaUser`, `ChronovaStatsRange`, `ChronovaHeartbeat`, `ChronovaHeartbeatResponse`, `ChronovaAiAnalytics`                                            |
+| `src/tools/get-developer-context.ts`    | `get_developer_context` → `users/current` (profile, subscription, GitHub orgs)                                                                                                |
+| `src/tools/get-productivity-summary.ts` | `get_productivity_summary` → `users/current/stats/{range}` (languages, projects, editors)                                                                                     |
+| `src/tools/get-recent-activity.ts`      | `get_recent_activity` → `users/current/heartbeats` (paginated coding events)                                                                                                  |
+| `src/tools/get-ai-insights.ts`          | `get_ai_insights` → `users/current/analytics/ai` (AI-assisted coding analytics)                                                                                               |
+| `tests/integration/`                    | `*.test.ts` integration tests (server, tools, errors, config)                                                                                                                 |
+| `tests/helpers/mock-server.ts`          | `mockChronovaApi`, `startMcpTestServer`, `initSession`, `callTool`                                                                                                            |
+| `.wiki/`                                | Generated project documentation (architecture, configuration, operations, testing, tools, domain)                                                                             |
+| `.github/workflows/`                    | CI: `test.yml`, `release.yml`, Claude Code automation (`claude.yml`, `claude-ci.yml`, `claude-code-review.yml`, `claude-fix-issue.yml`), `auto-manage.yml`, `update-wiki.yml` |
 
 ## Development Commands
 
 ```bash
-npm run build        # tsc → dist/ (ESM, declarations, source maps)
-npm run type-check   # tsc --noEmit
-npm run lint         # eslint .
-npm test             # vitest run
-npm run start        # node dist/index.js   (HTTP mode)
-npm run dev          # tsc --watch & node --watch dist/index.js
-npm run semantic-release  # release pipeline (CI only)
+bun install                # install deps (uses bun.lock)
+bun run build              # bun build → dist/ (ESM) + tsc --emitDeclarationOnly → .d.ts
+bun run type-check         # tsc --noEmit
+bun run lint               # oxlint --react-plugin --vitest-plugin --import-plugin
+bun run lint:fix           # oxlint --fix
+bun run format             # oxfmt (write)
+bun run format:check       # oxfmt --check
+bun run test               # vitest run
+bun run start              # bun dist/index.js   (HTTP mode)
+bun run dev                # bun --watch src/index.ts
+bun run semantic-release   # release pipeline (CI only)
 ```
 
-Runtime: **Node.js ≥ 18** (Dockerfile uses `node:24-alpine`). Package manager: **npm** (`package-lock.json` committed). No bundler; `tsc` emits directly to `dist/`.
+Package manager and build tool: **Bun** (`bun.lock` committed; `packageManager` pins the version). `bun build` bundles the two entrypoints with `--packages external`, and `tsc --emitDeclarationOnly` emits the `.d.ts` tree alongside.
+
+Runtime: the Docker image runs **Bun** (`oven/bun:1-alpine`). The published npm bin keeps its `#!/usr/bin/env node` shebang and targets **Node.js ≥ 18**, so `dist/` is built with `--target node`.
 
 Required env (see `.env.example`):
+
 - `CHRONOVA_API_KEY` — required Bearer token (no default; stdio exits without it)
 - `CHRONOVA_API_URL` — default `https://chronova.dev/api/v1`
 - `PORT` — default `3001`
@@ -69,7 +76,7 @@ Required env (see `.env.example`):
 ## Code Conventions & Common Patterns
 
 - **Module system**: ESM (`"type": "module"`). Imports from `@modelcontextprotocol/sdk` use deep paths (`/server/mcp.js`, `/server/streamableHttp.js`, `/server/stdio.js`).
-- **TypeScript**: `strict`, ES2022, Node16 module/resolution. Declarations + source maps emitted. No `any`, no `ts-ignore`, no `console.log` (ESLint enforced — use `console.error`/`console.warn` only). Unused vars allowed if prefixed `_`.
+- **TypeScript**: `strict`, ES2022, Node16 module/resolution. Declarations + source maps emitted. No `any`, no `ts-ignore`, no `console.log` (oxlint enforced — use `console.error`/`console.warn` only). Unused vars allowed if prefixed `_`.
 - **File naming**: `kebab-case` for tool files (`get-recent-activity.ts`), `camelCase` for lib files (`chronova-client.ts`). Test files `*.test.ts`.
 - **Exports**: Named exports only; no `default` exports. Factory functions named `create<X>` (`createApp`), resolvers `resolve<X>` (`resolveConfig`), tool registrars `register<ToolName>`.
 - **Tool handler shape**: `async (args) => { try { const data = await chronova.get(...); return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] }; } catch (e) { return { content: [{ type: "text", text: (e as Error).message }], isError: true }; } }`.
@@ -88,18 +95,18 @@ Required env (see `.env.example`):
 - `src/lib/config.ts` — `resolveConfig()`; the single source of truth for runtime config
 - `src/lib/errors.ts` — error class + two mappers; extend here when adding new HTTP status handling
 - `package.json` — scripts, deps, `engines.node`, `bin`, `publishConfig.access: public`
-- `tsconfig.json`, `eslint.config.js`, `vitest.config.ts` — toolchain config
-- `Dockerfile` — two-stage `node:24-alpine`, exposes 3001, runs `node dist/index.js` (HTTP only)
+- `tsconfig.json`, `.oxlintrc.json`, `.oxfmtrc.json`, `vitest.config.ts` — toolchain config
+- `Dockerfile` — two-stage `oven/bun:1-alpine`, exposes 3001, runs `bun dist/index.js` (HTTP only)
 - `.releaserc.json` — semantic-release: `main`/`beta`/`alpha` branches, conventional commits
 - `.env.example` — canonical env var list
 
 ## Runtime/Tooling Preferences
 
-- **Node.js ≥ 18**, ESM. No Bun, no ts-node — `tsc` then `node dist/`.
-- **npm** is the package manager (`package-lock.json`); do not introduce `pnpm`/`yarn` lockfiles.
-- **No bundler**. `tsc` output is what ships: `dist/` + `README.md` only (see `package.json` `files`).
+- **Bun** is the package manager and build tool (`bun.lock`); do not introduce `npm`/`pnpm`/`yarn` lockfiles. `npm` remains the _publish registry_ only.
+- ESM throughout. `bun build --target node` produces `dist/`, so the published bin still runs under **Node.js ≥ 18**; the container runs it under Bun.
+- **`bun build` is the bundler** (`--packages external`, so declared dependencies stay external). `tsc` is kept solely for `--noEmit` type-checking and `--emitDeclarationOnly`. What ships is `dist/` + `README.md` (see `package.json` `files`).
 - **Express v5** for HTTP transport; **Zod v4** for tool input schemas; **`@modelcontextprotocol/sdk` v1.29+** for the MCP protocol layer.
-- **Vitest** for tests; **ESLint flat config** with `typescript-eslint` recommended.
+- **Vitest** for tests; **oxlint** (`.oxlintrc.json`, `correctness` category + the SG rules) for linting and **oxfmt** (`.oxfmtrc.json`) for formatting. Lint runs with `--react-plugin --vitest-plugin --import-plugin`.
 - **semantic-release** handles versioning on `main` — do not manually bump `package.json` version or edit `CHANGELOG.md`.
 
 ## Testing & QA
@@ -132,7 +139,7 @@ Required env (see `.env.example`):
 
 ## CI/CD
 
-- `test.yml` — type-check + lint + build + test on push/PR to `main`, `develop`, feature branches.
+- `test.yml` — type-check + lint (oxlint) + format check (oxfmt) + build + test on push/PR to `main`, `develop`, feature branches. All jobs install with `bun install --frozen-lockfile`.
 - `release.yml` — runs tests then `semantic-release` on `main` pushes (conventional commits → npm + GitHub release + `CHANGELOG.md`).
 - `claude.yml`, `claude-ci.yml`, `claude-code-review.yml`, `claude-fix-issue.yml` — Claude Code automation (issue triage, PR labeling, PR review, `/claude` comment triggers).
 - `auto-manage.yml` — auto-tags issues `needs-triage`, assigns to `niklasschaeffer`.
@@ -142,6 +149,7 @@ Required env (see `.env.example`):
 Commit messages follow **Conventional Commits** (`feat:`, `fix:`, `docs:`, `ci:`, `BREAKING CHANGE:`). `feat` → minor, `fix` → patch, `BREAKING CHANGE` → major. Do not manually version or edit `CHANGELOG.md`.
 
 <!-- wiki-agent -->
+
 ## Wiki Agent
 
 This repository is managed by [wiki-agent](https://github.com/nx-solutions-ug/wiki-agent).

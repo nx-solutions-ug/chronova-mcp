@@ -28,7 +28,9 @@ export function mockChronovaApi(): MockChronovaApi {
 
   return {
     setup() {
-      globalThis.fetch = vi.fn(async (url: string | Request | URL, _init?: RequestInit) => {
+      globalThis.fetch = vi.fn<
+        (url: string | Request | URL, init?: RequestInit) => Promise<Response>
+      >(async (url, _init) => {
         fetchCallCount++;
         const urlStr = typeof url === "string" ? url : url.toString();
 

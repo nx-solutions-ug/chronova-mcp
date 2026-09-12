@@ -23,7 +23,7 @@ gh auth setup-git
 Install project dependencies (required before running quality gates):
 
 ```bash
-npm ci
+bun install --frozen-lockfile
 ```
 
 This ensures git push uses the same credentials as gh and that quality gates have the dependencies they need. Use $REPO_SLUG in all subsequent gh api calls instead of {owner}/{repo}.
@@ -84,6 +84,7 @@ This marks the issue as accepted by maintainers and signals to other workflows t
 ## Step 4: Create a branch
 
 Determine the branch prefix based on the issue type:
+
 - Use `fix/issue-$ARGUMENTS` for bugs.
 - Use `feat/issue-$ARGUMENTS` for features or enhancements.
 
@@ -139,15 +140,15 @@ Place tests in the appropriate location under `tests/`. Follow existing test pat
 Run all quality gates in order. Fix any failures before proceeding:
 
 ```bash
-npm run lint
+bun run lint
 ```
 
 ```bash
-npm run type-check
+bun run type-check
 ```
 
 ```bash
-npm test
+bun run test
 ```
 
 If any gate fails, fix the failure and re-run that gate. Do **not** proceed to Step 9 until all three gates pass cleanly.
@@ -155,6 +156,7 @@ If any gate fails, fix the failure and re-run that gate. Do **not** proceed to S
 ## Step 9: Commit and push
 
 Determine the commit prefix based on the issue type:
+
 - Use `fix(issue-$ARGUMENTS)` for bugs.
 - Use `feat(issue-$ARGUMENTS)` for features or enhancements.
 
@@ -207,6 +209,7 @@ gh pr edit <PR-NUMBER> --add-label "<type-label>,<priority-label>"
 ```
 
 Where:
+
 - Type labels: `bug` for bugs, `feature` for features, `enhancement` for improvements.
 - Priority labels: `priority: critical`, `priority: high`, `priority: medium`, or `priority: low` — match the priority from the issue.
 
@@ -224,7 +227,7 @@ Where:
 - If quality gates fail, **MUST** fix failures before creating the PR.
 - **MUST** resolve the repository slug before any gh api calls. Use the GH_REPO environment variable if available.
 - **MUST** run `gh auth setup-git` before any git push to ensure authentication works.
-- **MUST NOT** start a dev server (no `npm run dev`, `npm start`, or similar). The CI environment has no browser access.
+- **MUST NOT** start a dev server (no `bun run dev`, `bun run start`, or similar). The CI environment has no browser access.
 - **MUST NOT** open a browser or attempt visual verification. There is no display or user session available.
 - **MUST NOT** attempt to connect to databases or external services. The CI environment is isolated.
-- **MUST** install dependencies with `npm ci` (Step 0) before running any quality gates.
+- **MUST** install dependencies with `bun install --frozen-lockfile` (Step 0) before running any quality gates.
