@@ -87,7 +87,7 @@ Developers or PR authors often reply explaining intentional design decisions, ar
    - Inspect comments from PR authors, human reviewers, or peer agents in `thread_comments[]`.
    - Extract technical claims, rationale, or domain context provided in comments.
 2. **Ground and verify claims against project standards & codebase**:
-   - Query `AGENTS.md`, `.wiki/`, and surrounding code to verify whether the developer's claim conforms to documented project standards or intentional architecture.
+   - Query `AGENTS.md` and surrounding code to verify whether the developer's claim conforms to documented project standards or intentional architecture.
 3. **Assess the impact of developer justifications**:
    - **Sound & Justified Claims**: If the explanation provides a sound, technically valid justification (e.g. deliberate design override, documented exception, intentional API contract):
      - **Accept the justification**: Do NOT treat this pattern as a violation or re-raise it.
@@ -144,7 +144,7 @@ git diff "$BASE"...HEAD -- src/components/
 
 ### Review Criteria (Chronova Standards)
 
-Check for ALL of the following (backed by `AGENTS.md` and `.wiki/`):
+Check for ALL of the following (backed by `AGENTS.md`):
 
 - **Named exports only**: No `default` exports (factory functions named `create<X>`, resolvers `resolve<X>`, tool registrars `register<ToolName>`).
 - **Module system**: ESM (`"type": "module"`). Imports from `@modelcontextprotocol/sdk` use deep paths (`/server/mcp.js`, `/server/streamableHttp.js`, `/server/stdio.js`).

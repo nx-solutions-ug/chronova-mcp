@@ -10,6 +10,6 @@
   "bracketSpacing": true,
   "endOfLine": "lf",
   "insertFinalNewline": true,
-  "ignorePatterns": ["dist/**", "build/**", "out/**", "CHANGELOG.md", ".wiki/**"],
+  "ignorePatterns": ["dist/**", "build/**", "out/**", "CHANGELOG.md"],
   "sortPackageJson": false
 }
