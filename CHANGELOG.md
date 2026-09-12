@@ -1,3 +1,10 @@
+## [1.11.2](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.11.1...v1.11.2) (2026-09-12)
+
+
+### Bug Fixes
+
+* **ci:** quote command descriptions containing a colon ([ace6cc1](https://github.com/nx-solutions-ug/chronova-mcp/commit/ace6cc17a6f21cabb6bc4d6384846e33d4ae0cb8))
+
 ## [1.11.1](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.11.0...v1.11.1) (2026-09-12)
 
 
