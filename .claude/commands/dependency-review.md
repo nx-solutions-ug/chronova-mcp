@@ -44,7 +44,7 @@ If you cannot find release notes, state so explicitly. Do NOT fabricate changes.
 
 ## Step 3: Assess Impact on Chronova MCP Server
 
-- Check project standards in `AGENTS.md` and `.wiki/` for dependency guidelines.
+- Check project standards in `AGENTS.md` for dependency guidelines.
 - Check whether version constraints in `package.json` are compatible.
 - For library updates: check if any deprecated or removed APIs are used in `src/` (scan imports and usage across `src/`).
 - Note MCP SDK compatibility: `@modelcontextprotocol/sdk` version changes may change the protocol surface — verify all four registered tools still work with the new SDK version before recommending a merge.

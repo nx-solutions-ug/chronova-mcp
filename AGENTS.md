@@ -44,8 +44,7 @@ Chronova REST API  (https://chronova.dev/api/v1)
 | `src/tools/get-ai-insights.ts`          | `get_ai_insights` → `users/current/analytics/ai` (AI-assisted coding analytics)                                                                                               |
 | `tests/integration/`                    | `*.test.ts` integration tests (server, tools, errors, config)                                                                                                                 |
 | `tests/helpers/mock-server.ts`          | `mockChronovaApi`, `startMcpTestServer`, `initSession`, `callTool`                                                                                                            |
-| `.wiki/`                                | Generated project documentation (architecture, configuration, operations, testing, tools, domain)                                                                             |
-| `.github/workflows/`                    | CI: `test.yml`, `release.yml`, Claude Code automation (`claude.yml`, `claude-ci.yml`, `claude-code-review.yml`, `claude-fix-issue.yml`), `auto-manage.yml`, `update-wiki.yml` |
+| `.github/workflows/`                    | CI: `test.yml`, `release.yml`, Claude Code automation (`claude.yml`, `claude-ci.yml`, `claude-code-review.yml`, `claude-fix-issue.yml`), `auto-manage.yml` |
 
 ## Development Commands
 
@@ -130,7 +129,6 @@ Required env (see `.env.example`):
 4. Wire it into `src/server.ts` alongside the other `register<ToolName>` calls.
 5. Add response types to `src/lib/types.ts` if the Chronova endpoint returns a new shape.
 6. Add an integration test in `tests/integration/tools.test.ts` using `mockChronovaApi` + `callTool`; cover the success path and at least one error status.
-7. Document the tool in `.wiki/tools/` (the wiki is auto-regenerated, but a stub may be needed).
 
 ### Adding a new Chronova endpoint error class
 
@@ -143,21 +141,6 @@ Required env (see `.env.example`):
 - `release.yml` — runs tests then `semantic-release` on `main` pushes (conventional commits → npm + GitHub release + `CHANGELOG.md`).
 - `claude.yml`, `claude-ci.yml`, `claude-code-review.yml`, `claude-fix-issue.yml` — Claude Code automation (issue triage, PR labeling, PR review, `/claude` comment triggers).
 - `auto-manage.yml` — auto-tags issues `needs-triage`, assigns to `niklasschaeffer`.
-- `update-wiki.yml` — regenerates `.wiki/` daily and on `main` pushes.
 - `renovate.json` — recommended preset; automated dependency PRs.
 
 Commit messages follow **Conventional Commits** (`feat:`, `fix:`, `docs:`, `ci:`, `BREAKING CHANGE:`). `feat` → minor, `fix` → patch, `BREAKING CHANGE` → major. Do not manually version or edit `CHANGELOG.md`.
-
-<!-- wiki-agent -->
-
-## Wiki Agent
-
-This repository is managed by [wiki-agent](https://github.com/nx-solutions-ug/wiki-agent).
-Documentation is generated under `.wiki/` and kept in sync via `wiki --update`.
-Do not hand-edit files under `.wiki/` — regenerate them with `wiki --update` instead.
-
-```yaml
-version: 1.13.1
-wiki-path: .wiki/
-initialized: 2026-07-28T07:44:56.008Z
-```
