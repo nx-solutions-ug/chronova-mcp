@@ -1,15 +1,21 @@
 {
-  "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "printWidth": 100,
-  "tabWidth": 2,
-  "useTabs": false,
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxfmt/configuration_schema.json",
+  "singleQuote": true,
   "semi": true,
-  "singleQuote": false,
+  "tabWidth": 2,
+  "printWidth": 100,
   "trailingComma": "all",
-  "arrowParens": "always",
-  "bracketSpacing": true,
   "endOfLine": "lf",
-  "insertFinalNewline": true,
-  "ignorePatterns": ["dist/**", "build/**", "out/**", "CHANGELOG.md"],
-  "sortPackageJson": false
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "out/**",
+    "coverage/**",
+    ".worktrees/**",
+    "CHANGELOG.md",
+    "bun.lock",
+    "*.min.js",
+    "*.bundle.js"
+  ]
 }

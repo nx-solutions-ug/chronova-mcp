@@ -1,29 +1,24 @@
 {
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "import", "react", "vitest"],
   "env": {
-    "es2024": true,
-    "node": true
+    "builtin": true,
+    "node": true,
+    "es2024": true
   },
   "categories": {
     "correctness": "error"
   },
-  "ignorePatterns": ["node_modules/**", "dist/**", "build/**", "out/**"],
   "rules": {
-    // Mirrors chronova SG rules (sg/rules/) enforced on the main repo
-    "typescript/no-explicit-any": "error", // no-as-any
-    "typescript/ban-ts-comment": "error", // no-ts-ignore
-    // allow intentionally unused args/vars prefixed with _
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
-    "no-empty": ["error", { "allowEmptyCatch": false }], // no-empty-catch
-    // no-console-log (SG rule targets console.log specifically; error/warn to stderr are legitimate)
-    "no-console": ["error", { "allow": ["error", "warn"] }]
-  },
-  "overrides": [
-    {
-      "files": ["tests/**", "test/**"],
-      "rules": {
-        "no-console": "off"
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "after-used",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
       }
-    }
-  ]
+    ]
+  },
+  "ignorePatterns": ["node_modules/**", "dist/**", "build/**", "out/**", ".worktrees/**"]
 }
