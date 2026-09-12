@@ -36,7 +36,7 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "semantic-release": "semantic-release",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
