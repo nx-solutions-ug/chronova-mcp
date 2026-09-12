@@ -1,6 +1,6 @@
-import { vi } from "vitest";
-import http from "node:http";
-import type { Express } from "express";
+import { vi } from 'vitest';
+import http from 'node:http';
+import type { Express } from 'express';
 
 export interface MockResponse {
   status: number;
@@ -32,14 +32,14 @@ export function mockChronovaApi(): MockChronovaApi {
         (url: string | Request | URL, init?: RequestInit) => Promise<Response>
       >(async (url, _init) => {
         fetchCallCount++;
-        const urlStr = typeof url === "string" ? url : url.toString();
+        const urlStr = typeof url === 'string' ? url : url.toString();
 
         for (let i = handlers.length - 1; i >= 0; i--) {
           const handler = handlers[i];
           if (handler.consumed) continue;
 
           const matches =
-            typeof handler.pattern === "string"
+            typeof handler.pattern === 'string'
               ? urlStr.includes(handler.pattern)
               : handler.pattern.test(urlStr);
 
@@ -50,7 +50,7 @@ export function mockChronovaApi(): MockChronovaApi {
             const resp = handler.respond();
             return new Response(JSON.stringify(resp.body), {
               status: resp.status,
-              headers: { "Content-Type": "application/json", ...resp.headers },
+              headers: { 'Content-Type': 'application/json', ...resp.headers },
             });
           }
         }
@@ -87,18 +87,18 @@ export function mockChronovaApi(): MockChronovaApi {
   };
 }
 
-const ACCEPT_HEADER = "application/json, text/event-stream";
-const CONTENT_TYPE = "application/json";
+const ACCEPT_HEADER = 'application/json, text/event-stream';
+const CONTENT_TYPE = 'application/json';
 
 interface McpRequest {
-  jsonrpc: "2.0";
+  jsonrpc: '2.0';
   id?: number;
   method: string;
   params?: Record<string, unknown>;
 }
 
 interface McpResponse {
-  jsonrpc: "2.0";
+  jsonrpc: '2.0';
   id: number | null;
   result?: unknown;
   error?: { code: number; message: string };
@@ -106,14 +106,14 @@ interface McpResponse {
 
 function parseSse(text: string): McpResponse[] {
   const results: McpResponse[] = [];
-  let currentData = "";
-  for (const line of text.split("\n")) {
-    if (line.startsWith("data: ")) {
+  let currentData = '';
+  for (const line of text.split('\n')) {
+    if (line.startsWith('data: ')) {
       currentData += line.slice(6);
-    } else if (line.startsWith("event: ") || line === "") {
+    } else if (line.startsWith('event: ') || line === '') {
       if (currentData) {
         results.push(JSON.parse(currentData));
-        currentData = "";
+        currentData = '';
       }
     }
   }
@@ -141,32 +141,32 @@ export async function startMcpTestServer(app: Express): Promise<McpTestServer> {
 
   async function mcpRequest(mcpReq: McpRequest): Promise<McpResponse> {
     const headers: Record<string, string> = {
-      "Content-Type": CONTENT_TYPE,
+      'Content-Type': CONTENT_TYPE,
       Accept: ACCEPT_HEADER,
     };
     if (currentSessionId) {
-      headers["Mcp-Session-Id"] = currentSessionId;
+      headers['Mcp-Session-Id'] = currentSessionId;
     }
 
     const res = await fetch(`${baseUrl}/mcp`, {
-      method: "POST",
+      method: 'POST',
       headers,
       body: JSON.stringify(mcpReq),
     });
 
-    const newSid = res.headers.get("mcp-session-id");
+    const newSid = res.headers.get('mcp-session-id');
     if (newSid) {
       currentSessionId = newSid;
     }
 
     const text = await res.text();
 
-    if (res.status === 202 && text === "") {
-      return { jsonrpc: "2.0", id: null };
+    if (res.status === 202 && text === '') {
+      return { jsonrpc: '2.0', id: null };
     }
 
-    if (text === "") {
-      return { jsonrpc: "2.0", id: mcpReq.id ?? null };
+    if (text === '') {
+      return { jsonrpc: '2.0', id: mcpReq.id ?? null };
     }
 
     const messages = parseSse(text);
@@ -181,7 +181,7 @@ export async function startMcpTestServer(app: Express): Promise<McpTestServer> {
         return errBody as McpResponse;
       } catch {
         return {
-          jsonrpc: "2.0",
+          jsonrpc: '2.0',
           id: mcpReq.id ?? null,
           error: { code: res.status, message: text },
         };
@@ -204,13 +204,13 @@ export async function startMcpTestServer(app: Express): Promise<McpTestServer> {
 
 export async function initSession(server: McpTestServer): Promise<void> {
   const res = await server.request({
-    jsonrpc: "2.0",
+    jsonrpc: '2.0',
     id: 1,
-    method: "initialize",
+    method: 'initialize',
     params: {
-      protocolVersion: "2025-03-26",
+      protocolVersion: '2025-03-26',
       capabilities: {},
-      clientInfo: { name: "test-client", version: "1.0.0" },
+      clientInfo: { name: 'test-client', version: '1.0.0' },
     },
   });
   if (res.error) {
@@ -218,8 +218,8 @@ export async function initSession(server: McpTestServer): Promise<void> {
   }
 
   await server.request({
-    jsonrpc: "2.0",
-    method: "notifications/initialized",
+    jsonrpc: '2.0',
+    method: 'notifications/initialized',
     params: {},
   });
 }
@@ -230,9 +230,9 @@ export async function callTool(
   args: Record<string, unknown> = {},
 ): Promise<unknown> {
   const res = await server.request({
-    jsonrpc: "2.0",
+    jsonrpc: '2.0',
     id: 10,
-    method: "tools/call",
+    method: 'tools/call',
     params: { name, arguments: args },
   });
   if (res.error) {

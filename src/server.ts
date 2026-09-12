@@ -1,13 +1,13 @@
-import { randomUUID } from "node:crypto";
-import type { IncomingMessage, ServerResponse } from "node:http";
-import cors from "cors";
-import express, { type Request, type Response } from "express";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { ChronovaClient } from "./lib/chronova-client.js";
-import { resolveConfig, type ChronovaConfig } from "./lib/config.js";
-import { VERSION } from "./version.js";
-import { registerAllTools } from "./tools/index.js";
+import { randomUUID } from 'node:crypto';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+import cors from 'cors';
+import express, { type Request, type Response } from 'express';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { ChronovaClient } from './lib/chronova-client.js';
+import { resolveConfig, type ChronovaConfig } from './lib/config.js';
+import { VERSION } from './version.js';
+import { registerAllTools } from './tools/index.js';
 
 interface Session {
   transport: StreamableHTTPServerTransport;
@@ -15,7 +15,7 @@ interface Session {
 }
 
 function createMcpServer(config: ChronovaConfig): { server: McpServer; chronova: ChronovaClient } {
-  const server = new McpServer({ name: "chronova-mcp", version: VERSION });
+  const server = new McpServer({ name: 'chronova-mcp', version: VERSION });
   const chronova = new ChronovaClient(config.apiUrl, config.apiKey);
 
   registerAllTools(server, chronova);
@@ -31,19 +31,19 @@ export function createApp(config?: ChronovaConfig): express.Express {
 
   const sessions = new Map<string, Session>();
 
-  app.get("/health", (_req: Request, res: Response) => {
-    res.json({ status: "ok", version: VERSION });
+  app.get('/health', (_req: Request, res: Response) => {
+    res.json({ status: 'ok', version: VERSION });
   });
 
   async function handleMcpRequest(req: Request, res: Response): Promise<void> {
-    const sessionId = req.headers["mcp-session-id"] as string | undefined;
+    const sessionId = req.headers['mcp-session-id'] as string | undefined;
 
     if (sessionId) {
       const session = sessions.get(sessionId);
       if (!session) {
         res.status(400).json({
-          jsonrpc: "2.0",
-          error: { code: -32600, message: "Invalid or expired session ID" },
+          jsonrpc: '2.0',
+          error: { code: -32600, message: 'Invalid or expired session ID' },
           id: null,
         });
         return;
@@ -79,9 +79,9 @@ export function createApp(config?: ChronovaConfig): express.Express {
     );
   }
 
-  app.post("/mcp", handleMcpRequest);
-  app.get("/mcp", handleMcpRequest);
-  app.delete("/mcp", handleMcpRequest);
+  app.post('/mcp', handleMcpRequest);
+  app.get('/mcp', handleMcpRequest);
+  app.delete('/mcp', handleMcpRequest);
 
   return app;
 }
@@ -91,9 +91,9 @@ export function startServer() {
 
   if (!config.apiKey) {
     console.warn(
-      "Warning: No API key found. Set CHRONOVA_API_KEY env var, or add api_key to ~/.chronova.cfg or ~/.wakatime.cfg. API requests will fail.",
+      'Warning: No API key found. Set CHRONOVA_API_KEY env var, or add api_key to ~/.chronova.cfg or ~/.wakatime.cfg. API requests will fail.',
     );
-  } else if (config.configSource !== "env") {
+  } else if (config.configSource !== 'env') {
     process.stderr.write(`Using API key from ${config.configSource}\n`);
   }
 
@@ -103,13 +103,13 @@ export function startServer() {
   });
 
   async function shutdown(): Promise<void> {
-    process.stderr.write("Shutting down...\n");
+    process.stderr.write('Shutting down...\n');
     httpServer.close();
     process.exit(0);
   }
 
-  process.on("SIGTERM", shutdown);
-  process.on("SIGINT", shutdown);
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
 
   return httpServer;
 }

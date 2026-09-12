@@ -1,6 +1,6 @@
 name-template: v$RESOLVED_VERSION
 tag-template: v$RESOLVED_VERSION
-change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 template: |
   ## Changes
 
@@ -27,7 +27,7 @@ categories:
 version-resolver:
   major:
     labels:
-      - "priority: critical"
+      - 'priority: critical'
   minor:
     labels:
       - feature

@@ -1,12 +1,12 @@
-import { readFileSync } from "node:fs";
-import { homedir } from "node:os";
-import { join } from "node:path";
+import { readFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 
 export interface ChronovaConfig {
   apiKey: string;
   apiUrl: string;
   port: number;
-  configSource: "env" | "chronova.cfg" | "wakatime.cfg" | "none";
+  configSource: 'env' | 'chronova.cfg' | 'wakatime.cfg' | 'none';
 }
 
 export interface ResolveConfigOptions {
@@ -15,22 +15,22 @@ export interface ResolveConfigOptions {
   env?: NodeJS.ProcessEnv;
 }
 
-const DEFAULT_API_URL = "https://chronova.dev/api/v1";
+const DEFAULT_API_URL = 'https://chronova.dev/api/v1';
 const DEFAULT_PORT = 3001;
 
 export function parseIniFile(content: string): Record<string, string> {
   const result: Record<string, string> = {};
-  for (const line of content.split("\n")) {
+  for (const line of content.split('\n')) {
     const trimmed = line.trim();
     if (
-      trimmed === "" ||
-      trimmed.startsWith("[") ||
-      trimmed.startsWith("#") ||
-      trimmed.startsWith(";")
+      trimmed === '' ||
+      trimmed.startsWith('[') ||
+      trimmed.startsWith('#') ||
+      trimmed.startsWith(';')
     ) {
       continue;
     }
-    const eqIndex = trimmed.indexOf("=");
+    const eqIndex = trimmed.indexOf('=');
     if (eqIndex === -1) continue;
     const key = trimmed.slice(0, eqIndex).trim();
     const value = trimmed.slice(eqIndex + 1).trim();
@@ -41,7 +41,7 @@ export function parseIniFile(content: string): Record<string, string> {
 
 export function readConfigFile(filePath: string): Record<string, string> | null {
   try {
-    const content = readFileSync(filePath, "utf-8");
+    const content = readFileSync(filePath, 'utf-8');
     return parseIniFile(content);
   } catch {
     return null;
@@ -62,34 +62,34 @@ export function resolveConfig(options?: ResolveConfigOptions): ChronovaConfig {
       apiKey: envApiKey,
       apiUrl: envApiUrl ?? DEFAULT_API_URL,
       port: envPort ? Number(envPort) : DEFAULT_PORT,
-      configSource: "env",
+      configSource: 'env',
     };
   }
 
-  const chronovaCfg = readFile(join(getHome(), ".chronova.cfg"));
+  const chronovaCfg = readFile(join(getHome(), '.chronova.cfg'));
   if (chronovaCfg?.api_key) {
     return {
       apiKey: chronovaCfg.api_key,
       apiUrl: envApiUrl ?? chronovaCfg.api_url ?? DEFAULT_API_URL,
       port: envPort ? Number(envPort) : DEFAULT_PORT,
-      configSource: "chronova.cfg",
+      configSource: 'chronova.cfg',
     };
   }
 
-  const wakatimeCfg = readFile(join(getHome(), ".wakatime.cfg"));
+  const wakatimeCfg = readFile(join(getHome(), '.wakatime.cfg'));
   if (wakatimeCfg?.api_key) {
     return {
       apiKey: wakatimeCfg.api_key,
       apiUrl: envApiUrl ?? wakatimeCfg.api_url ?? DEFAULT_API_URL,
       port: envPort ? Number(envPort) : DEFAULT_PORT,
-      configSource: "wakatime.cfg",
+      configSource: 'wakatime.cfg',
     };
   }
 
   return {
-    apiKey: "",
+    apiKey: '',
     apiUrl: envApiUrl ?? DEFAULT_API_URL,
     port: envPort ? Number(envPort) : DEFAULT_PORT,
-    configSource: "none",
+    configSource: 'none',
   };
 }

@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       issue_number:
-        description: "Issue number to fix"
+        description: 'Issue number to fix'
         required: true
         type: number
 
@@ -74,7 +74,7 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ steps.app-token.outputs.token }}
-          prompt: "/fix-issue ${{ github.event.client_payload.issue_number || github.event.inputs.issue_number }}"
+          prompt: '/fix-issue ${{ github.event.client_payload.issue_number || github.event.inputs.issue_number }}'
           claude_args: |
             --model claude-sonnet-5
             --allowedTools "Bash,Read,Grep,Glob,Edit,Write,WebFetch"

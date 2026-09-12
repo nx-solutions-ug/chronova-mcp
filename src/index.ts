@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { startServer } from "./server.js";
+import { startServer } from './server.js';
 
 const HELP_TEXT = `
 Usage: @chronova/mcp-server [options]
@@ -28,28 +28,28 @@ function parseArgs(): void {
   while (i < args.length) {
     const arg = args[i];
 
-    if (arg === "--help") {
-      process.stdout.write(HELP_TEXT.trim() + "\n");
+    if (arg === '--help') {
+      process.stdout.write(HELP_TEXT.trim() + '\n');
       process.exit(0);
     }
 
-    if (arg === "--port") {
+    if (arg === '--port') {
       const value = args[++i];
       if (!value || isNaN(Number(value))) {
-        console.error("Error: --port requires a number");
+        console.error('Error: --port requires a number');
         process.exit(1);
       }
       process.env.PORT = value;
-    } else if (arg === "--api-url") {
+    } else if (arg === '--api-url') {
       const value = args[++i];
       if (!value) {
-        console.error("Error: --api-url requires a URL");
+        console.error('Error: --api-url requires a URL');
         process.exit(1);
       }
       process.env.CHRONOVA_API_URL = value;
     } else {
       console.error(`Error: Unknown option '${arg}'`);
-      process.stdout.write(HELP_TEXT.trim() + "\n");
+      process.stdout.write(HELP_TEXT.trim() + '\n');
       process.exit(1);
     }
 

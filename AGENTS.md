@@ -29,21 +29,21 @@ Chronova REST API  (https://chronova.dev/api/v1)
 
 ## Key Directories
 
-| Path                                    | Purpose                                                                                                                                                                       |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/index.ts`                          | HTTP entrypoint; exports `createApp`, `startServer`; CLI flags `--port`, `--api-url`, `--help`                                                                                |
-| `src/stdio.ts`                          | stdio entrypoint (npm `bin`); exits if `CHRONOVA_API_KEY` missing                                                                                                             |
-| `src/server.ts`                         | `McpServer` construction; registers all four tools; Express app with `/health` and `/mcp`                                                                                     |
-| `src/lib/chronova-client.ts`            | `ChronovaClient`: `get<T>(path, params)`, `fetch`, Bearer auth, 30s `AbortSignal.timeout`                                                                                     |
-| `src/lib/config.ts`                     | `resolveConfig()` — env → `~/.chronova.cfg` → `~/.wakatime.cfg` → defaults                                                                                                    |
-| `src/lib/errors.ts`                     | `ChronovaApiError`, `mapHttpStatusToError`, `mapNetworkError`                                                                                                                 |
-| `src/lib/types.ts`                      | Response interfaces: `ChronovaUser`, `ChronovaStatsRange`, `ChronovaHeartbeat`, `ChronovaHeartbeatResponse`, `ChronovaAiAnalytics`                                            |
-| `src/tools/get-developer-context.ts`    | `get_developer_context` → `users/current` (profile, subscription, GitHub orgs)                                                                                                |
-| `src/tools/get-productivity-summary.ts` | `get_productivity_summary` → `users/current/stats/{range}` (languages, projects, editors)                                                                                     |
-| `src/tools/get-recent-activity.ts`      | `get_recent_activity` → `users/current/heartbeats` (paginated coding events)                                                                                                  |
-| `src/tools/get-ai-insights.ts`          | `get_ai_insights` → `users/current/analytics/ai` (AI-assisted coding analytics)                                                                                               |
-| `tests/integration/`                    | `*.test.ts` integration tests (server, tools, errors, config)                                                                                                                 |
-| `tests/helpers/mock-server.ts`          | `mockChronovaApi`, `startMcpTestServer`, `initSession`, `callTool`                                                                                                            |
+| Path                                    | Purpose                                                                                                                                                    |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/index.ts`                          | HTTP entrypoint; exports `createApp`, `startServer`; CLI flags `--port`, `--api-url`, `--help`                                                             |
+| `src/stdio.ts`                          | stdio entrypoint (npm `bin`); exits if `CHRONOVA_API_KEY` missing                                                                                          |
+| `src/server.ts`                         | `McpServer` construction; registers all four tools; Express app with `/health` and `/mcp`                                                                  |
+| `src/lib/chronova-client.ts`            | `ChronovaClient`: `get<T>(path, params)`, `fetch`, Bearer auth, 30s `AbortSignal.timeout`                                                                  |
+| `src/lib/config.ts`                     | `resolveConfig()` — env → `~/.chronova.cfg` → `~/.wakatime.cfg` → defaults                                                                                 |
+| `src/lib/errors.ts`                     | `ChronovaApiError`, `mapHttpStatusToError`, `mapNetworkError`                                                                                              |
+| `src/lib/types.ts`                      | Response interfaces: `ChronovaUser`, `ChronovaStatsRange`, `ChronovaHeartbeat`, `ChronovaHeartbeatResponse`, `ChronovaAiAnalytics`                         |
+| `src/tools/get-developer-context.ts`    | `get_developer_context` → `users/current` (profile, subscription, GitHub orgs)                                                                             |
+| `src/tools/get-productivity-summary.ts` | `get_productivity_summary` → `users/current/stats/{range}` (languages, projects, editors)                                                                  |
+| `src/tools/get-recent-activity.ts`      | `get_recent_activity` → `users/current/heartbeats` (paginated coding events)                                                                               |
+| `src/tools/get-ai-insights.ts`          | `get_ai_insights` → `users/current/analytics/ai` (AI-assisted coding analytics)                                                                            |
+| `tests/integration/`                    | `*.test.ts` integration tests (server, tools, errors, config)                                                                                              |
+| `tests/helpers/mock-server.ts`          | `mockChronovaApi`, `startMcpTestServer`, `initSession`, `callTool`                                                                                         |
 | `.github/workflows/`                    | CI: `test.yml`, `release.yml`, Claude Code automation (`claude.yml`, `claude-ci.yml`, `claude-code-review.yml`, `claude-fix-issue.yml`), `auto-manage.yml` |
 
 ## Development Commands

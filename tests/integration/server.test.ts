@@ -1,19 +1,19 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import request from "supertest";
-import { createApp } from "../../src/server.js";
-import { VERSION } from "../../src/version.js";
-import type { ChronovaConfig } from "../../src/lib/config.js";
-import { startMcpTestServer, initSession } from "../helpers/mock-server.js";
-import type { McpTestServer } from "../helpers/mock-server.js";
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import request from 'supertest';
+import { createApp } from '../../src/server.js';
+import { VERSION } from '../../src/version.js';
+import type { ChronovaConfig } from '../../src/lib/config.js';
+import { startMcpTestServer, initSession } from '../helpers/mock-server.js';
+import type { McpTestServer } from '../helpers/mock-server.js';
 
 const TEST_CONFIG: ChronovaConfig = {
-  apiKey: "test-api-key",
-  apiUrl: "https://chronova.test/api/v1",
+  apiKey: 'test-api-key',
+  apiUrl: 'https://chronova.test/api/v1',
   port: 3001,
-  configSource: "env",
+  configSource: 'env',
 };
 
-describe("MCP Server - Protocol negotiation and tool listing", () => {
+describe('MCP Server - Protocol negotiation and tool listing', () => {
   let app: ReturnType<typeof createApp>;
   let mcpServer: McpTestServer;
 
@@ -27,43 +27,43 @@ describe("MCP Server - Protocol negotiation and tool listing", () => {
     }
   });
 
-  it("should respond to health check", async () => {
-    const res = await request(app).get("/health");
+  it('should respond to health check', async () => {
+    const res = await request(app).get('/health');
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ status: "ok", version: VERSION });
+    expect(res.body).toEqual({ status: 'ok', version: VERSION });
   });
 
-  it("should initialize an MCP session via POST /mcp", async () => {
+  it('should initialize an MCP session via POST /mcp', async () => {
     mcpServer = await startMcpTestServer(app);
     const res = await mcpServer.request({
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       id: 1,
-      method: "initialize",
+      method: 'initialize',
       params: {
-        protocolVersion: "2025-03-26",
+        protocolVersion: '2025-03-26',
         capabilities: {},
-        clientInfo: { name: "test-client", version: "1.0.0" },
+        clientInfo: { name: 'test-client', version: '1.0.0' },
       },
     });
 
-    expect(res.jsonrpc).toBe("2.0");
+    expect(res.jsonrpc).toBe('2.0');
     expect(res.result).toBeDefined();
     const result = res.result as {
       serverInfo: { name: string; version: string };
     };
-    expect(result.serverInfo.name).toBe("chronova-mcp");
+    expect(result.serverInfo.name).toBe('chronova-mcp');
     expect(result.serverInfo.version).toBe(VERSION);
     expect(mcpServer.sessionId()).toBeDefined();
   });
 
-  it("should list exactly 4 tools", async () => {
+  it('should list exactly 4 tools', async () => {
     mcpServer = await startMcpTestServer(app);
     await initSession(mcpServer);
 
     const res = await mcpServer.request({
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       id: 2,
-      method: "tools/list",
+      method: 'tools/list',
       params: {},
     });
 
@@ -72,21 +72,21 @@ describe("MCP Server - Protocol negotiation and tool listing", () => {
 
     const toolNames = result.tools.map((t) => t.name).sort();
     expect(toolNames).toEqual([
-      "get_ai_insights",
-      "get_developer_context",
-      "get_productivity_summary",
-      "get_recent_activity",
+      'get_ai_insights',
+      'get_developer_context',
+      'get_productivity_summary',
+      'get_recent_activity',
     ]);
   });
 
-  it("should include annotations and inputSchema for each tool", async () => {
+  it('should include annotations and inputSchema for each tool', async () => {
     mcpServer = await startMcpTestServer(app);
     await initSession(mcpServer);
 
     const res = await mcpServer.request({
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       id: 2,
-      method: "tools/list",
+      method: 'tools/list',
       params: {},
     });
 
@@ -101,31 +101,31 @@ describe("MCP Server - Protocol negotiation and tool listing", () => {
       expect(tool.annotations).toBeDefined();
       expect(tool.annotations.readOnlyHint).toBe(true);
       expect(tool.inputSchema).toBeDefined();
-      expect(tool.inputSchema.type).toBe("object");
+      expect(tool.inputSchema.type).toBe('object');
     }
   });
 
-  it("should return 400 for invalid session ID", async () => {
+  it('should return 400 for invalid session ID', async () => {
     mcpServer = await startMcpTestServer(app);
     await initSession(mcpServer);
 
     const res = await fetch(`${mcpServer.baseUrl}/mcp`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json, text/event-stream",
-        "Mcp-Session-Id": "nonexistent-session-id",
+        'Content-Type': 'application/json',
+        Accept: 'application/json, text/event-stream',
+        'Mcp-Session-Id': 'nonexistent-session-id',
       },
       body: JSON.stringify({
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         id: 1,
-        method: "tools/list",
+        method: 'tools/list',
         params: {},
       }),
     });
 
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error.message).toContain("Invalid or expired session ID");
+    expect(body.error.message).toContain('Invalid or expired session ID');
   });
 });
