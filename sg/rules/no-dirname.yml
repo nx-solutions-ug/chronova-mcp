@@ -1,0 +1,29 @@
+id: no-dirname
+language: typescript
+message: |
+  `__dirname` is undefined in ESM modules. Use `process.cwd()`, or derive it
+  from `import.meta.url` with `fileURLToPath`.
+severity: error
+note: |
+  `__dirname` and `__filename` are CommonJS globals and do not exist in ESM.
+
+  Use `process.cwd()` for the project root, or build the shim the module needs:
+
+    const __dirname = dirname(fileURLToPath(import.meta.url))
+
+  A file that does that is doing the recommended thing, so this rule does not
+  fire anywhere in it. A file that must be CommonJS belongs in `.cjs`.
+rule:
+  all:
+    - any:
+        - pattern: __dirname
+        - pattern: __filename
+    # A module that builds the shim from import.meta.url is following this very
+    # rule's advice; flagging its own recommended fix would make the rule noise.
+    - not:
+        inside:
+          kind: program
+          stopBy: end
+          has:
+            pattern: fileURLToPath(import.meta.url)
+            stopBy: end

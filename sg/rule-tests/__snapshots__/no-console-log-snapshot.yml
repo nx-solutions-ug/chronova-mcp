@@ -1,0 +1,14 @@
+id: no-console-log
+snapshots:
+  console.log('debug message'):
+    labels:
+    - source: console.log('debug message')
+      style: primary
+      start: 0
+      end: 28
+  console.log('user id:', userId):
+    labels:
+    - source: console.log('user id:', userId)
+      style: primary
+      start: 0
+      end: 31

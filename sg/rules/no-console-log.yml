@@ -1,0 +1,22 @@
+id: no-console-log
+language: typescript
+message: 'Prefer structured logging over bare console.log.
+
+  Use console.error for errors, console.warn for warnings, or a dedicated logger.
+
+  console.log statements in production code create noise and are hard to filter.
+
+  '
+severity: warning
+note: '`console.warn` and `console.error` carry a severity a log pipeline can filter.
+
+  `console.log` carries none, so it becomes noise nobody can switch off. In a
+
+  process that speaks a protocol over stdout, it also corrupts the stream.
+
+  '
+ignores:
+- tests/**
+- scripts/**
+rule:
+  pattern: console.log($$$ARGS)

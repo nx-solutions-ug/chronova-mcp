@@ -1,0 +1,7 @@
+id: no-console-log
+valid:
+  - "console.error('something went wrong')"
+  - "console.warn('retrying', error)"
+invalid:
+  - "console.log('debug message')"
+  - "console.log('user id:', userId)"

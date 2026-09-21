@@ -1,0 +1,26 @@
+id: no-ts-ignore
+language: typescript
+message: 'Avoid @ts-ignore and @ts-expect-error. They suppress type errors instead of fixing them.
+
+  Prefer proper type annotations, type guards, or type narrowing.
+
+  '
+severity: warning
+note: '`@ts-ignore` and `@ts-expect-error` hide the problem rather than fix it.
+
+  Reach for an annotation, a type guard, narrowing or a discriminated union. If a
+
+  case is genuinely unavoidable, keep the suppression and explain it in a comment.
+
+  '
+ignores:
+- tests/**
+- sg/rule-tests/**
+rule:
+  any:
+  - pattern: '// @ts-ignore
+
+      '
+  - pattern: '// @ts-expect-error$COMMENT
+
+      '

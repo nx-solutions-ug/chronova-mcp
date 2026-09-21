@@ -1,0 +1,7 @@
+id: no-empty-catch
+valid:
+  - 'try { doSomething() } catch (e) { console.error(e) }'
+  - 'try { doSomething() } catch (e) { throw e }'
+  - 'try { doSomething() } catch (e) { return null }'
+invalid:
+  - 'try { doSomething() } catch (e) {}'

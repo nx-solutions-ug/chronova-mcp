@@ -1,0 +1,14 @@
+id: no-dirname
+snapshots:
+  console.error(__filename):
+    labels:
+    - source: __filename
+      style: primary
+      start: 14
+      end: 24
+  const p = join(__dirname, 'file.txt'):
+    labels:
+    - source: __dirname
+      style: primary
+      start: 15
+      end: 24

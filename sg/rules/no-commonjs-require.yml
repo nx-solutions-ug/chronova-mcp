@@ -1,0 +1,21 @@
+id: no-commonjs-require
+language: typescript
+message: 'Avoid `require()` in ESM code. The project uses `"type": "module"` in package.json.
+
+  Use static `import` or dynamic `import()` instead.
+
+  '
+severity: error
+note: 'This package is ESM (`"type": "module"`), where `require()` does not exist.
+
+  Use a static `import`, or `import()` when the dependency is optional and loaded
+
+  at runtime. A script that must be CommonJS belongs in a `.cjs` file.
+
+  '
+ignores:
+- tests/**
+- scripts/**
+- sg/rule-tests/**
+rule:
+  pattern: require($ARG)
