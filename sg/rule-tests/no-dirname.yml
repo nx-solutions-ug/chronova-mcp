@@ -1,0 +1,9 @@
+id: no-dirname
+valid:
+  - 'const root = process.cwd()'
+  - 'const here = fileURLToPath(import.meta.url)'
+  # A module that builds the shim itself is following the rule's own advice.
+  - "const __dirname = dirname(fileURLToPath(import.meta.url))\nreadFileSync(join(__dirname, 'x'))"
+invalid:
+  - "const p = join(__dirname, 'file.txt')"
+  - 'console.error(__filename)'

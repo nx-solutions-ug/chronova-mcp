@@ -104,8 +104,10 @@ shapes, and every multi-file rewrite. Repo-specific, in the order they bite:
   `-p 'log($MSG)'` does not match `console.log("x")`. Check with
   `--debug-query=pattern` before concluding anything.
 - Not on `PATH`, CI runners included: `bun add -g @ast-grep/cli`.
-- This repo has no `sgconfig.yml`, so a bare `ast-grep scan` has no project
-  rules to run — use `--inline-rules`.
+- `sgconfig.yml` points at `sg/rules`, so a bare `ast-grep scan` runs the
+  project rules; `ast-grep test` runs them against `sg/rule-tests` and its
+  snapshots. Neither is wired into a gate — run them deliberately, and
+  regenerate snapshots with `ast-grep test -U` after changing a rule.
 
 Reference: <https://ast-grep.github.io/llms-full.txt>
 

@@ -1,0 +1,22 @@
+id: no-empty-catch
+snapshots:
+  try { doSomething() } catch (e) {}:
+    labels:
+      - source: catch (e) {}
+        style: primary
+        start: 22
+        end: 34
+      - source: '{}'
+        style: secondary
+        start: 32
+        end: 34
+  try { doSomething() } catch {}:
+    labels:
+      - source: catch {}
+        style: primary
+        start: 22
+        end: 30
+      - source: '{}'
+        style: secondary
+        start: 28
+        end: 30

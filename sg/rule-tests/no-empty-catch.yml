@@ -1,0 +1,12 @@
+id: no-empty-catch
+valid:
+  - 'try { doSomething() } catch (e) { console.error(e) }'
+  - 'try { doSomething() } catch (e) { throw e }'
+  - 'try { doSomething() } catch (e) { return null }'
+  - 'try { doSomething() } catch (e) { const msg = String(e); log(msg) }'
+  - 'try { doSomething() } catch (e) { for (const h of handlers) { h(e) } }'
+  - 'try { doSomething() } catch (e) { switch (e.code) { default: break } }'
+  - 'try { doSomething() } catch (e) { /* the parse failure is the expected miss */ }'
+invalid:
+  - 'try { doSomething() } catch (e) {}'
+  - 'try { doSomething() } catch {}'

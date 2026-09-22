@@ -1,0 +1,25 @@
+id: no-empty-catch
+language: typescript
+message: 'Empty catch blocks silently swallow errors, making debugging impossible.
+
+  At minimum, log the error or explicitly ignore it with a comment.
+
+  '
+severity: error
+note: 'An empty catch turns a failure into silence, which is the hardest kind of bug
+
+  to find. Log it, return a fallback, rethrow, or write a comment saying which
+
+  error is being ignored and why.
+
+  '
+ignores:
+  - tests/**
+rule:
+  kind: catch_clause
+  has:
+    kind: statement_block
+    not:
+      has:
+        stopBy: end
+        pattern: $STMT

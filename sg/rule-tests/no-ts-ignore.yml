@@ -1,0 +1,6 @@
+id: no-ts-ignore
+valid:
+  - 'const x: string = thing'
+  - 'type Result = Success | Error'
+invalid:
+  - "// @ts-ignore\nconst x = thing"

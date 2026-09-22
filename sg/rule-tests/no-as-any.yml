@@ -1,0 +1,7 @@
+id: no-as-any
+valid:
+  - 'const value: unknown = something'
+  - "if (typeof x === 'string') { console.log(x) }"
+invalid:
+  - 'const x = thing as any'
+  - '(data as any).field'

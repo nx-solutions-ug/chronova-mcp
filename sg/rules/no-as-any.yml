@@ -1,0 +1,17 @@
+id: no-as-any
+language: typescript
+message: "Avoid `as any` type assertions. They circumvent TypeScript's type system.
+
+  Use proper type annotations, type guards, or unknown instead.
+
+  "
+severity: warning
+note: '`as any` defeats the point of TypeScript. Narrow with `unknown` plus a type
+
+  guard, define the interface, or use a generic. Where a Web API type is genuinely
+
+  missing from the lib definitions, keep the assertion and say so in a comment.
+
+  '
+rule:
+  pattern: $EXPR as any

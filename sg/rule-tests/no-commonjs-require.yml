@@ -1,0 +1,7 @@
+id: no-commonjs-require
+valid:
+  - "import { foo } from '@/lib/foo'"
+  - "const mod = await import('@/lib/entity-normalization')"
+invalid:
+  - "const { foo } = require('@/lib/foo')"
+  - "require('dotenv/config')"
