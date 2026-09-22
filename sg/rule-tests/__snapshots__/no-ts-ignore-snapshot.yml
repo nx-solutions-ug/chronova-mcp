@@ -4,7 +4,7 @@ snapshots:
     // @ts-ignore
     const x = thing
   : labels:
-    - source: // @ts-ignore
-      style: primary
-      start: 0
-      end: 13
+      - source: // @ts-ignore
+        style: primary
+        start: 0
+        end: 13

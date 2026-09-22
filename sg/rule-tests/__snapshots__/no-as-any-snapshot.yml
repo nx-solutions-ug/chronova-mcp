@@ -2,13 +2,13 @@ id: no-as-any
 snapshots:
   (data as any).field:
     labels:
-    - source: data as any
-      style: primary
-      start: 1
-      end: 12
+      - source: data as any
+        style: primary
+        start: 1
+        end: 12
   const x = thing as any:
     labels:
-    - source: thing as any
-      style: primary
-      start: 10
-      end: 22
+      - source: thing as any
+        style: primary
+        start: 10
+        end: 22

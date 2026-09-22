@@ -14,8 +14,8 @@ note: 'This package is ESM (`"type": "module"`), where `require()` does not exis
 
   '
 ignores:
-- tests/**
-- scripts/**
-- sg/rule-tests/**
+  - tests/**
+  - scripts/**
+  - sg/rule-tests/**
 rule:
   pattern: require($ARG)

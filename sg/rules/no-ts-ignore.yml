@@ -14,13 +14,13 @@ note: '`@ts-ignore` and `@ts-expect-error` hide the problem rather than fix it.
 
   '
 ignores:
-- tests/**
-- sg/rule-tests/**
+  - tests/**
+  - sg/rule-tests/**
 rule:
   any:
-  - pattern: '// @ts-ignore
+    - pattern: '// @ts-ignore
 
-      '
-  - pattern: '// @ts-expect-error$COMMENT
+        '
+    - pattern: '// @ts-expect-error$COMMENT
 
-      '
+        '

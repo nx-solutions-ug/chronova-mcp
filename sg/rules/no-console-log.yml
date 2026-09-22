@@ -16,7 +16,7 @@ note: '`console.warn` and `console.error` carry a severity a log pipeline can fi
 
   '
 ignores:
-- tests/**
-- scripts/**
+  - tests/**
+  - scripts/**
 rule:
   pattern: console.log($$$ARGS)

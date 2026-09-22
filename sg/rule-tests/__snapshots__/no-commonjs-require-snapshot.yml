@@ -2,13 +2,13 @@ id: no-commonjs-require
 snapshots:
   const { foo } = require('@/lib/foo'):
     labels:
-    - source: require('@/lib/foo')
-      style: primary
-      start: 16
-      end: 36
+      - source: require('@/lib/foo')
+        style: primary
+        start: 16
+        end: 36
   require('dotenv/config'):
     labels:
-    - source: require('dotenv/config')
-      style: primary
-      start: 0
-      end: 24
+      - source: require('dotenv/config')
+        style: primary
+        start: 0
+        end: 24

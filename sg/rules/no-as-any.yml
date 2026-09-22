@@ -1,10 +1,10 @@
 id: no-as-any
 language: typescript
-message: 'Avoid `as any` type assertions. They circumvent TypeScript''s type system.
+message: "Avoid `as any` type assertions. They circumvent TypeScript's type system.
 
   Use proper type annotations, type guards, or unknown instead.
 
-  '
+  "
 severity: warning
 note: '`as any` defeats the point of TypeScript. Narrow with `unknown` plus a type
 

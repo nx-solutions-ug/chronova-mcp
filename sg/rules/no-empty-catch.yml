@@ -14,24 +14,12 @@ note: 'An empty catch turns a failure into silence, which is the hardest kind of
 
   '
 ignores:
-- tests/**
+  - tests/**
 rule:
   kind: catch_clause
-  not:
-    any:
-    - has:
-        kind: statement_block
-        has:
-          kind: expression_statement
-    - has:
-        kind: statement_block
-        has:
-          kind: return_statement
-    - has:
-        kind: statement_block
-        has:
-          kind: throw_statement
-    - has:
-        kind: statement_block
-        has:
-          kind: if_statement
+  has:
+    kind: statement_block
+    not:
+      has:
+        stopBy: end
+        pattern: $STMT
