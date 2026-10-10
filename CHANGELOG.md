@@ -1,3 +1,10 @@
+## [1.11.4](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.11.3...v1.11.4) (2026-10-10)
+
+
+### Bug Fixes
+
+* **ci:** stop double 👀 reaction on [@claude](https://github.com/claude) comments ([#142](https://github.com/nx-solutions-ug/chronova-mcp/issues/142)) ([1dc333f](https://github.com/nx-solutions-ug/chronova-mcp/commit/1dc333f43e3bbac7aafe727b3174cc5412208797))
+
 ## [1.11.3](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.11.2...v1.11.3) (2026-09-12)
 
 
