@@ -1,3 +1,10 @@
+## [1.11.5](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.11.4...v1.11.5) (2026-10-12)
+
+
+### Bug Fixes
+
+* **ci:** run [@claude](https://github.com/claude) agent as chronova-agent[bot] and allow it in dependency review ([#143](https://github.com/nx-solutions-ug/chronova-mcp/issues/143)) ([48f1e8a](https://github.com/nx-solutions-ug/chronova-mcp/commit/48f1e8a04db733d9987612a7a2e113a0b2dbe093))
+
 ## [1.11.4](https://github.com/nx-solutions-ug/chronova-mcp/compare/v1.11.3...v1.11.4) (2026-10-10)
 
 
