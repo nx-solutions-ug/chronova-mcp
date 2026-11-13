@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "chronova": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@chronova/mcp-server@latest"],
+      "env": {
+        "CHRONOVA_API_KEY": "${CHRONOVA_API_KEY:-}"
+      }
+    }
+  }
+}

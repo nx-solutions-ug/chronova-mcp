@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "chronova",
+  "description": "Plugins for Chronova, the developer-productivity tracker: coding stats, activity and AI-assisted coding metrics in Claude.",
+  "owner": {
+    "name": "NX Solutions UG",
+    "url": "https://github.com/nx-solutions-ug"
+  },
+  "plugins": [
+    {
+      "name": "chronova",
+      "displayName": "Chronova",
+      "source": "./plugins/chronova",
+      "description": "Connects the Chronova MCP server so Claude can read your coding stats, recent activity, productivity summaries and AI-assisted coding insights.",
+      "category": "productivity",
+      "keywords": ["chronova", "wakatime", "time-tracking", "analytics", "productivity"],
+      "homepage": "https://github.com/nx-solutions-ug/chronova-mcp"
+    }
+  ]
+}
