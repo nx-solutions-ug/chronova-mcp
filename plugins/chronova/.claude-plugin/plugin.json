@@ -1,0 +1,13 @@
+{
+  "name": "chronova",
+  "displayName": "Chronova",
+  "description": "Connects the Chronova MCP server so Claude can read your coding stats, recent activity, productivity summaries and AI-assisted coding insights.",
+  "author": {
+    "name": "NX Solutions UG",
+    "url": "https://github.com/nx-solutions-ug"
+  },
+  "homepage": "https://github.com/nx-solutions-ug/chronova-mcp",
+  "repository": "https://github.com/nx-solutions-ug/chronova-mcp",
+  "license": "ISC",
+  "keywords": ["chronova", "wakatime", "time-tracking", "analytics", "productivity"]
+}

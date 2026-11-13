@@ -61,6 +61,12 @@ not the package manager.
 `semantic-release` owns the version and `CHANGELOG.md` on `main`. Never bump
 either by hand.
 
+The Claude Code plugin (`.claude-plugin/marketplace.json`, `plugins/chronova/`)
+carries **no `version`** on purpose: Claude Code then versions it by commit, so it
+never drifts from the npm release. Its `.mcp.json` passes `CHRONOVA_API_KEY` as
+`${CHRONOVA_API_KEY:-}` so an unset key falls through to the config files; never
+pass `CHRONOVA_API_URL` the same way — an empty string defeats the `??` default.
+
 ## Conventions
 
 - ESM throughout. `@modelcontextprotocol/sdk` is imported by deep path

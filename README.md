@@ -48,6 +48,19 @@ CLI flags override env vars: `--port 3001`, `--api-url https://chronova.dev/api/
 
 ## Usage with AI Clients
 
+### Claude Code
+
+Install the plugin from this repository's marketplace:
+
+```bash
+claude plugin marketplace add nx-solutions-ug/chronova-mcp
+claude plugin install chronova@chronova
+```
+
+Or inside a session: `/plugin marketplace add nx-solutions-ug/chronova-mcp`, then `/plugin install chronova@chronova`.
+
+The plugin runs `npx -y @chronova/mcp-server@latest` and reads your API key from `CHRONOVA_API_KEY`, `~/.chronova.cfg` or `~/.wakatime.cfg` (see [Configuration](#configuration)). If you already registered the server with `claude mcp add`, remove that entry so the tools are not listed twice.
+
 ### Claude Desktop
 
 Add to `claude_desktop_config.json`:
