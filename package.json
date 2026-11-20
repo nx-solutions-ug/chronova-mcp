@@ -58,7 +58,7 @@
     "husky": "^9.1.7",
     "oxfmt": "0.78.0",
     "oxlint": "1.94.0",
-    "semantic-release": "^25.0.0",
+    "semantic-release": "^26.0.0",
     "supertest": "^7.2.2",
     "typescript": "^6.0.3",
     "vitest": "^5.0.0"
